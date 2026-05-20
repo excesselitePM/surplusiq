@@ -431,6 +431,21 @@
   tr.row-killed td.surplus-cell .surplus-true {
     text-decoration: line-through;
   }
+
+  /* Verification methodology note */
+  .verify-note {
+    background: rgba(79, 139, 255, 0.06);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent, #4f8bff);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 0 0 24px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-dim);
+  }
+  .verify-note strong { color: var(--text); }
+  #verify-note-counts { display: block; margin-top: 6px; color: var(--text-muted); font-size: 12px; }
 </style>
 </head>
 
@@ -460,28 +475,37 @@
 
 <main class="container">
 
-  <!-- KPIs -->
+  <!-- KPIs — Confirmed Surplus shown first; estimated/apparent are secondary -->
   <div class="kpi-grid" id="kpi-grid">
     <div class="kpi">
-      <div class="kpi-label">Total Leads</div>
-      <div class="kpi-value" id="kpi-total-leads">—</div>
-      <div class="kpi-sub">Qualifying 3rd-party wins ≥ $10K surplus</div>
+      <div class="kpi-label">Confirmed Surplus</div>
+      <div class="kpi-value surplus" id="kpi-confirmed-surplus">—</div>
+      <div class="kpi-sub"><span id="kpi-confirmed-count">—</span> leads · docket / official proof verified</div>
     </div>
     <div class="kpi">
-      <div class="kpi-label">Total Surplus Identified</div>
-      <div class="kpi-value surplus" id="kpi-total-surplus">—</div>
-      <div class="kpi-sub">Pre-debt-verification estimate</div>
+      <div class="kpi-label">Estimated Surplus</div>
+      <div class="kpi-value" id="kpi-estimated-surplus">—</div>
+      <div class="kpi-sub"><span id="kpi-estimated-count">—</span> leads · PropertyRadar enrichment only</div>
     </div>
     <div class="kpi">
-      <div class="kpi-label">A+ Priority Leads</div>
-      <div class="kpi-value" id="kpi-aplus">—</div>
-      <div class="kpi-sub">≥ $100,000 surplus each</div>
+      <div class="kpi-label">Apparent Surplus</div>
+      <div class="kpi-value" id="kpi-apparent-surplus">—</div>
+      <div class="kpi-sub"><span id="kpi-apparent-count">—</span> leads · auction math only, not verified</div>
     </div>
     <div class="kpi">
-      <div class="kpi-label">Top Lead</div>
-      <div class="kpi-value surplus" id="kpi-top-lead">—</div>
-      <div class="kpi-sub" id="kpi-top-lead-county">—</div>
+      <div class="kpi-label">Pipeline Ready</div>
+      <div class="kpi-value" id="kpi-pipeline-ready">—</div>
+      <div class="kpi-sub">Confirmed leads cleared for outreach</div>
     </div>
+  </div>
+
+  <!-- Verification methodology note -->
+  <div class="verify-note" id="verify-note">
+    <strong>How surplus is classified:</strong>
+    Confirmed surplus requires docket or official proof fields.
+    Estimated surplus is based on enrichment.
+    Apparent surplus is based on auction math only.
+    <span id="verify-note-counts"></span>
   </div>
 
   <!-- County Breakdown -->
@@ -532,7 +556,8 @@
         <thead>
           <tr>
             <th data-sort="best_real_surplus" class="numeric sorted-desc">Surplus</th>
-            <th data-sort="classification">Status</th>
+            <th data-sort="money_status">Money Status</th>
+            <th data-sort="classification">Docket</th>
             <th data-sort="score">Tier</th>
             <th data-sort="county_name">County</th>
             <th data-sort="state">St</th>
@@ -542,13 +567,13 @@
             <th data-sort="opening_bid" class="numeric">Opening Bid</th>
             <th data-sort="sale_datetime">Sold At</th>
             <th data-sort="pr_owner_name">Owner</th>
-            <th data-sort="real_surplus_source">Verified By</th>
+            <th data-sort="evidence_level">Evidence Level</th>
             <th>Source</th>
             <th data-sort="sold_to">Sold To</th>
           </tr>
         </thead>
         <tbody id="leads-body">
-          <tr><td colspan="13" class="loading">Loading leads…</td></tr>
+          <tr><td colspan="15" class="loading">Loading leads…</td></tr>
         </tbody>
       </table>
     </div>
@@ -595,9 +620,9 @@
     const cls = (l.classification || '').toLowerCase();
     if (!cls) return '<span class="status-badge status-none" title="No docket data yet">—</span>';
     const labels = {
-      green:   '✓ Confirmed',
-      yellow:  'Pending',
-      red:     '⚠ At Risk',
+      green:   '✓ Green',
+      yellow:  'Yellow',
+      red:     '⚠ Red Flagged',
       killed:  '✗ Killed',
       unknown: '?'
     };
@@ -608,15 +633,36 @@
     return '<span class="status-badge status-' + cls + '" title="' + tooltip + '">' + label + '</span>';
   }
 
-  function renderSourceBadge(l) {
-    const src = l.real_surplus_source || 'apparent';
-    const labels = {
-      'docket':        { txt: '⚖ Docket',  cls: 'status-green',  tip: 'Court-verified via docket scrape' },
-      'propertyradar': { txt: '🏠 PR',    cls: 'status-yellow', tip: 'PropertyRadar enriched (loan balance, equity)' },
-      'apparent':      { txt: 'Auction',         cls: 'status-none',   tip: 'Auction-only data, no enrichment yet' }
+  function renderMoneyStatusBadge(l) {
+    const ms = (l.money_status || 'unknown').toLowerCase();
+    const map = {
+      confirmed_surplus: { txt: 'Confirmed Surplus', cls: 'status-green',
+                           tip: 'Docket / official proof verified' },
+      estimated_surplus: { txt: 'Estimated Surplus', cls: 'status-yellow',
+                           tip: 'Based on PropertyRadar enrichment — not verified' },
+      apparent_surplus:  { txt: 'Apparent Surplus',  cls: 'status-none',
+                           tip: 'Auction math only — not verified' },
+      no_surplus:        { txt: 'No Surplus',        cls: 'status-killed',
+                           tip: 'Killed / no collectible surplus' },
+      unknown:           { txt: 'Unknown',           cls: 'status-unknown',
+                           tip: 'Status not determined' },
     };
-    const info = labels[src] || labels.apparent;
+    const info = map[ms] || map.unknown;
     return '<span class="status-badge ' + info.cls + '" title="' + info.tip + '">' + info.txt + '</span>';
+  }
+
+  function renderEvidenceBadge(l) {
+    const ev = (l.evidence_level || 'unknown').toLowerCase();
+    const map = {
+      official_document_verified: { txt: 'Official Document Verified', cls: 'status-green' },
+      docket_confirmed:           { txt: 'Docket Confirmed',           cls: 'status-green' },
+      docket_reviewed:            { txt: 'Docket Reviewed',            cls: 'status-yellow' },
+      property_enriched:          { txt: 'Property Enriched',          cls: 'status-yellow' },
+      auction_only:               { txt: 'Auction Only',               cls: 'status-none' },
+      unknown:                    { txt: 'Unknown',                    cls: 'status-unknown' },
+    };
+    const info = map[ev] || map.unknown;
+    return '<span class="status-badge ' + info.cls + '">' + info.txt + '</span>';
   }
 
   const scoreBadgeClass = (score) => ({
@@ -639,7 +685,7 @@
     } catch (err) {
       console.error(err);
       $("leads-body").innerHTML =
-        `<tr><td colspan="13"><div class="error">Failed to load lead data: ${err.message}</div></td></tr>`;
+        `<tr><td colspan="15"><div class="error">Failed to load lead data: ${err.message}</div></td></tr>`;
     }
   }
 
@@ -652,29 +698,48 @@
   }
 
   function renderKPIs() {
-    $("kpi-total-leads").textContent = SUMMARY.total_leads.toLocaleString();
-    $("kpi-total-surplus").textContent = fmtMoney(SUMMARY.total_surplus);
-    $("kpi-aplus").textContent = SUMMARY.by_score["A+"].toLocaleString();
+    const s = SUMMARY;
+    // Confirmed surplus is shown first. If $0, show $0 — never hidden.
+    $("kpi-confirmed-surplus").textContent = fmtMoney(s.confirmed_surplus_total || 0);
+    $("kpi-confirmed-count").textContent   = (s.confirmed_surplus_count || 0).toLocaleString();
 
-    const top = SUMMARY.top_5_leads[0];
-    if (top) {
-      $("kpi-top-lead").textContent = fmtMoney(top.surplus);
-      $("kpi-top-lead-county").textContent = `${top.county}, ${top.state} · ${top.case_number}`;
-    }
+    $("kpi-estimated-surplus").textContent = fmtMoney(s.estimated_surplus_total || 0);
+    $("kpi-estimated-count").textContent   = (s.estimated_surplus_count || 0).toLocaleString();
 
-    if (SUMMARY.generated_at) {
-      const d = new Date(SUMMARY.generated_at);
-      $("meta-updated").textContent = isNaN(d) ? SUMMARY.generated_at :
+    $("kpi-apparent-surplus").textContent  = fmtMoney(s.apparent_surplus_total || 0);
+    $("kpi-apparent-count").textContent    = (s.apparent_surplus_count || 0).toLocaleString();
+
+    $("kpi-pipeline-ready").textContent    = (s.pipeline_ready_count || 0).toLocaleString();
+
+    // Methodology note — show the lead-disposition counts honestly.
+    const noteCounts = [
+      `${s.total_leads || 0} total leads`,
+      `${s.killed_count || 0} killed`,
+      `${s.red_count || 0} red-flagged`,
+      `${s.docket_matched_count || 0} docket-reviewed`,
+      `${s.pr_matched_count || 0} property-enriched`,
+    ].join(" · ");
+    $("verify-note-counts").textContent = noteCounts;
+
+    if (s.generated_at) {
+      const d = new Date(s.generated_at);
+      $("meta-updated").textContent = isNaN(d) ? s.generated_at :
         d.toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
     }
 
-    $("footer-stats").textContent = `${SUMMARY.total_leads} leads · ${fmtMoney(SUMMARY.total_surplus)} total surplus identified`;
+    $("footer-stats").textContent =
+      `${s.total_leads || 0} leads · ${fmtMoney(s.confirmed_surplus_total || 0)} confirmed surplus`;
   }
 
   function renderCounties() {
     const grid = $("county-grid");
     grid.innerHTML = "";
-    SUMMARY.by_county.forEach(c => {
+    const counties = SUMMARY.by_county || [];
+    if (!counties.length) {
+      grid.innerHTML = '<div class="loading">No leads in the current window.</div>';
+      return;
+    }
+    counties.forEach(c => {
       const card = document.createElement("div");
       card.className = "county-card";
       card.innerHTML = `
@@ -685,7 +750,7 @@
         <div class="county-leads">${c.leads}</div>
         <div class="county-leads-label">qualifying leads</div>
         <div class="county-surplus">${fmtMoney(c.surplus)}</div>
-        <div class="county-top">Top lead: ${fmtMoney(c.top_lead)}</div>
+        <div class="county-top">Apparent surplus · top lead ${fmtMoney(c.top_lead)}</div>
       `;
       card.style.cursor = "pointer";
       card.addEventListener("click", () => {
@@ -756,13 +821,14 @@
     $("results-count").textContent = filtered.length.toLocaleString();
 
     if (!filtered.length) {
-      tbody.innerHTML = `<tr><td colspan="13" class="loading">No leads match your filters.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="15" class="loading">No leads match your filters.</td></tr>`;
       return;
     }
 
     const rows = filtered.map(l => `
-      <tr>
+      <tr${(l.lead_quality === 'killed') ? ' class="row-killed"' : ''}>
         <td class="numeric surplus-cell">${renderSurplusCell(l)}</td>
+        <td>${renderMoneyStatusBadge(l)}</td>
         <td>${renderStatusBadge(l)}</td>
         <td><span class="badge ${scoreBadgeClass(l.score)}">${l.score}</span></td>
         <td>${l.county_name}</td>
@@ -773,8 +839,8 @@
         <td class="numeric">${fmtMoney(l.opening_bid)}</td>
         <td>${l.sale_datetime || fmtDate(l.sale_date)}</td>
         <td>${l.pr_owner_name ? `<span class="owner-name">${l.pr_owner_name}</span>` : '<span style="color:var(--text-muted)">—</span>'}</td>
-        <td>${renderSourceBadge(l)}</td>
-                  <td>${l.source_url ? `<a href="${l.source_url}" target="_blank" rel="noopener" class="src-link">View</a>` : '—'}</td>
+        <td>${renderEvidenceBadge(l)}</td>
+        <td>${l.source_url ? `<a href="${l.source_url}" target="_blank" rel="noopener" class="src-link">View</a>` : '—'}</td>
         <td>${l.sold_to || "—"}</td>
       </tr>
     `).join("");
