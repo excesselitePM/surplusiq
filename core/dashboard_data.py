@@ -1,10 +1,18 @@
 """
-SurplusIQ — Dashboard Data Exporter
+SurplusIQ — Dashboard Data Exporter (HARDENING PASS — false-positive resistant)
 
-Generates two JSON files that the dashboard HTML reads:
+Generates two JSON files the dashboard HTML reads:
+  docs/data/leads.json    — all qualifying leads + verification status model
+  docs/data/summary.json  — separated confirmed/estimated/apparent totals
 
-  docs/data/leads.json      — all qualifying leads
-  docs/data/summary.json    — county totals, score distribution, KPIs
+Core rule (strict separation of confidence layers):
+  • Auction math alone        → apparent_surplus  (never confirmed)
+  • PropertyRadar enrichment  → estimated_surplus (PR cannot confirm surplus)
+  • Docket + proof fields     → confirmed_surplus (only path to confirmed)
+
+The headline never presents apparent surplus as confirmed money.
+killed/red leads are kept in leads.json (QA trail) but excluded from the
+confirmed total, pipeline-ready count, and top-confirmed list.
 
 Usage:
     python -m core.dashboard_data
@@ -15,7 +23,127 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-from core.loader import load_all_leads, get_summary, PROJECT_ROOT
+from core.loader import (
+    load_all_leads, get_summary, PROJECT_ROOT,
+    _POSITIVE_CLASSIFICATIONS, _NEGATIVE_CLASSIFICATIONS,
+)
+
+
+# Classifications that count as "docket-verified" — explicit allowlist.
+# "unknown" is excluded because it means the scrape ran but produced no usable data.
+DOCKET_VERIFIED_CLASSIFICATIONS = {"green", "yellow", "red", "killed"}
+
+
+def _load_pr_enrichment() -> dict:
+    """Load the most recent PropertyRadar enrichment file."""
+    enriched_dir = PROJECT_ROOT / "data" / "enriched"
+    if not enriched_dir.exists():
+        return {}
+
+    files = sorted(enriched_dir.glob("all_enriched_*.json"))
+    if not files:
+        return {}
+
+    latest = files[-1]
+    print(f"   📡 PropertyRadar enrichment: loading {latest.name}")
+
+    try:
+        with open(latest) as f:
+            records = json.load(f)
+    except Exception as e:
+        print(f"   ⚠ Failed to load PR enrichment: {e}")
+        return {}
+
+    lookup = {}
+    matched = 0
+    for r in records:
+        key = (r.get("county_id", ""), r.get("case_number", ""))
+        lookup[key] = r
+        if r.get("pr_match"):
+            matched += 1
+
+    print(f"   ✓ {len(lookup)} PR enrichment records ({matched} matched)")
+    return lookup
+
+
+def _apply_pr_to_payload(payload_lead: dict, pr_record: dict) -> dict:
+    """Merge PropertyRadar enrichment fields onto a payload lead dict."""
+    if not pr_record or not pr_record.get("pr_match"):
+        return payload_lead
+
+    pr_fields = [
+        "pr_match", "pr_radar_id", "pr_owner_name",
+        "pr_mailing_address", "pr_mailing_city", "pr_mailing_state", "pr_mailing_zip",
+        "pr_estimated_value", "pr_total_loan_balance", "pr_available_equity",
+        "pr_first_loan_amount", "pr_first_loan_type", "pr_second_loan_amount",
+        "pr_years_owned", "pr_owner_occupied", "pr_in_tax_delinquency",
+        "pr_involuntary_lien", "pr_property_type", "pr_year_built",
+        "pr_sqft", "pr_bedrooms", "pr_bathrooms",
+        "real_surplus_estimate", "debt_coverage_ratio", "is_clean_surplus",
+        "enrichment_status",
+    ]
+    for field in pr_fields:
+        if field in pr_record:
+            payload_lead[field] = pr_record[field]
+
+    return payload_lead
+
+
+def _surplus_for_payload(payload_lead: dict) -> tuple:
+    """
+    Return (amount, bucket) where bucket is one of:
+      confirmed_surplus | estimated_surplus | apparent_surplus | no_surplus
+
+    HARDENING (FP-6): the bucket is driven by money_status assigned by the
+    loader's verification status model — NOT by classification alone, and
+    NOT by trusting true_surplus blindly. The status model has already run
+    the proof-field gate, so this function only reads its verdict.
+    """
+    money_status = (payload_lead.get("money_status") or "unknown").strip().lower()
+
+    if money_status == "confirmed_surplus":
+        # Proof gate already passed in the loader => true_surplus is real.
+        ts = payload_lead.get("true_surplus")
+        return (float(ts) if ts is not None else 0.0, "confirmed_surplus")
+
+    if money_status == "estimated_surplus":
+        # PropertyRadar estimate, or docket-reviewed-but-unproven.
+        pr = payload_lead.get("real_surplus_estimate")
+        if pr is not None:
+            return (float(pr), "estimated_surplus")
+        # docket-reviewed green/yellow without proof: fall back to apparent
+        return (float(payload_lead.get("gross_surplus", 0.0)), "estimated_surplus")
+
+    if money_status == "no_surplus":
+        return (0.0, "no_surplus")
+
+    # apparent_surplus or unknown => auction math only
+    return (float(payload_lead.get("gross_surplus", 0.0)), "apparent_surplus")
+
+
+def _reassign_status_after_pr(payload: dict) -> None:
+    """
+    Re-run the verification status model on a payload dict AFTER PR enrichment
+    has been merged. The loader assigns status on raw Lead objects before PR
+    data exists; a PR-matched lead that had no docket classification must be
+    upgraded from auction_only to property_enriched / estimated_surplus.
+
+    This NEVER upgrades a lead to confirmed_surplus — PR cannot confirm surplus
+    (spec Part 4). Leads already docket-classified are left untouched.
+    """
+    classification = (payload.get("classification") or "").strip().lower()
+
+    # Docket-classified leads (positive OR negative) keep the loader's verdict.
+    if classification in _POSITIVE_CLASSIFICATIONS or classification in _NEGATIVE_CLASSIFICATIONS:
+        return
+
+    # No docket classification, but PR matched => property_enriched.
+    if payload.get("pr_match"):
+        payload["research_status"] = "property_enriched"
+        payload["money_status"]    = "estimated_surplus"
+        payload["evidence_level"]  = "property_enriched"
+        payload["lead_quality"]    = "unknown"
+        payload["pipeline_ready"]  = False
 
 
 def export_dashboard_data():
@@ -26,12 +154,17 @@ def export_dashboard_data():
     leads = load_all_leads()
     summary = get_summary(leads)
     print(f"   ✓ {len(leads)} leads loaded")
-    print(f"   ✓ ${summary['total_surplus']:,.0f} total surplus")
+    print(f"   ✓ ${summary['total_apparent_surplus']:,.0f} apparent surplus (pre-enrichment)")
 
-    # Write leads.json — array of lead dicts (slim version, no PII / debug fields)
+    pr_lookup = _load_pr_enrichment()
+
     leads_payload = []
+    pr_matches = 0
+    docket_matches = 0
+    total_real_surplus = 0.0
+
     for l in leads:
-        leads_payload.append({
+        payload = {
             "county_id":        l.county_id,
             "county_name":      l.county_name,
             "state":            l.state,
@@ -44,26 +177,124 @@ def export_dashboard_data():
             "gross_surplus":    l.gross_surplus,
             "assessed_value":   l.assessed_value,
             "sale_date":        l.sale_date,
+            "sale_datetime":    getattr(l, "sale_datetime", ""),
             "sold_to":          l.sold_to,
             "auction_status":   l.auction_status,
             "score":            l.score,
-        })
+            "source_url":       getattr(l, "source_url", ""),
+
+            # Docket-enrichment fields
+            "classification":         getattr(l, "classification", ""),
+            "classification_reason":  getattr(l, "classification_reason", ""),
+            "prayer_amount":          getattr(l, "prayer_amount", 0.0),
+            "true_surplus":           getattr(l, "true_surplus", None),
+            "kill_signals":           getattr(l, "kill_signals", []),
+            "proof_of_surplus":       getattr(l, "proof_of_surplus", ""),
+            "competing_filers":       getattr(l, "competing_filers", []),
+            "additional_parties":     getattr(l, "additional_parties", []),
+            "docket_url":             getattr(l, "docket_url", ""),
+
+            # Verification status model (HARDENING — Parts 1-6)
+            "research_status":  getattr(l, "research_status", "unknown"),
+            "lead_quality":     getattr(l, "lead_quality", "unknown"),
+            "money_status":     getattr(l, "money_status", "unknown"),
+            "evidence_level":   getattr(l, "evidence_level", "unknown"),
+            "pipeline_ready":   getattr(l, "pipeline_ready", False),
+
+            "pr_match": False,
+        }
+
+        pr_record = pr_lookup.get((l.county_id, l.case_number))
+        if pr_record:
+            _apply_pr_to_payload(payload, pr_record)
+            if payload.get("pr_match"):
+                pr_matches += 1
+                # PR merged AFTER loader status assignment. Re-run the status
+                # model on the merged payload so a PR-matched auction-only lead
+                # is correctly re-tagged property_enriched / estimated_surplus.
+                _reassign_status_after_pr(payload)
+
+        # docket match count: any real docket classification
+        if (payload.get("classification") or "").strip().lower() in DOCKET_VERIFIED_CLASSIFICATIONS:
+            docket_matches += 1
+
+        amount, bucket = _surplus_for_payload(payload)
+        payload["best_real_surplus"]   = amount
+        payload["real_surplus_source"] = bucket
+        # Only confirmed surplus contributes to the confirmed total.
+        if bucket == "confirmed_surplus":
+            total_real_surplus += amount
+
+        leads_payload.append(payload)
 
     leads_file = docs_data / "leads.json"
     with open(leads_file, "w") as f:
         json.dump(leads_payload, f, indent=2)
     print(f"   ✓ Wrote {leads_file.relative_to(PROJECT_ROOT)}")
+    print(f"   ✓ Enrichment coverage: {pr_matches} PR / {docket_matches} docket / {len(leads_payload)} total")
+    print(f"   ✓ Total real surplus (best available): ${total_real_surplus:,.0f}")
 
-    # Write summary.json — KPIs, county breakdown, score distribution
+    # ── HARDENING (FP-4): rebuild ALL summary numbers from money_status ──
+    # The headline must NOT present apparent surplus as confirmed money.
+    def _bucket(p):
+        return (p.get("money_status") or "unknown").strip().lower()
+
+    confirmed = [p for p in leads_payload if _bucket(p) == "confirmed_surplus"]
+    estimated = [p for p in leads_payload if _bucket(p) == "estimated_surplus"]
+    apparent  = [p for p in leads_payload if _bucket(p) == "apparent_surplus"]
+    killed    = [p for p in leads_payload if (p.get("lead_quality") or "") == "killed"]
+    red       = [p for p in leads_payload if (p.get("lead_quality") or "") == "red"]
+
+    confirmed_total = sum(p.get("best_real_surplus", 0) for p in confirmed)
+    estimated_total = sum(p.get("best_real_surplus", 0) for p in estimated)
+    apparent_total  = sum(p.get("best_real_surplus", 0) for p in apparent)
+
+    def _top5(bucket_list):
+        s = sorted(bucket_list, key=lambda p: p.get("best_real_surplus", 0), reverse=True)
+        return [{
+            "county":      p.get("county_name", ""),
+            "state":       p.get("state", ""),
+            "case_number": p.get("case_number", ""),
+            "address":     p.get("address", ""),
+            "surplus":     p.get("best_real_surplus", 0),
+            "money_status": p.get("money_status", "unknown"),
+            "evidence_level": p.get("evidence_level", "unknown"),
+        } for p in s[:5]]
+
+    print(f"   ✓ Confirmed: {len(confirmed)} leads / ${confirmed_total:,.0f}")
+    print(f"   ✓ Estimated: {len(estimated)} leads / ${estimated_total:,.0f}")
+    print(f"   ✓ Apparent:  {len(apparent)} leads / ${apparent_total:,.0f}")
+    print(f"   ✓ Killed: {len(killed)} | Red: {len(red)} (excluded from confirmed)")
+
     summary_file = docs_data / "summary.json"
     summary_payload = {
-        "generated_at":   summary["generated_at"],
-        "total_leads":    summary["total_leads"],
-        "total_surplus":  summary["total_surplus"],
-        "by_state":       summary["by_state"],
-        "by_county":      summary["by_county"],
-        "by_score":       summary["by_score"],
-        "top_5_leads":    summary["top_5_leads"],
+        "generated_at":           summary["generated_at"],
+        "total_leads":            summary["total_leads"],
+
+        # FP-4: separated, honestly-labeled totals. No single "total_surplus"
+        # that conflates confirmed money with auction guesses.
+        "confirmed_surplus_total":  confirmed_total,
+        "estimated_surplus_total":  estimated_total,
+        "apparent_surplus_total":   apparent_total,
+
+        "confirmed_surplus_count":  len(confirmed),
+        "estimated_surplus_count":  len(estimated),
+        "apparent_surplus_count":   len(apparent),
+        "killed_count":             len(killed),
+        "red_count":                len(red),
+        "pipeline_ready_count":     sum(1 for p in leads_payload if p.get("pipeline_ready")),
+
+        "pr_matched_count":       pr_matches,
+        "docket_matched_count":   docket_matches,
+
+        "by_state":  summary["by_state"],
+        "by_county": summary["by_county"],
+        "by_score":  summary["by_score"],
+
+        "top_5_confirmed_leads": _top5(confirmed),
+        "top_5_estimated_leads": _top5(estimated),
+        "top_5_apparent_leads":  _top5(apparent),
+
         "coverage": {
             "states":   ["FL", "OH"],
             "counties": [
@@ -84,6 +315,8 @@ def export_dashboard_data():
     with open(summary_file, "w") as f:
         json.dump(summary_payload, f, indent=2)
     print(f"   ✓ Wrote {summary_file.relative_to(PROJECT_ROOT)}")
+    print(f"   ✓ CONFIRMED surplus = ${confirmed_total:,.0f} "
+          f"({len(confirmed)} leads) — apparent ${apparent_total:,.0f} NOT counted as confirmed")
 
     return leads_file, summary_file
 
