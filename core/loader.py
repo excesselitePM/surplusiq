@@ -107,7 +107,23 @@ def _normalize_case_for_lookup(case_number: str) -> str:
 
 
 def _apply_docket_to_lead(lead, docket: dict, county_id: str) -> None:
-    """Merge a docket result onto a Lead in place."""
+    """
+    Merge a docket result onto a Lead in place.
+
+    HARDENING (FP-1/FP-2/FP-3): true_surplus is now a DOCKET-ONLY field.
+    It is set ONLY when the docket supplies a real debt figure (prayer/writ/
+    judgment amount). It is NEVER defaulted to gross_surplus.
+
+      • Ohio   — opening_bid is fake (2/3 appraised value, statutory). The only
+                 valid debt is the docket prayer amount. No prayer amount =>
+                 true_surplus stays None (lead is apparent-only).
+      • Florida — opening_bid equals the judgment, but auction math alone is
+                 still not a confirmed surplus. true_surplus is only set here
+                 if the docket itself supplies a debt figure. Otherwise None.
+
+    A None true_surplus is the explicit signal that this lead has NOT been
+    docket-verified and must not be treated as confirmed surplus downstream.
+    """
     lead.classification       = docket.get("classification", "") or ""
     lead.classification_reason = docket.get("classification_reason", "") or ""
     lead.prayer_amount        = float(docket.get("prayer_amount", 0.0) or 0.0)
@@ -117,13 +133,12 @@ def _apply_docket_to_lead(lead, docket: dict, county_id: str) -> None:
     lead.additional_parties   = list(docket.get("additional_parties", []) or [])
     lead.docket_url           = docket.get("case_url", "") or ""
 
-    # Calculate true_surplus
-    # Ohio: opening_bid is fake (2/3 appraised), use prayer_amount
-    # Florida: opening_bid IS the real debt, so true_surplus = gross_surplus
-    if lead.state == "OH" and lead.prayer_amount > 0:
+    # true_surplus = final_sale_price - real_debt, where real_debt comes ONLY
+    # from the docket. No docket debt figure => true_surplus stays None.
+    if lead.prayer_amount > 0:
         lead.true_surplus = round(lead.final_sale_price - lead.prayer_amount, 2)
     else:
-        lead.true_surplus = lead.gross_surplus
+        lead.true_surplus = None
 
 
 
@@ -182,12 +197,19 @@ class Lead:
     classification:   str = ""
     classification_reason: str = ""
     prayer_amount:    float = 0.0
-    true_surplus:     float = 0.0
+    true_surplus:     Optional[float] = None   # None = NOT docket-verified
     kill_signals:     list = field(default_factory=list)
     proof_of_surplus: str = ""
     competing_filers: list = field(default_factory=list)
     additional_parties: list = field(default_factory=list)
     docket_url:       str = ""
+
+    # Verification status model (HARDENING — assigned by assign_status_fields)
+    research_status:  str = "unknown"
+    lead_quality:     str = "unknown"
+    money_status:     str = "unknown"
+    evidence_level:   str = "unknown"
+    pipeline_ready:   bool = False
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -332,6 +354,103 @@ def _score_lead(lead: Lead) -> tuple[str, str]:
 
 
 # ═══════════════════════════════════════════════════════════════════════
+# Verification status model  (HARDENING PASS — Parts 1-6)
+#
+# Strict separation of confidence layers:
+#   • Auction data can create a POSSIBLE lead        → apparent_surplus
+#   • PropertyRadar can ENRICH a lead                → estimated_surplus
+#   • Only docket / official records CONFIRM surplus → confirmed_surplus
+#
+# A lead is confirmed_surplus ONLY if every required proof field is present.
+# ═══════════════════════════════════════════════════════════════════════
+
+# Classifications a docket scrape can assign.
+_POSITIVE_CLASSIFICATIONS = {"green", "yellow"}   # reviewed AND still viable
+_NEGATIVE_CLASSIFICATIONS = {"red", "killed"}     # reviewed, NOT viable
+
+# Required proof fields for confirmed_surplus (spec Part 3).
+def _has_required_proof(lead) -> bool:
+    """
+    True only if the lead carries every proof field required to call it
+    confirmed_surplus. Any missing field => not confirmed.
+    """
+    if not lead.county_id:
+        return False
+    if not lead.case_number:
+        return False
+    if lead.true_surplus is None or lead.true_surplus <= 0:
+        return False
+    if not (lead.docket_url or lead.source_url):
+        return False
+    if not lead.proof_of_surplus:
+        return False
+    if not lead.sale_date:
+        return False
+    if not lead.final_sale_price or lead.final_sale_price <= 0:
+        return False
+    if (lead.classification or "").strip().lower() not in _POSITIVE_CLASSIFICATIONS:
+        return False
+    return True
+
+
+def assign_status_fields(lead) -> None:
+    """
+    Assign research_status, lead_quality, money_status, evidence_level,
+    pipeline_ready on a Lead in place.
+
+    This is the single chokepoint that decides whether a lead may be called
+    confirmed surplus. It is deliberately conservative: when in doubt, downgrade.
+    """
+    classification = (lead.classification or "").strip().lower()
+    has_docket = bool(classification) or lead.prayer_amount > 0 or bool(lead.docket_url)
+    has_pr     = bool(getattr(lead, "enriched", False)) or bool(getattr(lead, "owner_name", ""))
+
+    # ---- lead_quality: mirrors docket classification, else unknown ----
+    if classification in _POSITIVE_CLASSIFICATIONS or classification in _NEGATIVE_CLASSIFICATIONS:
+        lead.lead_quality = classification
+    else:
+        lead.lead_quality = "unknown"
+
+    # ---- killed / red: reviewed but NOT viable (spec Part 6) ----
+    if classification in _NEGATIVE_CLASSIFICATIONS:
+        lead.research_status = "docket_reviewed"
+        lead.evidence_level  = "docket_reviewed"
+        lead.money_status    = "no_surplus" if classification == "killed" else "unknown"
+        lead.pipeline_ready  = False
+        return
+
+    # ---- positive classification: candidate for confirmed_surplus ----
+    if classification in _POSITIVE_CLASSIFICATIONS:
+        if _has_required_proof(lead):
+            lead.research_status = "docket_reviewed"
+            lead.money_status    = "confirmed_surplus"
+            lead.evidence_level  = "docket_confirmed"
+            lead.pipeline_ready  = True
+        else:
+            # Reviewed green/yellow but missing proof => DOWNGRADE (spec Part 3)
+            lead.research_status = "docket_reviewed"
+            lead.money_status    = "estimated_surplus" if has_pr else "apparent_surplus"
+            lead.evidence_level  = "docket_reviewed"
+            lead.pipeline_ready  = False
+        return
+
+    # ---- no docket classification: PR-enriched or auction-only ----
+    if has_pr:
+        # PropertyRadar enriched, but PR does NOT verify surplus (spec Part 4)
+        lead.research_status = "property_enriched"
+        lead.money_status    = "estimated_surplus"
+        lead.evidence_level  = "property_enriched"
+        lead.pipeline_ready  = False
+        return
+
+    # ---- auction-only: apparent surplus, never confirmed (spec Part 5) ----
+    lead.research_status = "auction_only"
+    lead.money_status    = "apparent_surplus"
+    lead.evidence_level  = "auction_only"
+    lead.pipeline_ready  = False
+
+
+# ═══════════════════════════════════════════════════════════════════════
 # Public API
 # ═══════════════════════════════════════════════════════════════════════
 def load_all_leads(
@@ -422,13 +541,16 @@ def load_all_leads(
                 # Score and keep
                 lead.score, lead.score_reason = _score_lead(lead)
                 stats[county_id]["kept"] += 1
-                # Merge docket-scraper data if available
+                # Merge docket-scraper data if available.
+                # FP-3 fix: if no docket data, true_surplus stays None
+                # (NOT defaulted to gross_surplus). Apparent-only leads keep
+                # true_surplus=None as the explicit "not verified" signal.
                 _norm = _normalize_case_for_lookup(lead.case_number)
                 _docket = _docket_lookup.get((lead.county_id, _norm))
                 if _docket:
                     _apply_docket_to_lead(lead, _docket, lead.county_id)
-                else:
-                    lead.true_surplus = lead.gross_surplus
+                # Assign the verification status model (FP-6 gate)
+                assign_status_fields(lead)
                 leads.append(lead)
 
     leads.sort(key=lambda x: x.gross_surplus, reverse=True)
@@ -489,7 +611,10 @@ def get_summary(leads: list[Lead]) -> dict:
     return {
         "generated_at":    datetime.now().isoformat(timespec="seconds"),
         "total_leads":     len(leads),
-        "total_surplus":   sum(l.gross_surplus for l in leads),
+        # FP-4 fix: this total is gross/apparent surplus ONLY. It is NOT
+        # confirmed money. dashboard_data.py recomputes confirmed/estimated
+        # totals from the verification status model.
+        "total_apparent_surplus": sum(l.gross_surplus for l in leads),
         "by_county":       sorted(by_county.values(), key=lambda x: x["surplus"], reverse=True),
         "by_state":        by_state,
         "by_score":        by_score,
@@ -499,7 +624,7 @@ def get_summary(leads: list[Lead]) -> dict:
                 "state":       l.state,
                 "case_number": l.case_number,
                 "address":     l.address,
-                "surplus":     l.gross_surplus,
+                "apparent_surplus": l.gross_surplus,
                 "sale_price":  l.final_sale_price,
                 "sale_date":   l.sale_date,
                 "score":       l.score,
@@ -523,7 +648,8 @@ if __name__ == "__main__":
     leads = load_all_leads()
     summary = get_summary(leads)
 
-    print(f"\n✓ Total surplus identified: ${summary['total_surplus']:,.0f}\n")
+    print(f"\n✓ Total APPARENT surplus (auction math, not confirmed): "
+          f"${summary['total_apparent_surplus']:,.0f}\n")
 
     print("─" * 70)
     print("  BY STATE")
