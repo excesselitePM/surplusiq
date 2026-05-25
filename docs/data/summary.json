@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-05-24T13:28:36",
+  "generated_at": "2026-05-25T15:37:21",
   "total_leads": 47,
   "confirmed_surplus_total": 0,
-  "estimated_surplus_total": 2764090.6,
+  "estimated_surplus_total": 2390543.62,
   "apparent_surplus_total": 501563.12,
   "confirmed_surplus_count": 0,
   "estimated_surplus_count": 38,
@@ -106,15 +106,6 @@
       "evidence_level": "property_enriched"
     },
     {
-      "county": "Miami-Dade",
-      "state": "FL",
-      "case_number": "2024A01355",
-      "address": "18975 COLLINS AVE",
-      "surplus": 374855.98,
-      "money_status": "estimated_surplus",
-      "evidence_level": "property_enriched"
-    },
-    {
       "county": "Broward",
       "state": "FL",
       "case_number": "CACE-24-002646",
@@ -138,6 +129,15 @@
       "case_number": "2025A00929",
       "address": "14095 NE 2 CT",
       "surplus": 166721.0,
+      "money_status": "estimated_surplus",
+      "evidence_level": "property_enriched"
+    },
+    {
+      "county": "Summit",
+      "state": "OH",
+      "case_number": "CV2025052012 (10524)",
+      "address": "375 REVERE ROAD",
+      "surplus": 103688.0,
       "money_status": "estimated_surplus",
       "evidence_level": "property_enriched"
     }
