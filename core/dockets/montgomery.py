@@ -432,60 +432,93 @@ class MontgomeryDocketScraper(DocketScraper):
             await page.keyboard.press("Enter")
             print(f"      → pressed Enter as last resort")
 
-        # SPA: wait for the results section to populate
+        # SPA: openTab() fires an AJAX call that populates the #Results section.
+        # Wait for the response, then look for results content.
         await page.wait_for_timeout(5000)
 
-        # Dump post-search page state
-        body = await page.inner_text("body")
-        print(f"      → post-search page text (first 500): {body[:500].strip()}")
+        # The SPA has sections: #Home (search), #Results, #Case, etc.
+        # After search, #Results should now have content. Click it.
+        try:
+            await page.click("a[href='#Results']", timeout=3000)
+            await page.wait_for_timeout(2000)
+            print(f"      → clicked #Results nav")
+        except Exception:
+            print(f"      ⚠ could not click #Results nav")
 
-        # SPA uses #Results for results — try clicking the Results nav
-        for sel in [
-            "a[href='#Results']",
-            "a:has-text('Results')",
-        ]:
+        # Check what's in the Results section — look for a results div/table
+        # The PRO V3 SPA likely has a div#Results or similar
+        results_text = ""
+        for sel in ["#Results", "#results", "[id*='Results']", "[id*='results']", "#tblResults", ".results-table"]:
             try:
-                link = page.locator(sel).first
-                if await link.count() > 0 and await link.is_visible():
-                    await link.click(timeout=3000)
-                    await page.wait_for_timeout(2000)
-                    print(f"      → clicked results nav: {sel}")
-                    break
+                el = page.locator(sel).first
+                if await el.count() > 0:
+                    results_text = await el.inner_text()
+                    if results_text.strip():
+                        print(f"      → results container ({sel}) text (first 300): {results_text[:300].strip()}")
+                        break
             except Exception:
                 continue
 
-        # Now look for case result rows and click into the first one
-        body = await page.inner_text("body")
-        print(f"      → results section text (first 500): {body[:500].strip()}")
+        if not results_text.strip():
+            # Fallback: dump visible text to see what's showing
+            body = await page.inner_text("body")
+            print(f"      → no results container found. Full page text (first 800): {body[:800].strip()}")
 
-        # Try clicking a case link in the results
+        # Try to find and click a case link in the results
+        # PRO V3 likely renders results as clickable rows or links
+        clicked_case = False
         for link_sel in [
-            f"a:has-text('{parsed['year']} CV {parsed['number']}')",
+            f"a:has-text('{parsed['year']} CV')",
             f"a:has-text('{parsed['search_text']}')",
-            f"a:has-text('CV')",
-            "table tbody tr:first-child a",
-            "table tbody tr:first-child td:first-child",
-            "table tr:nth-child(2) a",
-            "a[href*='#Case']",
+            "#Results a",
+            "#Results table tr a",
+            "#Results table tbody tr:first-child",
+            "a[onclick*='openTab'][onclick*='Case']",
+            "a[onclick*='caseDetail']",
+            "a[onclick*='openCase']",
+            "td a[href='#Case']",
             "a[href='#Case']",
-            ".case-link",
-            "tr.clickable",
         ]:
             try:
                 link = page.locator(link_sel).first
                 if await link.count() > 0 and await link.is_visible():
                     await link.click(timeout=5000)
                     await page.wait_for_timeout(3000)
+                    clicked_case = True
                     print(f"      → clicked case result: {link_sel}")
                     break
             except Exception:
                 continue
 
-        # Check if we're now on case detail (#Case section)
+        if not clicked_case:
+            # Try clicking the Case Info nav directly — might auto-load first result
+            try:
+                await page.click("a[href='#Case']", timeout=3000)
+                await page.wait_for_timeout(3000)
+                print(f"      → clicked #Case nav directly")
+            except Exception:
+                pass
+
+        # Check if we have case detail content now
+        # Look in the #Case section specifically
+        case_text = ""
+        for sel in ["#Case", "#case", "[id*='Case']", "[id*='caseInfo']"]:
+            try:
+                el = page.locator(sel).first
+                if await el.count() > 0:
+                    case_text = await el.inner_text()
+                    if case_text.strip() and len(case_text.strip()) > 50:
+                        print(f"      → case container ({sel}) text (first 500): {case_text[:500].strip()}")
+                        break
+            except Exception:
+                continue
+
+        if not case_text.strip():
+            body = await page.inner_text("body")
+            print(f"      → no case container found. Page text (first 500): {body[:500].strip()}")
+
         body = await page.inner_text("body")
         body_lower = body.lower()
-        print(f"      → case detail text (first 500): {body[:500].strip()}")
-
         has_case = any(kw in body_lower for kw in [
             "docket", "parties", "filing date",
             "plaintiff", "defendant", "foreclosure",
