@@ -56,12 +56,9 @@ from core.loader import load_all_leads, Lead
 # ═══════════════════════════════════════════════════════════════════════════
 PR_API_BASE = "https://api.propertyradar.com/v1"
 # Read from environment ONLY. No hardcoded fallback — a missing or empty
-# PROPERTYRADAR_TOKEN must fail the run loudly so we never silently re-use
-# a dead/zero-credit token and call its empty responses "no matches".
+# PROPERTYRADAR_TOKEN must fail the run loudly so the run can't silently
+# tag leads as "no PR match" when the real cause is unauthenticated.
 PR_API_TOKEN = (os.environ.get("PROPERTYRADAR_TOKEN") or "").strip()
-# The previous hardcoded fallback (9ffe6b0b…0700) is owner-confirmed dead.
-# If anyone re-introduces it via env, fail just as loudly.
-_DEAD_TOKEN_PREFIX = "9ffe6b0b"
 
 # Conservative rate limit — be polite to their API
 REQUEST_DELAY_SEC = 0.5
@@ -190,93 +187,143 @@ class PropertyRadarClient:
         self.credits_burned = 0  # 1 per matched property when dry_run is False
         self.total_cost_usd = 0.0  # sum of totalCost from each response
 
-    def search_by_address(self, street: str, city: str, state: str, zipcode: str = "") -> dict:
-        """
-        Search PropertyRadar via two-step flow:
-          Step 1: /v1/suggestions/SiteAddress  (free, normalizes raw address)
-          Step 2: /v1/properties               (uses normalized Criteria)
+    # ─── Request helper with verbose logging ───────────────────────────────
+    def _post(self, path: str, *, params: dict, body: dict, label: str) -> requests.Response:
+        url = f"{PR_API_BASE}{path}"
+        print(f"  → POST {url}")
+        print(f"     params: {json.dumps(params, sort_keys=True)}")
+        print(f"     body:   {json.dumps(body, sort_keys=True)[:600]}")
+        resp = self.session.post(url, params=params, json=body, timeout=30)
+        time.sleep(REQUEST_DELAY_SEC)
+        head = (resp.text or "")[:600]
+        print(f"  ← {resp.status_code} {label}  body[:600]={head!r}")
+        return resp
 
-        PropertyRadar stores addresses with ordinal suffixes (154TH not 154),
-        so raw addresses like "13857 SW 154 ST" return 0 results from the
-        /v1/properties endpoint directly. Pre-normalizing via the suggestions
-        endpoint is required.
-
-        When dry_run=True  -> Purchase=0, returns count only, costs $0
-        When dry_run=False -> Purchase=1, returns full record, ~$0.01 per match
-
-        Returns the /v1/properties JSON response or {"error": "..."} on failure.
-        """
-        suggest_input = (street or "").strip()
-        if not suggest_input:
-            return {"error": "empty street address"}
-
-        # ─── STEP 1: Normalize address via SiteAddress suggestion (free) ───
-        suggest_body = {}
-        if state:
-            suggest_body["Criteria"] = [{"name": "State", "value": [state.upper()]}]
-
+    def _properties_call(self, criteria: list, *, label: str) -> dict:
+        """Single POST to /v1/properties. Purchase honored by self.dry_run."""
+        params = {
+            "Fields": ",".join(PR_FIELDS),
+            "Limit": 5,
+            "Purchase": 0 if self.dry_run else 1,
+            "Start": 0,
+        }
+        self.calls_made += 1
         try:
-            self.calls_made += 1
-            suggest_resp = self.session.post(
-                f"{PR_API_BASE}/suggestions/SiteAddress",
-                params={"SuggestionInput": suggest_input, "Limit": 5},
-                json=suggest_body,
-                timeout=30,
-            )
-            time.sleep(REQUEST_DELAY_SEC)
-
-            if suggest_resp.status_code != 200:
-                self.errors += 1
-                return {
-                    "error": f"suggestion HTTP {suggest_resp.status_code}",
-                    "body": suggest_resp.text[:500],
-                }
-
-            suggestions = suggest_resp.json().get("results", [])
-            if not suggestions:
-                # No address match in PR's database at all
-                return {
-                    "results": [], "totalCost": 0, "resultCount": 0,
-                    "totalResultCount": 0, "_no_suggestion_match": True,
-                }
-
-            normalized_criteria = suggestions[0].get("Criteria", [])
-            normalized_label = suggestions[0].get("Label", "")
-            if not normalized_criteria:
-                self.errors += 1
-                return {"error": "suggestion response missing Criteria"}
-
-            # ─── STEP 2: Query /v1/properties with normalized Criteria ──────
-            params = {
-                "Fields": ",".join(PR_FIELDS),
-                "Limit": 5,
-                "Purchase": 0 if self.dry_run else 1,
-                "Start": 0,
-            }
-
-            self.calls_made += 1
-            resp = self.session.post(
-                f"{PR_API_BASE}/properties",
+            resp = self._post(
+                "/properties",
                 params=params,
-                json={"Criteria": normalized_criteria},
-                timeout=30,
+                body={"Criteria": criteria},
+                label=label,
             )
-            time.sleep(REQUEST_DELAY_SEC)
-
-            if resp.status_code == 200:
-                data = resp.json()
-                data["_normalized_label"] = normalized_label
-                return data
-            else:
-                self.errors += 1
-                return {
-                    "error": f"properties HTTP {resp.status_code}",
-                    "body": resp.text[:500],
-                }
-
         except Exception as e:
             self.errors += 1
             return {"error": str(e)}
+        if resp.status_code != 200:
+            self.errors += 1
+            return {
+                "error": f"properties HTTP {resp.status_code}",
+                "body": (resp.text or "")[:500],
+            }
+        try:
+            return resp.json()
+        except Exception as e:
+            self.errors += 1
+            return {"error": f"json decode: {e}", "body": (resp.text or "")[:500]}
+
+    def search_by_address(self, street: str, city: str, state: str, zipcode: str = "") -> dict:
+        """Look up a property by address against /v1/properties.
+
+        PropertyRadar Criteria field names (verbatim from
+        developers.propertyradar.com): SiteAddress, SiteCity, SiteState,
+        ZipFive. Each criterion is {"name": "<X>", "value": [...]} per the
+        Criteria Reference. There is no raw-address parameter.
+
+        Strategy:
+          1. Direct POST /v1/properties with whatever address fields we have.
+             This is the fast path for clean addresses.
+          2. If that returns 0 matches and we have a street, fall back to
+             POST /v1/suggestions/SiteAddress (input field name is
+             SiteAddressInput, NOT SuggestionInput), take the top suggestion's
+             returned Criteria, and re-query /v1/properties.
+
+        Purchase: 0 when self.dry_run (free; counts/RadarID only), 1 otherwise.
+        """
+        if not street and not city and not zipcode:
+            return {"error": "no address components to search"}
+
+        # ─── STEP 1: direct properties query with what we have ────────────
+        direct_criteria = []
+        if street:
+            direct_criteria.append({"name": "SiteAddress", "value": [street]})
+        if city:
+            direct_criteria.append({"name": "SiteCity", "value": [city]})
+        if state:
+            direct_criteria.append({"name": "SiteState", "value": [state.upper()]})
+        if zipcode:
+            direct_criteria.append({"name": "ZipFive", "value": [zipcode]})
+
+        if not direct_criteria:
+            return {"error": "no usable criteria after filtering"}
+
+        data = self._properties_call(direct_criteria, label="direct")
+        if "error" in data:
+            return data
+
+        results = data.get("results") or data.get("Results") or []
+        total = data.get("totalResultCount") or data.get("totalCount") or len(results)
+        self.total_cost_usd += float(data.get("totalCost") or 0)
+        if results or not street:
+            return data
+
+        # ─── STEP 2: fall back to suggestion → normalized criteria ────────
+        # PropertyRadar stores addresses with ordinal suffixes ("154TH" not
+        # "154"), so unnormalized strings can miss. /v1/suggestions/SiteAddress
+        # returns canonical Criteria we can re-query with.
+        suggest_body = {"SiteAddressInput": street, "Limit": 5}
+        if state:
+            suggest_body["Criteria"] = [
+                {"name": "SiteState", "value": [state.upper()]}
+            ]
+        self.calls_made += 1
+        try:
+            sresp = self._post(
+                "/suggestions/SiteAddress",
+                params={},
+                body=suggest_body,
+                label="suggest",
+            )
+        except Exception as e:
+            self.errors += 1
+            return {"error": f"suggestion: {e}"}
+
+        if sresp.status_code != 200:
+            self.errors += 1
+            return {
+                "error": f"suggestion HTTP {sresp.status_code}",
+                "body": (sresp.text or "")[:500],
+            }
+        try:
+            sjson = sresp.json()
+        except Exception as e:
+            return {"error": f"suggestion json decode: {e}", "body": (sresp.text or "")[:500]}
+
+        sugs = sjson.get("results") or sjson.get("Results") or []
+        if not sugs:
+            return {
+                "results": [], "totalCost": 0, "resultCount": 0,
+                "totalResultCount": 0, "_no_suggestion_match": True,
+            }
+        normalized_criteria = sugs[0].get("Criteria") or []
+        normalized_label = sugs[0].get("Label", "")
+        if not normalized_criteria:
+            self.errors += 1
+            return {"error": "suggestion response missing Criteria"}
+
+        data2 = self._properties_call(normalized_criteria, label="post-suggest")
+        if "error" not in data2:
+            data2["_normalized_label"] = normalized_label
+            self.total_cost_usd += float(data2.get("totalCost") or 0)
+        return data2
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Address normalization
@@ -574,20 +621,17 @@ def main():
     parser.add_argument("--score", type=str, default=None,
                         choices=["A+", "A", "B", "C"],
                         help="Only enrich leads of this score tier")
+    parser.add_argument("--probe-address", type=str, default=None, metavar="STREET|CITY|STATE|ZIP",
+                        help="One-shot Purchase=0 smoke test against a single address. "
+                             "Pipe-separated, e.g. '1253 MCINTOSH AVE|AKRON|OH|44314'. "
+                             "Bypasses lead loading. Forces --dry-run.")
     args = parser.parse_args()
 
     if not PR_API_TOKEN:
         print(
             "❌ PROPERTYRADAR_TOKEN env var is missing or empty. "
             "Set it as a GitHub Actions secret (or export locally) before "
-            "running PR enrichment. No hardcoded fallback is permitted — "
-            "see core/enrichment/propertyradar.py:58 and CLAUDE.md."
-        )
-        sys.exit(1)
-    if PR_API_TOKEN.lower().startswith(_DEAD_TOKEN_PREFIX):
-        print(
-            f"❌ PROPERTYRADAR_TOKEN starts with {_DEAD_TOKEN_PREFIX}… — that is "
-            "the owner-confirmed DEAD token (0 credits). Refusing to run with it."
+            "running PR enrichment. No hardcoded fallback is permitted."
         )
         sys.exit(1)
     print(
@@ -600,6 +644,28 @@ def main():
     print("│  SurplusIQ — PropertyRadar Enrichment".ljust(71) + "│")
     print("└" + "─" * 70 + "┘")
     print()
+
+    # ─── Probe mode: one address, Purchase=0, full request/response log ───
+    if args.probe_address:
+        parts = args.probe_address.split("|")
+        if len(parts) != 4:
+            print("❌ --probe-address must be 'STREET|CITY|STATE|ZIP' (4 pipe-separated parts)")
+            sys.exit(2)
+        street, city, state, zipcode = [p.strip() for p in parts]
+        print(f"🧪 PROBE  street={street!r} city={city!r} state={state!r} zip={zipcode!r}")
+        print(f"          Purchase=0 forced (free). No credits will be deducted.")
+        client = PropertyRadarClient(token=PR_API_TOKEN, dry_run=True)
+        result = client.search_by_address(street, city, state, zipcode)
+        print()
+        print("─── PROBE RESULT ───")
+        # Trim heavy fields for readable log
+        if isinstance(result, dict):
+            for k in ("results", "Results"):
+                if k in result and isinstance(result[k], list):
+                    result[f"{k}_count_for_log"] = len(result[k])
+                    result[k] = result[k][:1]  # one sample
+        print(json.dumps(result, indent=2, default=str)[:3000])
+        return
 
     # Load all qualifying leads
     print("📊 Loading leads...")

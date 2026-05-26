@@ -63,7 +63,41 @@ KNOWN ISSUES (lower priority than the Ohio scrapers)
 
 Dead-browser-context bug in core/auction/universal.py — the day-loop keeps calling page.goto() on a closed page. Should detect a dead context and break.
 Miami-Dade docket (core/dockets/miami_dade.py) blocked by site-wide reCAPTCHA v3. Out of scope for the 2-day Ohio push.
-PropertyRadar token hardcoded in core/enrichment/propertyradar.py:58 and _archive/enrichment/enrichment.py:18 — owner-accepted risk. Do NOT action unless explicitly told. Token has 0 credits.
+Multi-parcel blanket-judgment surplus aggregation — when one judgment secures N parcels (e.g. Summit CV-2025-02-0548 → 12 parcels, one $852K judgment), the per-parcel `true_surplus = sale - debt` math marks each parcel KILLED even when total sale across the case clears the debt. Group same-case parcels and compare aggregate sale to the single prayer.
+
+## PROPERTYRADAR API
+
+Token: `PROPERTYRADAR_TOKEN` is a GitHub Actions secret AND must be exported locally for any local test. There is NO hardcoded fallback. The `9ffe6b0b…0700` token (previously mislabeled "dead" in earlier notes) is the live funded token. The token guard fails loud on missing/empty ONLY — it must never reject a token by prefix.
+
+Request shape (verified against developers.propertyradar.com):
+- POST `https://api.propertyradar.com/v1/properties`
+- Header: `Authorization: Bearer <token>`
+- Body: `{"Criteria": [{"name":"<CriteriaName>","value":[...]}, …]}` — top-level "Criteria" is always an array; each item is a single-criterion object. Nested criteria use the same shape (e.g. `PropertyType: [{"name":"PType","value":["SFR"]}]`). Never send a raw address string at the top level.
+- Query params: `Fields` (comma-separated PR field names), `Limit`, `Start`, `Purchase` (see below).
+
+Address-criterion field names (verbatim — these are the easy ones to get wrong):
+- `SiteAddress`  (NOT `Address`)
+- `SiteCity`     (NOT `City`)
+- `SiteState`    (NOT `State`)
+- `ZipFive`
+- `County`, `APN` when those are available
+
+Purchase parameter — billing-critical:
+- `Purchase=0` → counts/RadarID only, returns NO property data, does NOT deduct an export. ALWAYS use this when changing request shape.
+- `Purchase=1` → returns full property data, counts as one export per match.
+- Workflow rule: any time the request format changes, validate end-to-end with the `pr_probe_address` workflow input first (Purchase=0). Only switch to the normal enrichment step after the probe confirms a non-zero result count for a known address.
+
+Suggestion endpoint (used as a fallback when direct address criteria miss):
+- POST `https://api.propertyradar.com/v1/suggestions/SiteAddress`
+- Body: `{"SiteAddressInput": "<street>", "Limit": N, "Criteria": [{"name":"SiteState","value":["XX"]}]}` — input field is `SiteAddressInput`, NOT `SuggestionInput`.
+- Returns canonical Criteria you re-post to `/properties`.
+
+Local smoke test:
+```
+PROPERTYRADAR_TOKEN=<token> python -m core.enrichment.propertyradar \
+  --probe-address "1253 MCINTOSH AVE|AKRON|OH|44314"
+```
+This forces Purchase=0 and prints the exact request + response body so any format regression is visible in one run.
 
 SCOPE DISCIPLINE
 

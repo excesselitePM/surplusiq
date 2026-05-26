@@ -44,6 +44,11 @@ on:
         required: false
         default: true
         type: boolean
+      pr_probe_address:
+        description: 'PR API smoke test address (Purchase=0, free). Pipe-separated STREET|CITY|STATE|ZIP. When set, skips lead enrichment and runs only the probe.'
+        required: false
+        default: ''
+        type: string
 
 permissions:
   contents: write
@@ -135,9 +140,19 @@ jobs:
             python -m core.dockets.enrich "${{ steps.params.outputs.docket_county }}"
         continue-on-error: true
 
+      - name: PR API probe (Purchase=0, free)
+        id: pr_probe
+        if: github.event.inputs.pr_probe_address != ''
+        env:
+          PROPERTYRADAR_TOKEN: ${{ secrets.PROPERTYRADAR_TOKEN }}
+        run: |
+          python -m core.enrichment.propertyradar \
+            --probe-address "${{ github.event.inputs.pr_probe_address }}"
+        continue-on-error: false
+
       - name: Run PropertyRadar enrichment
         id: pr_enrich
-        if: steps.params.outputs.run_pr == 'true'
+        if: steps.params.outputs.run_pr == 'true' && github.event.inputs.pr_probe_address == ''
         timeout-minutes: 10
         env:
           PROPERTYRADAR_TOKEN: ${{ secrets.PROPERTYRADAR_TOKEN }}
