@@ -435,17 +435,38 @@ class MontgomeryDocketScraper(DocketScraper):
 
         await page.wait_for_timeout(500)
 
-        # Click search/submit
+        # Dump all buttons for diagnostics
+        buttons = await page.query_selector_all("button, input[type='submit'], a.btn, a.button")
+        for btn_el in buttons[:15]:
+            try:
+                btn_text = (await btn_el.inner_text()).strip()[:60]
+                btn_id = await btn_el.get_attribute("id") or ""
+                btn_class = await btn_el.get_attribute("class") or ""
+                btn_tag = await btn_el.evaluate("el => el.tagName.toLowerCase()")
+                btn_visible = await btn_el.is_visible()
+                btn_onclick = await btn_el.get_attribute("onclick") or ""
+                print(f"      → button: tag={btn_tag} id='{btn_id}' class='{btn_class[:40]}' text='{btn_text}' visible={btn_visible} onclick='{btn_onclick[:60]}'")
+            except Exception:
+                pass
+
+        # Click search/submit — try many patterns
         submitted = False
         for sel in [
+            "#gen_search",
+            "#btnSearch",
+            "#searchButton",
             "button:has-text('Search')",
+            "button:has-text('Go')",
+            "button:has-text('Find')",
             "input[type='submit']",
             "button[type='submit']",
             "input[value*='Search' i]",
             "button:has-text('Submit')",
             "a:has-text('Search')",
-            "#btnSearch",
             ".btn-search",
+            "button.search",
+            "span:has-text('Search')",
+            "i.fa-search",
         ]:
             try:
                 btn = page.locator(sel).first
@@ -458,8 +479,14 @@ class MontgomeryDocketScraper(DocketScraper):
                 continue
 
         if not submitted:
-            await page.keyboard.press("Enter")
-            print(f"      → pressed Enter to submit")
+            # Try clicking any visible button near the search form
+            try:
+                await page.locator("#gen_case_number").press("Enter")
+                submitted = True
+                print(f"      → pressed Enter on case number field")
+            except Exception:
+                await page.keyboard.press("Enter")
+                print(f"      → pressed Enter globally")
 
         # SPA: wait for the results section to populate
         await page.wait_for_timeout(5000)
