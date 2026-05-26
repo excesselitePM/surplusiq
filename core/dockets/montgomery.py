@@ -345,39 +345,35 @@ class MontgomeryDocketScraper(DocketScraper):
     # ─── Step 2: Navigate to Search ──────────────────────────────────────
 
     async def _navigate_to_search(self, page: Page) -> None:
-        """Click the 'Search' nav link to get to the case search form."""
+        """
+        PRO V3 is a single-page app with fragment-based navigation.
+        Search = #Home, Results = #Results, Case Info = #Case.
+        The search form is on the landing page itself — just click
+        the #Home anchor to ensure it's showing.
+        """
+        # PRO V3 uses fragment anchors — click #Home to show search section
         for sel in [
+            "a[href='#Home']",
+            "a[href='#Search']",
             "a:has-text('Search')",
-            "a[href*='Search']",
-            "a[href*='search']",
-            "nav a:has-text('Search')",
-            "#navSearch",
-            "li a:has-text('Search')",
         ]:
             try:
                 link = page.locator(sel).first
                 if await link.count() > 0 and await link.is_visible():
-                    await link.click(timeout=5000)
-                    await page.wait_for_load_state("domcontentloaded", timeout=15000)
-                    await page.wait_for_timeout(2000)
-                    print(f"      → navigated to search: {sel}")
-                    return
+                    await link.click(timeout=3000)
+                    await page.wait_for_timeout(1500)
+                    print(f"      → clicked SPA nav: {sel}")
+                    break
             except Exception:
                 continue
 
-        # Fallback: try direct URL patterns
-        for path in ["/Search", "/CaseSearch", "/search", "/pro/Search"]:
-            try:
-                await page.goto(f"{BASE_URL}{path}", wait_until="domcontentloaded", timeout=15000)
-                await page.wait_for_timeout(2000)
-                body = (await page.inner_text("body")).lower()
-                if "case" in body and ("number" in body or "search" in body):
-                    print(f"      → navigated to search via direct URL: {path}")
-                    return
-            except Exception:
-                continue
-
-        print(f"      ⚠ could not navigate to search page")
+        # Verify the search section is visible — look for input fields
+        await page.wait_for_timeout(1000)
+        body = (await page.inner_text("body")).lower()
+        if "case" in body or "search" in body or "number" in body:
+            print(f"      → search section visible on SPA")
+        else:
+            print(f"      ⚠ search section may not be visible")
 
     # ─── Step 3: Search for a case ───────────────────────────────────────
 
@@ -386,11 +382,25 @@ class MontgomeryDocketScraper(DocketScraper):
         search_text = parsed["search_text"]
         await page.wait_for_timeout(1000)
 
-        # Dump current page text for diagnostics
+        # Dump current page state for diagnostics
         body = await page.inner_text("body")
         body_lower = body.lower()
+        print(f"      → page URL: {page.url}")
         print(f"      → page has 'case': {'case' in body_lower}, 'search': {'search' in body_lower}")
-        print(f"      → page text (first 300): {body[:300].strip()}")
+        print(f"      → page text (first 500): {body[:500].strip()}")
+
+        # List all visible input fields for diagnostics
+        inputs = await page.query_selector_all("input")
+        for inp in inputs[:10]:
+            try:
+                inp_id = await inp.get_attribute("id") or ""
+                inp_name = await inp.get_attribute("name") or ""
+                inp_type = await inp.get_attribute("type") or ""
+                inp_ph = await inp.get_attribute("placeholder") or ""
+                visible = await inp.is_visible()
+                print(f"      → input: id='{inp_id}' name='{inp_name}' type='{inp_type}' placeholder='{inp_ph}' visible={visible}")
+            except Exception:
+                pass
 
         # Try to find a case number input field
         input_filled = False
