@@ -482,67 +482,64 @@ class MontgomeryDocketScraper(DocketScraper):
             body = await page.inner_text("body")
             print(f"      → no results container found. Full page text (first 800): {body[:800].strip()}")
 
-        # Dump the first results row so we can see what's actually clickable.
-        # PRO V3 renders the case number cell as an <a> with an onclick that
-        # invokes openTab('Case', ...) — clicking the <tr> itself does nothing.
-        await self._dump("results_first_row", "#Results table tbody tr:first-child", inline_chars=1500)
+        # The PRO V3 results table is #tblSearchResults — NOT the outer table
+        # that wraps the search-parameters header. Each row is
+        #   <tr style="cursor:pointer;"
+        #       onclick="openTab('caseInfo','case_id=NNNN&screen=summary',1,'YYYY CV NNNNN');">
+        # All rows for one searched case number share the same case_id, so
+        # picking the first is fine.
+        await self._dump("results_first_row", "#tblSearchResults tr:first-child", inline_chars=1500)
 
-        row_anchors = await page.query_selector_all("#Results table tbody tr:first-child a")
-        print(f"      → first row anchors: {len(row_anchors)}")
-        for a in row_anchors[:8]:
-            try:
-                a_text = (await a.inner_text()).strip()[:60]
-                a_href = await a.get_attribute("href") or ""
-                a_onclick = await a.get_attribute("onclick") or ""
-                print(f"         · a text='{a_text}' href='{a_href[:60]}' onclick='{a_onclick[:80]}'")
-            except Exception:
-                pass
+        first_row_onclick = ""
+        try:
+            first_row = page.locator("#tblSearchResults tr:first-child").first
+            if await first_row.count() > 0:
+                first_row_onclick = await first_row.get_attribute("onclick") or ""
+                print(f"      → first row onclick: {first_row_onclick[:160]}")
+        except Exception as e:
+            print(f"      ⚠ first row onclick read failed: {e}")
 
-        # Strategy: prefer clicking the case-number anchor inside the first row.
-        # Fall back to any anchor in the row, then to direct JS invocation of
-        # the row's onclick if Playwright misroutes the click.
         clicked_case = False
-        for link_sel in [
-            f"#Results table tbody tr:first-child a:has-text('{parsed['search_text']}')",
-            f"#Results table tbody tr:first-child a:has-text('{parsed['year']} CV')",
-            "#Results table tbody tr:first-child a[onclick*='Case' i]",
-            "#Results table tbody tr:first-child a[onclick*='openTab' i]",
-            "#Results table tbody tr:first-child td:first-child a",
-            "#Results table tbody tr:first-child a",
-        ]:
-            try:
-                link = page.locator(link_sel).first
-                if await link.count() > 0:
-                    await link.scroll_into_view_if_needed(timeout=2000)
-                    await link.click(timeout=5000, force=True)
-                    await page.wait_for_timeout(3500)
-                    clicked_case = True
-                    print(f"      → clicked case anchor: {link_sel}")
-                    break
-            except Exception as e:
-                print(f"      ⚠ click {link_sel} failed: {type(e).__name__}: {e}")
-                continue
-
-        if not clicked_case:
-            # Last resort: synthesize the click via JS on the first row's first link.
-            try:
-                await page.evaluate(
-                    "const a = document.querySelector('#Results table tbody tr a');"
-                    " if (a) { a.click(); }"
-                )
-                await page.wait_for_timeout(3500)
+        try:
+            row = page.locator("#tblSearchResults tr:first-child").first
+            if await row.count() > 0:
+                await row.scroll_into_view_if_needed(timeout=2000)
+                await row.click(timeout=5000, force=True)
                 clicked_case = True
-                print(f"      → triggered first-row anchor.click() via JS")
-            except Exception as e:
-                print(f"      ⚠ JS row click failed: {e}")
+                print(f"      → clicked #tblSearchResults tr:first-child")
+        except Exception as e:
+            print(f"      ⚠ row click failed: {type(e).__name__}: {e}")
 
-        # PRO V3 tab switching is independent of data loading. Explicitly click
-        # the #Case nav so the SPA reveals whatever the row click populated.
+        if not clicked_case and first_row_onclick:
+            # Fallback: invoke the row's onclick attribute as JS directly so
+            # we sidestep any element-targeting issues.
+            try:
+                await page.evaluate(f"(function(){{ {first_row_onclick} }})()")
+                clicked_case = True
+                print(f"      → invoked first-row onclick via JS eval")
+            except Exception as e:
+                print(f"      ⚠ JS onclick eval failed: {e}")
+
+        # openTab() does an AJAX fetch then injects the case detail into #Case.
+        # Poll for #Case to fill so we don't proceed before the SPA is ready.
+        case_loaded = False
+        for _ in range(20):  # ~10s budget
+            await page.wait_for_timeout(500)
+            try:
+                ln = await page.locator("#Case").first.evaluate("el => el.innerText.length")
+            except Exception:
+                ln = 0
+            if ln and ln > 80:
+                case_loaded = True
+                break
+        print(f"      → #Case populated wait: loaded={case_loaded}")
+
+        # Make sure #Case is the visible tab once it's populated.
         try:
             case_nav = page.locator("a[href='#Case']").first
             if await case_nav.count() > 0:
                 await case_nav.click(timeout=3000, force=True)
-                await page.wait_for_timeout(2000)
+                await page.wait_for_timeout(1500)
                 print(f"      → clicked #Case tab nav")
         except Exception as e:
             print(f"      ⚠ #Case tab nav failed: {e}")
