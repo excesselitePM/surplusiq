@@ -104,9 +104,9 @@ BROWARD = CountyConfig(
 
 DUVAL = CountyConfig(
     id="duval-fl", name="Duval", state="FL", state_full="Florida",
-    auction_url="https://www.duval.realtaxdeed.com/index.cfm",
+    auction_url="https://www.duval.realforeclose.com/index.cfm",
     auction_platform="realforeclose",
-    auction_calendar_url="https://www.duval.realtaxdeed.com/index.cfm",
+    auction_calendar_url="https://www.duval.realforeclose.com/index.cfm",
     clerk_url="https://www.duvalclerk.com/",
     clerk_search_url="https://core.duvalclerk.com/CoreCms.aspx?mode=PublicAccess",
     clerk_system="core_duval",
