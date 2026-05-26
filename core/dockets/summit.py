@@ -356,90 +356,53 @@ class SummitDocketScraper(DocketScraper):
             print(f"      ⚠ dump_search_inputs failed: {e}")
 
     async def _fill_split_fields(self, page: Page, parsed: dict) -> bool:
-        """Fill the Type/Year/Month/Sequence/Suffix fields.
+        """Fill the Type/Year/Month/Sequence/Suffix fields by exact ID.
 
-        Exact field IDs are not yet known — try common ASP.NET WebForms
-        naming conventions. If none match, return False so the run reports
-        "recon pending" rather than half-filling the wrong fields.
+        ASP.NET WebForms IDs captured from the recon dump:
+          #ContentPlaceHolder1_tbCase1Prefix  (maxlength=2) ← Type   (CV/MI/AC)
+          #ContentPlaceHolder1_tbCase1Part1   (maxlength=4) ← Year
+          #ContentPlaceHolder1_tbCase1Part2   (maxlength=2) ← Month
+          #ContentPlaceHolder1_tbCase1Part3   (maxlength=4) ← Sequence
+          #ContentPlaceHolder1_tbCase1Suffix  (maxlength=3) ← Suffix (optional)
+
+        Submit button: #ContentPlaceHolder1_btnOk.
         """
-        # Candidates by visible/maxlength heuristic — recon will replace these
-        # with exact IDs in the next iteration.
-        attempts = [
-            # (field_value, list of candidate selectors)
-            (parsed["type"], [
-                "select[id*='Type' i]",
-                "select[name*='Type' i]",
-                "input[id*='Type' i][maxlength='2']",
-                "input[name*='Type' i]",
-            ]),
-            (parsed["year"], [
-                "input[id*='Year' i]",
-                "input[name*='Year' i]",
-                "input[maxlength='4']",
-            ]),
-            (parsed["month"], [
-                "input[id*='Month' i]",
-                "input[name*='Month' i]",
-                "input[maxlength='2']",
-            ]),
-            (parsed["seq"], [
-                "input[id*='Seq' i]",
-                "input[name*='Seq' i]",
-                "input[id*='Number' i]",
-                "input[maxlength='5']",
-                "input[maxlength='4']",
-            ]),
+        plan = [
+            ("#ContentPlaceHolder1_tbCase1Prefix", parsed["type"]),
+            ("#ContentPlaceHolder1_tbCase1Part1",  parsed["year"]),
+            ("#ContentPlaceHolder1_tbCase1Part2",  parsed["month"]),
+            ("#ContentPlaceHolder1_tbCase1Part3",  parsed["seq"]),
         ]
-        any_filled = False
-        for value, selectors in attempts:
-            for sel in selectors:
-                try:
-                    el = page.locator(sel).first
-                    if await el.count() == 0 or not await el.is_visible():
-                        continue
-                    tag = await el.evaluate("el => el.tagName.toLowerCase()")
-                    if tag == "select":
-                        await el.select_option(value=value, timeout=3000)
-                    else:
-                        await el.fill(value, timeout=3000)
-                    print(f"      → filled {sel} ← '{value}'")
-                    any_filled = True
-                    break
-                except Exception:
-                    continue
         if parsed["suffix"]:
-            for sel in ["input[id*='Suffix' i]", "input[name*='Suffix' i]"]:
-                try:
-                    el = page.locator(sel).first
-                    if await el.count() > 0 and await el.is_visible():
-                        await el.fill(parsed["suffix"], timeout=3000)
-                        print(f"      → filled {sel} ← '{parsed['suffix']}'")
-                        break
-                except Exception:
+            plan.append(("#ContentPlaceHolder1_tbCase1Suffix", parsed["suffix"]))
+
+        all_ok = True
+        for sel, value in plan:
+            try:
+                el = page.locator(sel).first
+                if await el.count() == 0:
+                    print(f"      ⚠ missing {sel} — search form layout changed")
+                    all_ok = False
                     continue
-        return any_filled
+                await el.fill(value, timeout=3000)
+                print(f"      → filled {sel} ← '{value}'")
+            except Exception as e:
+                print(f"      ⚠ fill {sel} failed: {type(e).__name__}: {e}")
+                all_ok = False
+        return all_ok
 
     async def _submit_search(self, page: Page) -> bool:
-        for sel in [
-            "input[type='submit'][value*='Search' i]",
-            "input[type='submit']",
-            "button:has-text('Search')",
-            "button[type='submit']",
-        ]:
-            try:
-                btn = page.locator(sel).first
-                if await btn.count() > 0 and await btn.is_visible():
-                    await btn.click(timeout=5000)
-                    print(f"      → clicked submit via {sel}")
-                    return True
-            except Exception:
-                continue
-        # Last-ditch: press Enter on a focused input
+        sel = "#ContentPlaceHolder1_btnOk"
         try:
-            await page.keyboard.press("Enter")
-            print(f"      → pressed Enter as fallback submit")
+            btn = page.locator(sel).first
+            if await btn.count() == 0:
+                print(f"      ⚠ submit button {sel} not found")
+                return False
+            await btn.click(timeout=5000)
+            print(f"      → clicked submit via {sel}")
             return True
-        except Exception:
+        except Exception as e:
+            print(f"      ⚠ submit click failed: {type(e).__name__}: {e}")
             return False
 
     # ─── Step 5: Open case detail ───────────────────────────────────────
