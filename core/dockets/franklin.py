@@ -184,10 +184,23 @@ class FranklinDocketScraper(DocketScraper):
         diag_dir.mkdir(parents=True, exist_ok=True)
 
         async with async_playwright() as pw:
-            browser = await pw.chromium.launch(headless=self.headless)
+            browser = await pw.chromium.launch(
+                headless=self.headless,
+                args=[
+                    "--disable-blink-features=AutomationControlled",
+                ],
+            )
             context = await browser.new_context(
                 viewport={"width": 1400, "height": 900},
                 ignore_https_errors=True,
+                user_agent=(
+                    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+                    "(KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+                ),
+            )
+            # Remove the webdriver flag that Cloudflare checks
+            await context.add_init_script(
+                "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"
             )
             page = await context.new_page()
 
@@ -322,6 +335,7 @@ class FranklinDocketScraper(DocketScraper):
         await page.wait_for_timeout(500)
 
         # Click the submit/accept/continue button
+        button_clicked = False
         for sel in [
             "input[type='submit']",
             "button[type='submit']",
@@ -338,18 +352,58 @@ class FranklinDocketScraper(DocketScraper):
                 btn = page.locator(sel).first
                 if await btn.count() > 0:
                     await btn.click(timeout=5000)
-                    await page.wait_for_load_state("domcontentloaded", timeout=15000)
-                    await page.wait_for_timeout(2000)
+                    button_clicked = True
                     print(f"      → clicked accept button: {sel}")
-                    return True
+                    break
             except Exception:
                 continue
 
-        # Last resort: try pressing Enter
-        await page.keyboard.press("Enter")
-        await page.wait_for_timeout(2000)
+        if not button_clicked:
+            # Last resort: try pressing Enter
+            await page.keyboard.press("Enter")
 
-        return checkbox_clicked
+        # Wait for Cloudflare security challenge to resolve.
+        # After terms submit, Cloudflare may show a JS challenge page.
+        # Poll until either: (a) we see a search form, or (b) timeout.
+        await self._wait_for_cloudflare(page)
+
+        return True
+
+    async def _wait_for_cloudflare(self, page: Page, max_wait: int = 30) -> bool:
+        """
+        Wait for Cloudflare's JS challenge to resolve.
+        Polls page content every 2 seconds for up to max_wait seconds.
+        Returns True if we got past the challenge, False if timed out.
+        """
+        import time
+        start = time.time()
+        while time.time() - start < max_wait:
+            await page.wait_for_timeout(2000)
+            body = await page.inner_text("body")
+            body_lower = body.lower()
+
+            # Check if Cloudflare challenge is still showing
+            if "security verification" in body_lower or "verifies you are not a bot" in body_lower:
+                elapsed = int(time.time() - start)
+                print(f"      → Cloudflare challenge still active ({elapsed}s elapsed)...")
+                continue
+
+            # Check if we've reached a real page (search form, case info, etc.)
+            if any(kw in body_lower for kw in [
+                "case number", "search", "case information",
+                "civil", "domestic", "criminal",
+            ]):
+                elapsed = int(time.time() - start)
+                print(f"      → Cloudflare challenge resolved ({elapsed}s)")
+                return True
+
+            # Neither challenge nor expected content — might be transitional
+            elapsed = int(time.time() - start)
+            print(f"      → waiting for page load ({elapsed}s)...")
+            continue
+
+        print(f"      ⚠ Cloudflare challenge did not resolve within {max_wait}s")
+        return False
 
     # ─── Step 2: Search for a case ───────────────────────────────────────
 
