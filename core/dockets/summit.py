@@ -202,38 +202,46 @@ class SummitDocketScraper(DocketScraper):
                     await snap("04b_fill_failed")
                     return result
 
-                submitted = await self._submit_search(page)
-                if not submitted:
+                # ─── Step 5: Submit and wait for navigation to CaseDetail ───
+                # Summit's case-number search posts back to itself and then
+                # redirects to /PublicSite/CaseDetail.aspx on an exact match.
+                # If the case number is invalid the form re-renders inline
+                # ("Is Not A Valid Case Number") — same URL. So we wait for
+                # the URL to change instead of for domcontentloaded.
+                async with page.expect_navigation(
+                    url=re.compile(r"/PublicSite/CaseDetail\.aspx", re.I),
+                    timeout=20000,
+                    wait_until="domcontentloaded",
+                ) as nav:
+                    submitted = await self._submit_search(page)
+                    if not submitted:
+                        result.classification = "unknown"
+                        result.classification_reason = "could not submit search form"
+                        await snap("04c_submit_failed")
+                        return result
+                try:
+                    await nav.value
+                except PWTimeout:
+                    # Stayed on the form → server rejected the search.
+                    await snap("05_search_rejected")
+                    await dump("05_search_rejected", "body", inline_chars=4000)
                     result.classification = "unknown"
-                    result.classification_reason = "could not submit search form (recon pending)"
-                    await snap("04c_submit_failed")
+                    result.classification_reason = (
+                        f"search did not navigate to CaseDetail (url={page.url})"
+                    )
                     return result
 
-                await page.wait_for_load_state("domcontentloaded", timeout=20000)
-                await page.wait_for_timeout(2500)
-                await snap("05_after_search")
-                await dump("05_after_search", "body", inline_chars=4000)
-                print(f"      → after search: url={page.url}")
-
-                # ─── Step 5: Click into the case detail ─────────────────────
-                print(f"      ▶ step 5: open case detail")
-                opened = await self._open_case_detail(page, parsed)
-                await page.wait_for_timeout(2000)
-                await snap("06_case_detail")
-                await dump("06_case_detail", "body", inline_chars=4000)
-                print(f"      → case detail opened? {opened}; url={page.url}")
-                if not opened:
-                    result.classification = "unknown"
-                    result.classification_reason = "could not open case detail from results (recon pending)"
-                    return result
-
+                await page.wait_for_timeout(1500)
+                await snap("05_case_detail")
+                await dump("05_case_detail", "body", inline_chars=4000)
+                print(f"      → landed on case detail: url={page.url}")
                 result.case_url = page.url
 
                 # ─── Step 6: Scrape summary + parties + judgment doc ───────
-                # All recon-pending; per anti-fabrication rule, leave fields
-                # empty rather than guessing. The follow-up patch will fill
-                # these in once the dumps above expose the actual DOM.
-                print(f"      ▶ step 6: scrape (recon-pending)")
+                # All tab content (Parties + Docket + Images) is in the
+                # initial CaseDetail.aspx DOM — Infragistics WebTab just
+                # shows/hides via CSS. No tab clicks required.
+                print(f"      ▶ step 6: scrape case detail")
                 await self._scrape_summary(page, result)
                 await self._scrape_docket(page, result)
                 await self._scrape_parties(page, result)
@@ -412,51 +420,281 @@ class SummitDocketScraper(DocketScraper):
             print(f"      ⚠ submit click failed: {type(e).__name__}: {e}")
             return False
 
-    # ─── Step 5: Open case detail ───────────────────────────────────────
-
-    async def _open_case_detail(self, page: Page, parsed: dict) -> bool:
-        """Click into the case from the results page. Recon-pending."""
-        # ASP.NET search results typically render as a GridView with row-level
-        # __doPostBack handlers OR direct hyperlinks per row. Until recon
-        # shows the actual DOM, try anchor text matching the case number.
-        case_text = parsed["joined"]
-        for sel in [
-            f"a:has-text('{case_text}')",
-            f"a:has-text('{parsed['type']}{parsed['year']}{parsed['month']}{parsed['seq']}')",
-            "table[id*='Result' i] tr:nth-child(2) a",
-            "table[id*='Result' i] tbody tr:first-child a",
-        ]:
-            try:
-                link = page.locator(sel).first
-                if await link.count() > 0 and await link.is_visible():
-                    await link.click(timeout=5000)
-                    print(f"      → clicked result via {sel}")
-                    return True
-            except Exception:
-                continue
-        return False
-
-    # ─── Step 6: Stubs — refine after recon ─────────────────────────────
+    # ─── Step 6: Scrape case-detail subsections ──────────────────────────
 
     async def _scrape_summary(self, page: Page, result: DocketResult) -> None:
-        """Stub. Will be filled once 06_case_detail dump shows the layout."""
+        """Read case header labels: caption, file date, case type, judge."""
+        for label_id, attr in [
+            ("#ContentPlaceHolder1_lblCaseCaption", "case_title"),
+            ("#ContentPlaceHolder1_lblCaseType",   "case_designation"),
+        ]:
+            try:
+                el = page.locator(label_id).first
+                if await el.count() > 0:
+                    text = (await el.inner_text()).strip()
+                    if text:
+                        setattr(result, attr, text[:200])
+            except Exception:
+                pass
+
+        try:
+            el = page.locator("#ContentPlaceHolder1_lblFileDate").first
+            if await el.count() > 0:
+                fd = (await el.inner_text()).strip()
+                m = re.match(r"(\d{1,2})/(\d{1,2})/(\d{4})", fd)
+                if m:
+                    mm, dd, yyyy = m.groups()
+                    result.filing_date = f"{yyyy}-{mm.zfill(2)}-{dd.zfill(2)}"
+        except Exception:
+            pass
+
+        # Kill / proof / competing-filer signals from the whole case body —
+        # docket text is embedded in the DOM so a single body scan covers it.
         text = await page.inner_text("body")
         result.kill_signals = self.detect_kill_signals(text)
         proof = self.detect_proof_of_surplus(text)
         if proof:
             result.proof_of_surplus = proof
+        result.competing_filers = self.detect_competing_filers(text)
+        if re.search(r"owner'?s?\s+claim", text, re.IGNORECASE):
+            result.owner_filed_claim = True
+
+        print(f"      → case_title='{result.case_title[:80]}' filing_date='{result.filing_date}'")
 
     async def _scrape_docket(self, page: Page, result: DocketResult) -> None:
-        """Stub. Apply the same strict JUDGMENT classifier as Montgomery
-        once the docket-row DOM is known. Until then, prayer stays 0 per
-        the anti-fabrication rule."""
-        text = await page.inner_text("body")
-        result.kill_signals = list(set(
-            result.kill_signals + self.detect_kill_signals(text)
-        ))
-        result.competing_filers = self.detect_competing_filers(text)
-        print(f"      → docket scrape: recon-pending, prayer stays $0")
+        """Walk gvDocketDetails rows, classify, fetch the judgment PDF.
+
+        Each docket row inside #ContentPlaceHolder1_igtabCaseDetails__ctl1
+        renders as a Bootstrap row with:
+          - lblFilingDate_N  (date text)
+          - lblByAttorney_N  (filer)
+          - lblDocket_N      (description text)
+          - HyperLink1_N     (anchor, href like 'DisplayImage.asp?gstrPDFOH=...')
+        Some rows have no HyperLink1 (paperwork-only / no scan). Those are
+        skipped from PDF candidates by definition.
+
+        Strict JUDGMENT classifier — same rules as Montgomery: row text
+        must contain an explicit judgment-document phrase AND must not
+        contain any fee/cost/clerk/release/satisfaction marker. Supporting
+        filings (motion/affidavit/notice) are logged but never fetched.
+        """
+        judgment_doc_phrases = [
+            "judgment entry and foreclosure decree",
+            "judgment and decree of foreclosure",
+            "judgment entry of foreclosure",
+            "judgment and decree",
+            "decree of foreclosure",
+            "decree in foreclosure",
+            "foreclosure decree",
+            "final judgment entry",
+            "final judgment",
+            "final entry",
+            "judgment entry",
+            "entry of judgment",
+            "magistrate's decision",
+            "magistrate decision",
+        ]
+        exclusion_markers = [
+            "fee", "cost statement", "clerk fee", "deposit", "refund",
+            "release of judgment", "release of lien", "release of liens",
+            "partial release", "satisfaction of judgment", "satisfaction",
+            "transcript", "subpoena", "praecipe", "writ of execution",
+            "garnishment",
+        ]
+        supporting_doc_markers = [
+            "motion:", "motion for", "affidavit", "notice:", "notice of filing",
+            "memorandum", "brief in", "reply in support", "exhibit",
+        ]
+
+        # Pull every docket row label + matching hyperlink (if any).
+        # Label IDs follow the pattern lblDocket_N; we find all N and read
+        # the same row's HyperLink1_N when it exists.
+        label_els = await page.query_selector_all(
+            "[id^='ContentPlaceHolder1_igtabCaseDetails__ctl1_gvDocketDetails_lblDocket_']"
+        )
+        print(f"      → docket rows found: {len(label_els)}")
+
+        rows = []  # (idx, text, filing_date_iso, href_or_none)
+        for el in label_els:
+            try:
+                el_id = await el.get_attribute("id") or ""
+                m = re.match(
+                    r"ContentPlaceHolder1_igtabCaseDetails__ctl1_gvDocketDetails_lblDocket_(\d+)$",
+                    el_id,
+                )
+                if not m:
+                    continue
+                idx = m.group(1)
+                text = (await el.inner_text()).strip()
+                if not text:
+                    continue
+
+                # Filing date
+                fd_iso = ""
+                try:
+                    fd_el = page.locator(
+                        f"#ContentPlaceHolder1_igtabCaseDetails__ctl1_gvDocketDetails_lblFilingDate_{idx}"
+                    ).first
+                    if await fd_el.count() > 0:
+                        fd = (await fd_el.inner_text()).strip()
+                        dm = re.match(r"(\d{1,2})/(\d{1,2})/(\d{4})", fd)
+                        if dm:
+                            mm, dd, yyyy = dm.groups()
+                            fd_iso = f"{yyyy}-{mm.zfill(2)}-{dd.zfill(2)}"
+                except Exception:
+                    pass
+
+                # PDF hyperlink (may be absent)
+                href = ""
+                try:
+                    a_el = page.locator(
+                        f"#ContentPlaceHolder1_igtabCaseDetails__ctl1_gvDocketDetails_HyperLink1_{idx}"
+                    ).first
+                    if await a_el.count() > 0:
+                        href = (await a_el.get_attribute("href")) or ""
+                except Exception:
+                    pass
+
+                rows.append((idx, text, fd_iso, href))
+            except Exception:
+                continue
+
+        # Capture all events for audit (cap at 50, same as Montgomery)
+        result.events = [
+            DocketEvent(
+                filing_date=fd or "",
+                description=t[:200],
+                pdf_url=h or "",
+            ).__dict__
+            for (_, t, fd, h) in rows[:50]
+        ]
+        if rows:
+            sorted_events = sorted(
+                [(fd, t) for (_, t, fd, _) in rows if fd],
+                reverse=True,
+            )
+            if sorted_events:
+                result.last_activity_date = sorted_events[0][0]
+
+        # Classify each row
+        judgment_candidates = []  # (prio, idx, text, href)
+        supporting_seen = []
+        excluded_count = 0
+        no_pdf_count = 0
+
+        for idx, text, _fd, href in rows:
+            tl = text.lower()
+            if any(ex in tl for ex in exclusion_markers):
+                excluded_count += 1
+                continue
+            matched_prio = None
+            for prio, phrase in enumerate(judgment_doc_phrases):
+                if phrase in tl:
+                    matched_prio = prio
+                    break
+            if matched_prio is None:
+                continue
+            preview = text[:160].replace("\n", " ")
+            if any(sup in tl for sup in supporting_doc_markers):
+                supporting_seen.append((matched_prio, idx, preview))
+                continue
+            if not href:
+                no_pdf_count += 1
+                continue
+            judgment_candidates.append((matched_prio, idx, preview, href))
+
+        judgment_candidates.sort(key=lambda c: c[0])
+        supporting_seen.sort(key=lambda c: c[0])
+
+        print(
+            f"      → judgment candidates: {len(judgment_candidates)} "
+            f"(supporting only: {len(supporting_seen)}, "
+            f"excluded fee/clerk/release: {excluded_count}, "
+            f"no-PDF: {no_pdf_count})"
+        )
+        for prio, idx, preview, _ in judgment_candidates[:6]:
+            print(f"         · [JUDGMENT] prio={prio} row={idx} :: {preview}")
+        for prio, idx, preview in supporting_seen[:4]:
+            print(f"         · [SUPPORTING — not fetched] prio={prio} row={idx} :: {preview}")
+
+        if not judgment_candidates:
+            print(f"      → no qualified judgment document; prayer stays $0 (lead → unknown)")
+            return
+
+        req = page.context.request
+        for prio, idx, preview, href in judgment_candidates[:6]:
+            full_url = href if href.startswith("http") else f"{CLERK_HOST}/PublicSite/{href}"
+            try:
+                resp = await req.get(full_url, timeout=20000)
+                if not resp.ok:
+                    print(f"      ⚠ PDF fetch row={idx}: HTTP {resp.status}")
+                    continue
+                pdf_bytes = await resp.body()
+                if not pdf_bytes or len(pdf_bytes) < 1000:
+                    print(f"      ⚠ PDF row={idx}: body too small ({len(pdf_bytes)} bytes)")
+                    continue
+                if pdf_bytes[:4] != b"%PDF":
+                    # Summit's DisplayImage.asp may return an HTML viewer
+                    # wrapping an embed/iframe pointing at the real PDF.
+                    head = pdf_bytes[:200].decode("utf-8", errors="ignore")
+                    print(f"      ⚠ PDF row={idx}: not a raw PDF (head: {head[:120]!r})")
+                    continue
+                amount, snippet = extract_debt_from_pdf_bytes(pdf_bytes)
+                if amount:
+                    result.prayer_amount = amount
+                    result.debt_source = f"pdf_extract:docket_row_{idx}:judgment"
+                    print(f"      ✅ extracted debt from PDF row={idx} [JUDGMENT]: ${amount:,.2f}")
+                    print(f"      📄 PDF context (~400 chars around match):")
+                    print(f"         {snippet}")
+                    return
+                else:
+                    print(f"      → PDF row={idx} parsed but no debt keyword match")
+            except Exception as e:
+                print(f"      ⚠ PDF fetch row={idx} failed: {type(e).__name__}: {e}")
+
+        print(f"      → all qualified judgment PDFs failed; prayer stays $0 (lead → unknown)")
+        return
 
     async def _scrape_parties(self, page: Page, result: DocketResult) -> None:
-        """Stub. Recon-pending."""
-        return
+        """Read plaintiff(s) and defendant(s) from the gv* GridViews.
+
+        IDs follow:
+          gvPlaintiff_lblPartyName_N   (N=0..)
+          gvDefendant_lblPartyName_N   (N=0..)
+          gvOtherParties_lblPartyName_N
+        """
+        plaintiffs = []
+        defendants = []
+        others = []
+
+        for grid, target in [
+            ("gvPlaintiff", plaintiffs),
+            ("gvDefendant", defendants),
+            ("gvOtherParties", others),
+        ]:
+            els = await page.query_selector_all(
+                f"[id^='ContentPlaceHolder1_igtabCaseDetails__ctl0_{grid}_lblPartyName_']"
+            )
+            for el in els:
+                try:
+                    name = (await el.inner_text()).strip()[:200]
+                    if name and name not in target:
+                        target.append(name)
+                except Exception:
+                    continue
+
+        if plaintiffs and not result.plaintiff:
+            result.plaintiff = plaintiffs[0]
+        result.defendants = defendants
+
+        creditor_keywords = [
+            "LLC", "BANK", "TREASURER", "IRS", "STATE OF", "COUNTY",
+            "CITY OF", "REVENUE", "DEPARTMENT", "ASSOCIATION", "TRUST",
+            "FINANCIAL", "MORTGAGE", "CAPITAL", "FUND", "SERVICES", "INC",
+        ]
+        for name in defendants + others:
+            name_upper = name.upper()
+            if any(kw in name_upper for kw in creditor_keywords):
+                if name not in result.additional_parties:
+                    result.additional_parties.append(name)
+        print(f"      → parties: {len(plaintiffs)} plaintiff(s), {len(defendants)} defendant(s), {len(others)} other")
