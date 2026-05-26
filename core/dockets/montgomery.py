@@ -567,6 +567,50 @@ class MontgomeryDocketScraper(DocketScraper):
         ])
         return has_case
 
+    # ─── #Case subscreen switcher ────────────────────────────────────────
+
+    async def _switch_case_subscreen(self, page: Page, name: str) -> bool:
+        """Click the #menu_CI_<Name> tab inside #Case and wait for refresh.
+
+        PRO V3 uses <span> elements (not <a>) for the case sub-nav. Clicking
+        re-runs openTab('caseInfo', '...&screen=<name>...') which replaces
+        the inner HTML of #Case. We snapshot a content hash before clicking
+        and poll until it changes (or 10s elapses).
+        """
+        sel = f"#menu_CI_{name}"
+        try:
+            menu_el = page.locator(sel).first
+            if await menu_el.count() == 0:
+                print(f"      ⚠ subscreen menu '{name}' not present")
+                return False
+
+            try:
+                before_len = await page.locator("#Case").first.evaluate(
+                    "el => el.innerText.length"
+                )
+            except Exception:
+                before_len = 0
+
+            await menu_el.scroll_into_view_if_needed(timeout=2000)
+            await menu_el.click(timeout=5000, force=True)
+            print(f"      → switched #Case subscreen → {name}")
+
+            for _ in range(20):  # ~10s budget
+                await page.wait_for_timeout(500)
+                try:
+                    cur_len = await page.locator("#Case").first.evaluate(
+                        "el => el.innerText.length"
+                    )
+                except Exception:
+                    cur_len = before_len
+                if cur_len != before_len and cur_len > 80:
+                    return True
+            print(f"      ⚠ subscreen '{name}' content did not change after click")
+            return False
+        except Exception as e:
+            print(f"      ⚠ subscreen switch to '{name}' failed: {e}")
+            return False
+
     # ─── Step 4: Scrape case summary ─────────────────────────────────────
 
     async def _scrape_summary(self, page: Page, result: DocketResult) -> None:
@@ -618,20 +662,14 @@ class MontgomeryDocketScraper(DocketScraper):
     # ─── Step 5: Scrape docket + judgment PDF ────────────────────────────
 
     async def _scrape_docket(self, page: Page, result: DocketResult) -> None:
-        """Read docket entries from the #Case SPA section, find judgment PDFs.
+        """Read docket entries from the #Case Docket subscreen, find judgment PDFs.
 
-        PRO V3 renders the docket inline inside the #Case tab — there is no
-        separate Docket page to navigate to. Trying to click a Docket link
-        elsewhere just bounces the user back to the search form.
+        PRO V3 keeps a sub-nav inside #Case (#menu_CI_Summary, #menu_CI_Docket,
+        #menu_CI_Party, ...). The default load after a row click is the Summary
+        screen — to see docket entries we must click #menu_CI_Docket, which
+        re-issues openTab('caseInfo','...&screen=docket&sort=A...').
         """
-        # Make sure #Case is the active tab.
-        try:
-            case_nav = page.locator("a[href='#Case']").first
-            if await case_nav.count() > 0:
-                await case_nav.click(timeout=3000, force=True)
-                await page.wait_for_timeout(1500)
-        except Exception:
-            pass
+        await self._switch_case_subscreen(page, "Docket")
 
         case_locator = page.locator("#Case").first
         case_exists = await case_locator.count() > 0
@@ -813,24 +851,19 @@ class MontgomeryDocketScraper(DocketScraper):
     # ─── Step 6: Scrape parties ──────────────────────────────────────────
 
     async def _scrape_parties(self, page: Page, result: DocketResult) -> None:
-        """Extract plaintiff and defendants."""
-        for sel in [
-            "a:has-text('Parties')",
-            "a:has-text('Party')",
-            "a[href*='parties' i]",
-            "a[href*='party' i]",
-        ]:
-            try:
-                link = page.locator(sel).first
-                if await link.count() > 0:
-                    await link.click(timeout=5000)
-                    await page.wait_for_load_state("domcontentloaded", timeout=10000)
-                    await page.wait_for_timeout(1500)
-                    break
-            except Exception:
-                continue
+        """Extract plaintiff and defendants from the Party subscreen."""
+        await self._switch_case_subscreen(page, "Party")
+        await self._dump("case_for_parties", "#Case", inline_chars=3000)
 
-        text = await page.inner_text("body")
+        text = ""
+        try:
+            case_el = page.locator("#Case").first
+            if await case_el.count() > 0:
+                text = await case_el.inner_text()
+        except Exception:
+            text = ""
+        if not text.strip():
+            text = await page.inner_text("body")
 
         p_m = re.search(r"PLAINTIFF\s*:?\s*\n?\s*([^\n]+)", text, re.IGNORECASE)
         if p_m:
