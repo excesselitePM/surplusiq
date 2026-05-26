@@ -13,12 +13,14 @@ CLI usage:
 from .base import DocketScraper, DocketResult, DocketEvent
 from .cuyahoga import CuyahogaDocketScraper, parse_cuyahoga_case_number
 from .miami_dade import MiamiDadeDocketScraper, parse_miami_dade_case_number
+from .franklin import FranklinDocketScraper, parse_franklin_case_number
 
 
 # Registry — add new counties here as they're implemented
 SCRAPER_REGISTRY = {
     "cuyahoga-oh":   CuyahogaDocketScraper,
     "miami-dade-fl": MiamiDadeDocketScraper,
+    "franklin-oh":   FranklinDocketScraper,
 }
 
 
@@ -35,6 +37,7 @@ __all__ = [
     "DocketEvent",
     "CuyahogaDocketScraper",
     "MiamiDadeDocketScraper",
+    "FranklinDocketScraper",
     "get_scraper",
     "SCRAPER_REGISTRY",
 ]
