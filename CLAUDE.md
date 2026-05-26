@@ -75,12 +75,14 @@ Request shape (verified against developers.propertyradar.com):
 - Body: `{"Criteria": [{"name":"<CriteriaName>","value":[...]}, …]}` — top-level "Criteria" is always an array; each item is a single-criterion object. Nested criteria use the same shape (e.g. `PropertyType: [{"name":"PType","value":["SFR"]}]`). Never send a raw address string at the top level.
 - Query params: `Fields` (comma-separated PR field names), `Limit`, `Start`, `Purchase` (see below).
 
-Address-criterion field names (verbatim — these are the easy ones to get wrong):
-- `SiteAddress`  (NOT `Address`)
-- `SiteCity`     (NOT `City`)
-- `SiteState`    (NOT `State`)
-- `ZipFive`
-- `County`, `APN` when those are available
+Address-criterion field names for the `/properties` endpoint — empirically verified by Purchase=0 probe (PR returns "Unexpected Criterion: X" with the exact bad name when wrong):
+- `SiteAddress` ✓
+- `ZipFive` ✓
+- `SiteCity` ✗ rejected by `/properties` (works elsewhere; don't send here)
+- `SiteState` ✗ rejected by `/properties` (use it only as a suggestion-endpoint scope criterion)
+- Best primary lookup: SiteAddress + ZipFive. When ZipFive is missing, fall through to the suggestion endpoint instead of adding city/state to /properties.
+
+Suggestion endpoint `/v1/suggestions/SiteAddress` accepts SiteState as a scoping criterion (and uses the `SiteAddressInput` body field, not the `SuggestionInput` query param).
 
 Purchase parameter — billing-critical:
 - `Purchase=0` → counts/RadarID only, returns NO property data, does NOT deduct an export. ALWAYS use this when changing request shape.

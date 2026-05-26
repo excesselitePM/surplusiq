@@ -252,18 +252,21 @@ class PropertyRadarClient:
             return {"error": "no address components to search"}
 
         # ─── STEP 1: direct properties query with what we have ────────────
+        # PropertyRadar /v1/properties accepts SiteAddress + ZipFive as
+        # address-anchored criteria. SiteCity and SiteState are NOT valid
+        # at /properties (the API returns "Unexpected Criterion: SiteCity"
+        # / "Unexpected Criterion: SiteState" — verified via probe run
+        # 26481516049). City/state are only used for the suggestion
+        # fallback below. Address + zip is enough to disambiguate in
+        # practice; when zip is missing we fall through to suggestions.
         direct_criteria = []
         if street:
             direct_criteria.append({"name": "SiteAddress", "value": [street]})
-        if city:
-            direct_criteria.append({"name": "SiteCity", "value": [city]})
-        if state:
-            direct_criteria.append({"name": "SiteState", "value": [state.upper()]})
         if zipcode:
             direct_criteria.append({"name": "ZipFive", "value": [zipcode]})
 
         if not direct_criteria:
-            return {"error": "no usable criteria after filtering"}
+            return {"error": "no usable criteria after filtering (need street or zip)"}
 
         data = self._properties_call(direct_criteria, label="direct")
         if "error" in data:
@@ -278,7 +281,9 @@ class PropertyRadarClient:
         # ─── STEP 2: fall back to suggestion → normalized criteria ────────
         # PropertyRadar stores addresses with ordinal suffixes ("154TH" not
         # "154"), so unnormalized strings can miss. /v1/suggestions/SiteAddress
-        # returns canonical Criteria we can re-query with.
+        # returns canonical Criteria we can re-query with. The suggestion
+        # endpoint accepts SiteState as a scoping criterion (unlike the
+        # /properties endpoint, where it's rejected).
         suggest_body = {"SiteAddressInput": street, "Limit": 5}
         if state:
             suggest_body["Criteria"] = [
