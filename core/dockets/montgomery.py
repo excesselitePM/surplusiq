@@ -77,21 +77,20 @@ def parse_montgomery_case_number(raw: str) -> Optional[dict]:
     return None
 
 
-def extract_debt_from_pdf_bytes(pdf_bytes: bytes) -> Optional[float]:
-    """
-    Extract the judgment/debt amount from a foreclosure judgment PDF.
-    Same logic as Franklin scraper — scan for dollar amounts near
-    judgment keywords and return the largest qualifying amount.
+def extract_debt_from_pdf_bytes(pdf_bytes: bytes) -> tuple[Optional[float], str]:
+    """Extract the judgment/debt amount from a foreclosure judgment PDF.
+
+    Returns (amount, snippet) — snippet is ~400 chars of PDF text centered on
+    the chosen dollar match, so the caller can prove the number came from a
+    judgment line and not a fee/cost/interest line.
     """
     try:
         import pdfplumber
     except ImportError:
         print("      ⚠ pdfplumber not installed — cannot parse PDF")
-        return None
+        return None, ""
 
-    amounts = []
     full_text = ""
-
     try:
         with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
             for page in pdf.pages[:10]:
@@ -99,10 +98,10 @@ def extract_debt_from_pdf_bytes(pdf_bytes: bytes) -> Optional[float]:
                 full_text += page_text + "\n"
     except Exception as e:
         print(f"      ⚠ PDF parse error: {e}")
-        return None
+        return None, ""
 
     if not full_text.strip():
-        return None
+        return None, ""
 
     text_lower = full_text.lower()
     judgment_keywords = [
@@ -112,6 +111,7 @@ def extract_debt_from_pdf_bytes(pdf_bytes: bytes) -> Optional[float]:
     ]
 
     dollar_pattern = re.compile(r"\$\s*([\d,]+(?:\.\d{2})?)")
+    qualified = []  # (amount, match_start, match_end)
     for match in dollar_pattern.finditer(full_text):
         try:
             amt = float(match.group(1).replace(",", ""))
@@ -122,18 +122,30 @@ def extract_debt_from_pdf_bytes(pdf_bytes: bytes) -> Optional[float]:
         start = max(0, match.start() - 500)
         context = text_lower[start:match.end()]
         if any(kw in context for kw in judgment_keywords):
-            amounts.append(amt)
+            qualified.append((amt, match.start(), match.end()))
 
-    if not amounts:
+    if qualified:
+        best = max(qualified, key=lambda x: x[0])
+        amt, ms, me = best
+    else:
+        # Fallback: largest > $10K anywhere in the PDF
+        loose = []
         for match in dollar_pattern.finditer(full_text):
             try:
-                amt = float(match.group(1).replace(",", ""))
-                if amt > 10000:
-                    amounts.append(amt)
+                a = float(match.group(1).replace(",", ""))
+                if a > 10000:
+                    loose.append((a, match.start(), match.end()))
             except ValueError:
                 continue
+        if not loose:
+            return None, ""
+        best = max(loose, key=lambda x: x[0])
+        amt, ms, me = best
 
-    return max(amounts) if amounts else None
+    snip_start = max(0, ms - 200)
+    snip_end = min(len(full_text), me + 200)
+    snippet = full_text[snip_start:snip_end].replace("\n", " ⏎ ").strip()
+    return amt, snippet
 
 
 class MontgomeryDocketScraper(DocketScraper):
@@ -763,14 +775,34 @@ class MontgomeryDocketScraper(DocketScraper):
         rows = await page.query_selector_all("#tblDocketBody td.docketRows")
         print(f"      → docket rows found: {len(rows)} (case_id={case_id or 'unknown'})")
 
+        # Ranked from MOST authoritative judgment document to least.
+        # Specific multi-word phrases come before bare "judgment" / "decree".
         judgment_keywords = [
-            "summary judgment", "default judgment", "magistrate decision",
-            "final judgment", "final entry", "judgment entry",
-            "decree of foreclosure", "decree in foreclosure", "judgment and decree",
-            "entry of judgment", "judgment", "decree",
+            "judgment entry and foreclosure decree",
+            "judgment and decree of foreclosure",
+            "judgment and decree",
+            "decree of foreclosure",
+            "decree in foreclosure",
+            "judgment entry",
+            "entry of judgment",
+            "final judgment",
+            "final entry",
+            "magistrate decision",
+            "summary judgment",
+            "default judgment",
+            "judgment",
+            "decree",
+        ]
+        # Rows whose docket text starts/leads with these are supporting filings
+        # (motions asking for judgment, affidavits supporting them, notices of
+        # filing) — they often contain the same dollar figures but are not the
+        # judgment itself. Deprioritize.
+        supporting_doc_markers = [
+            "motion:", "motion for", "affidavit", "notice:", "notice of filing",
+            "memorandum", "brief in", "reply in support", "exhibit",
         ]
 
-        candidates = []  # (docket_id, text_preview, priority)
+        candidates = []  # (rank, docket_id, text_preview, prio_in_kw_list, is_supporting)
         for row in rows:
             try:
                 row_id = await row.get_attribute("id") or ""
@@ -780,11 +812,17 @@ class MontgomeryDocketScraper(DocketScraper):
                 docket_id = m.group(1)
                 row_text = (await row.inner_text()).strip()
                 tl = row_text.lower()
-                # Higher priority for the longer/more-specific keywords (listed first above).
+                matched_prio = None
                 for prio, kw in enumerate(judgment_keywords):
                     if kw in tl:
-                        candidates.append((docket_id, row_text[:140].replace("\n", " "), prio))
+                        matched_prio = prio
                         break
+                if matched_prio is None:
+                    continue
+                is_supporting = any(marker in tl for marker in supporting_doc_markers)
+                # rank: lower wins. supporting rows shoved behind ALL non-supporting.
+                rank = (1 if is_supporting else 0, matched_prio)
+                candidates.append((rank, docket_id, row_text[:160].replace("\n", " "), matched_prio, is_supporting))
             except Exception:
                 continue
 
@@ -793,11 +831,11 @@ class MontgomeryDocketScraper(DocketScraper):
             self._extract_debt_from_text(await page.inner_text("#Case"), result)
             return
 
-        # Sort by priority (longest keyword first wins).
-        candidates.sort(key=lambda c: c[2])
+        candidates.sort(key=lambda c: c[0])
         print(f"      → judgment candidates: {len(candidates)}")
-        for docket_id, preview, prio in candidates[:5]:
-            print(f"         · prio={prio} docketid={docket_id} :: {preview}")
+        for rank, docket_id, preview, prio, is_sup in candidates[:6]:
+            tag = "SUPPORTING" if is_sup else "JUDGMENT"
+            print(f"         · [{tag}] prio={prio} docketid={docket_id} :: {preview}")
 
         if not case_id:
             print(f"      ⚠ cannot fetch PDFs without case_id; skipping")
@@ -805,7 +843,7 @@ class MontgomeryDocketScraper(DocketScraper):
             return
 
         req = page.context.request
-        for docket_id, preview, _ in candidates[:5]:
+        for rank, docket_id, preview, prio, is_sup in candidates[:6]:
             url = (
                 f"{BASE_URL}/Helpers/getDocumentFromOnBase.aspx"
                 f"?docketid={docket_id}&caseid={case_id}&documenttype=docket"
@@ -822,11 +860,14 @@ class MontgomeryDocketScraper(DocketScraper):
                 if pdf_bytes[:4] != b"%PDF":
                     print(f"      ⚠ PDF {docket_id}: not a PDF (first bytes {pdf_bytes[:8]!r})")
                     continue
-                amount = extract_debt_from_pdf_bytes(pdf_bytes)
+                amount, snippet = extract_debt_from_pdf_bytes(pdf_bytes)
                 if amount:
+                    tag = "SUPPORTING" if is_sup else "JUDGMENT"
                     result.prayer_amount = amount
-                    result.debt_source = f"pdf_extract:docket_{docket_id}"
-                    print(f"      ✅ extracted debt from PDF {docket_id}: ${amount:,.2f}")
+                    result.debt_source = f"pdf_extract:docket_{docket_id}:{tag.lower()}"
+                    print(f"      ✅ extracted debt from PDF {docket_id} [{tag}]: ${amount:,.2f}")
+                    print(f"      📄 PDF context (~400 chars around match):")
+                    print(f"         {snippet}")
                     return
                 else:
                     print(f"      → PDF {docket_id} parsed but no debt keyword match")
@@ -836,94 +877,6 @@ class MontgomeryDocketScraper(DocketScraper):
         # Last-ditch: scan the docket text itself.
         self._extract_debt_from_text(await page.inner_text("#Case"), result)
         return
-
-    async def _extract_judgment_from_pdf_legacy(self, page: Page, result: DocketResult) -> None:
-        """Unused legacy <a>-based extraction kept for reference."""
-        case_locator = page.locator("#Case").first
-        if await case_locator.count() > 0:
-            links = await case_locator.locator("a").element_handles()
-        else:
-            links = await page.query_selector_all("a")
-        print(f"      → scanning {len(links)} anchors in #Case for judgment links")
-        judgment_links = []
-
-        for link in links:
-            try:
-                text = (await link.inner_text()).strip().lower()
-                href = await link.get_attribute("href") or ""
-            except Exception:
-                continue
-
-            judgment_keywords = [
-                "judgment", "decree", "summary judgment",
-                "default judgment", "foreclosure judgment",
-                "final judgment", "entry of judgment",
-                "magistrate decision",
-            ]
-            is_judgment = any(kw in text for kw in judgment_keywords)
-            is_doc_link = any(ext in href.lower() for ext in [".pdf", "document", "doc", "image", "view"])
-
-            if is_judgment or (is_doc_link and any(kw in text for kw in judgment_keywords)):
-                judgment_links.append((link, text, href))
-
-        if not judgment_links:
-            print(f"      → no judgment PDF links found in docket")
-            self._extract_debt_from_text(await page.inner_text("body"), result)
-            return
-
-        for link_el, link_text, href in judgment_links[:3]:
-            print(f"      → trying judgment link: '{link_text[:60]}' → {href[:80]}")
-            try:
-                async with page.expect_download(timeout=15000) as download_info:
-                    await link_el.click()
-                download = await download_info.value
-                tmp_path = await download.path()
-                if tmp_path:
-                    pdf_bytes = Path(tmp_path).read_bytes()
-                    amount = extract_debt_from_pdf_bytes(pdf_bytes)
-                    if amount:
-                        result.prayer_amount = amount
-                        result.debt_source = "pdf_extract"
-                        print(f"      ✅ extracted debt from PDF: ${amount:,.2f}")
-                        return
-                    else:
-                        print(f"      → no debt amount found in PDF")
-            except Exception:
-                pass
-
-            # Fallback: navigate to href and read content
-            try:
-                original_url = page.url
-                full_href = href if href.startswith("http") else f"{BASE_URL}/{href.lstrip('/')}"
-                response = await page.goto(full_href, wait_until="domcontentloaded", timeout=15000)
-                await page.wait_for_timeout(2000)
-
-                content_type = response.headers.get("content-type", "") if response else ""
-                if "pdf" in content_type:
-                    body = await response.body()
-                    amount = extract_debt_from_pdf_bytes(body)
-                    if amount:
-                        result.prayer_amount = amount
-                        result.debt_source = "pdf_extract"
-                        print(f"      ✅ extracted debt from direct PDF: ${amount:,.2f}")
-                        await page.goto(original_url, wait_until="domcontentloaded", timeout=15000)
-                        return
-                else:
-                    viewer_text = await page.inner_text("body")
-                    self._extract_debt_from_text(viewer_text, result)
-                    if result.prayer_amount > 0:
-                        print(f"      ✅ extracted debt from doc viewer: ${result.prayer_amount:,.2f}")
-                        await page.goto(original_url, wait_until="domcontentloaded", timeout=15000)
-                        return
-
-                await page.goto(original_url, wait_until="domcontentloaded", timeout=15000)
-                await page.wait_for_timeout(1000)
-            except Exception as e:
-                print(f"      ⚠ link follow failed: {e}")
-                continue
-
-        if result.prayer_amount == 0:
-            self._extract_debt_from_text(await page.inner_text("body"), result)
 
     def _extract_debt_from_text(self, text: str, result: DocketResult) -> None:
         """Extract debt from inline docket text near judgment keywords."""
