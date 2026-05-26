@@ -6,6 +6,44 @@ on:
     # GitHub Actions cron is UTC only; does not observe DST.
     - cron: '0 11 * * *'
   workflow_dispatch:
+    inputs:
+      county:
+        description: 'County to scrape. "all" runs the full daily pipeline. A single county-id (e.g. cuyahoga-oh) runs ONLY that county scraper for fast testing.'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - miami-dade-fl
+          - broward-fl
+          - duval-fl
+          - lee-fl
+          - orange-fl
+          - cuyahoga-oh
+          - franklin-oh
+          - montgomery-oh
+          - summit-oh
+          - hamilton-oh
+      run_dockets:
+        description: 'Run docket enrichment step (slow). Off for quick auction-scraper tests.'
+        required: false
+        default: true
+        type: boolean
+      run_pr:
+        description: 'Run PropertyRadar enrichment step (slow). Off for quick tests.'
+        required: false
+        default: true
+        type: boolean
+      docket_county:
+        description: 'Docket scraper to run when run_dockets is on. "auto" = cuyahoga-oh. Set a specific county-id to test a new docket scraper in isolation.'
+        required: false
+        default: 'auto'
+        type: string
+      commit_results:
+        description: 'Commit and push refreshed data. Off for test runs so the trail stays clean.'
+        required: false
+        default: true
+        type: boolean
 
 permissions:
   contents: write
@@ -42,30 +80,70 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y xvfb
 
-      - name: Run auction scrapers (all 10 counties)
+      - name: Resolve run parameters
+        id: params
+        run: |
+          # Scheduled runs (no inputs) always behave as the full daily pipeline.
+          COUNTY="${{ github.event.inputs.county }}"
+          RUN_DOCKETS="${{ github.event.inputs.run_dockets }}"
+          RUN_PR="${{ github.event.inputs.run_pr }}"
+          DOCKET_COUNTY="${{ github.event.inputs.docket_county }}"
+          COMMIT="${{ github.event.inputs.commit_results }}"
+
+          # Empty inputs => scheduled run => full pipeline defaults.
+          [ -z "$COUNTY" ]        && COUNTY="all"
+          [ -z "$RUN_DOCKETS" ]   && RUN_DOCKETS="true"
+          [ -z "$RUN_PR" ]        && RUN_PR="true"
+          [ -z "$DOCKET_COUNTY" ] && DOCKET_COUNTY="auto"
+          [ -z "$COMMIT" ]        && COMMIT="true"
+
+          # docket_county "auto" resolves to cuyahoga-oh (the proven scraper).
+          [ "$DOCKET_COUNTY" = "auto" ] && DOCKET_COUNTY="cuyahoga-oh"
+
+          echo "county=$COUNTY"               >> "$GITHUB_OUTPUT"
+          echo "run_dockets=$RUN_DOCKETS"      >> "$GITHUB_OUTPUT"
+          echo "run_pr=$RUN_PR"                >> "$GITHUB_OUTPUT"
+          echo "docket_county=$DOCKET_COUNTY"  >> "$GITHUB_OUTPUT"
+          echo "commit=$COMMIT"                >> "$GITHUB_OUTPUT"
+
+          echo "===== RESOLVED RUN PARAMETERS ====="
+          echo "  county scrape target : $COUNTY"
+          echo "  run docket step      : $RUN_DOCKETS (county: $DOCKET_COUNTY)"
+          echo "  run PR step          : $RUN_PR"
+          echo "  commit results       : $COMMIT"
+
+      - name: Run auction scrapers
         id: scrapers
         run: |
-          xvfb-run -a --server-args="-screen 0 1280x800x24" \
-            python -m core.auction.universal --all --days=14
+          if [ "${{ steps.params.outputs.county }}" = "all" ]; then
+            echo "Running ALL 10 counties (--days=14)"
+            xvfb-run -a --server-args="-screen 0 1280x800x24" \
+              python -m core.auction.universal --all --days=14
+          else
+            echo "Running SINGLE county: ${{ steps.params.outputs.county }} (--days=14)"
+            xvfb-run -a --server-args="-screen 0 1280x800x24" \
+              python -m core.auction.universal "${{ steps.params.outputs.county }}" --days=14
+          fi
         continue-on-error: false
 
-      - name: Run Cuyahoga docket enrichment
+      - name: Run docket enrichment
         id: dockets
+        if: steps.params.outputs.run_dockets == 'true'
         run: |
+          echo "Running docket enrichment for: ${{ steps.params.outputs.docket_county }}"
           xvfb-run -a --server-args="-screen 0 1280x800x24" \
-            python -m core.dockets.enrich cuyahoga-oh
+            python -m core.dockets.enrich "${{ steps.params.outputs.docket_county }}"
         continue-on-error: true
 
       - name: Run PropertyRadar enrichment
         id: pr_enrich
+        if: steps.params.outputs.run_pr == 'true'
         timeout-minutes: 10
         env:
           PROPERTYRADAR_TOKEN: ${{ secrets.PROPERTYRADAR_TOKEN }}
         run: |
           # Cap at 50 leads/day to bound cost at ~$0.50/day worst case.
           # `yes |` auto-confirms the interactive "Continue? (y/N)" prompt.
-          # If this step fails or hits the cost cap, we still regenerate the
-          # dashboard using whatever PR data was previously cached.
           yes | python -m core.enrichment.propertyradar --top 50 || echo "::warning::PR enrichment step had issues — continuing with existing enriched data"
         continue-on-error: true
 
@@ -83,12 +161,11 @@ jobs:
           git diff --stat docs/data/ data/ || true
 
       - name: Commit and push refreshed data
+        if: steps.params.outputs.commit == 'true'
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          # Stage the data we care about. PR enrichment writes to data/enriched/
-          # so we include that too.
           git add docs/data/ data/dockets/ data/enriched/ data/raw/ 2>/dev/null || true
 
           if git diff --cached --quiet; then
@@ -99,6 +176,11 @@ jobs:
           DATESTAMP=$(date -u +'%Y-%m-%d %H:%M:%S UTC')
           git commit -m "Daily refresh ${DATESTAMP}"
           git push origin HEAD:${GITHUB_REF#refs/heads/}
+
+      - name: Skipped commit notice
+        if: steps.params.outputs.commit != 'true'
+        run: |
+          echo "::notice::commit_results was false — this was a TEST run. No data committed."
 
       - name: Report failure summary
         if: failure()
