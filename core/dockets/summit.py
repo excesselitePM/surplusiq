@@ -646,6 +646,25 @@ class SummitDocketScraper(DocketScraper):
                     print(f"      ✅ extracted debt from PDF row={idx} [JUDGMENT]: ${amount:,.2f}")
                     print(f"      📄 PDF context (~400 chars around match):")
                     print(f"         {snippet}")
+                    # Persist the raw PDF and full pdfplumber text so the
+                    # auditor can verify the figure in context (e.g. that a
+                    # multi-parcel decree is one blanket judgment vs. a
+                    # collapse of per-parcel debts).
+                    try:
+                        safe_case = re.sub(r"[^A-Za-z0-9_-]+", "_", result.case_number)
+                        ts = datetime.now().strftime("%H%M%S")
+                        diag = Path("data/diagnostics/summit-oh")
+                        (diag / f"{ts}-{safe_case}-row{idx}.pdf").write_bytes(pdf_bytes)
+                        # Re-extract full text for the audit file
+                        import pdfplumber
+                        full_text = ""
+                        with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
+                            for page in pdf.pages[:15]:
+                                full_text += (page.extract_text() or "") + "\n"
+                        (diag / f"{ts}-{safe_case}-row{idx}.txt").write_text(full_text, encoding="utf-8")
+                        print(f"      📝 saved raw PDF + extracted text ({len(pdf_bytes)} bytes, {len(full_text)} chars text)")
+                    except Exception as e:
+                        print(f"      ⚠ PDF save failed: {e}")
                     return
                 else:
                     print(f"      → PDF row={idx} parsed but no debt keyword match")
