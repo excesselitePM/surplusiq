@@ -266,77 +266,32 @@ class MontgomeryDocketScraper(DocketScraper):
         It may also show as a blocking page on first visit.
         Try multiple approaches to accept it.
         """
-        # Check if disclaimer modal is already visible
-        body_text = (await page.inner_text("body")).lower()
+        # PRO V3 shows a disclaimer modal on page load with "I Agree" / "Disagree" buttons.
+        # The modal overlays the search form, so we MUST dismiss it first.
+        # The onclick is acceptDisclaimer() — try clicking the button directly.
 
-        # If search is already visible, no disclaimer needed
-        if "case number" in body_text and "search" in body_text:
-            print(f"      → disclaimer already accepted (search visible)")
-            return
-
-        # Approach 1: Try clicking the disclaimer link to trigger the modal
+        # First try the "I Agree" button (confirmed from diagnostics)
         for sel in [
-            "a[href*='Disclaimer']",
-            "a[href*='disclaimer']",
-            "text=/disclaimer/i",
-        ]:
-            try:
-                link = page.locator(sel).first
-                if await link.count() > 0:
-                    await link.click(timeout=3000)
-                    await page.wait_for_timeout(1500)
-                    print(f"      → triggered disclaimer via: {sel}")
-                    break
-            except Exception:
-                continue
-
-        # Approach 2: Look for the disclaimer modal/dialog and accept it
-        await page.wait_for_timeout(1000)
-        for sel in [
+            "button:has-text('I Agree')",
             "button:has-text('Accept')",
             "button:has-text('Agree')",
-            "button:has-text('OK')",
-            "button:has-text('I Agree')",
-            "input[value*='Accept' i]",
-            "input[value*='Agree' i]",
-            "input[value*='OK' i]",
-            "a:has-text('Accept')",
-            "a:has-text('I Agree')",
-            "#btnAccept",
-            "#acceptButton",
-            ".btn-accept",
-            "button.accept",
         ]:
             try:
                 btn = page.locator(sel).first
                 if await btn.count() > 0 and await btn.is_visible():
-                    await btn.click(timeout=3000)
-                    await page.wait_for_timeout(1500)
+                    await btn.click(timeout=5000)
+                    await page.wait_for_timeout(2000)
                     print(f"      → accepted disclaimer: {sel}")
                     return
             except Exception:
                 continue
 
-        # Approach 3: Try executing the openDisclaimer() JS and then accepting
+        # Fallback: call acceptDisclaimer() directly via JS
         try:
-            await page.evaluate("if(typeof openDisclaimer === 'function') openDisclaimer()")
-            await page.wait_for_timeout(1500)
-            # Now try accept buttons again
-            for sel in [
-                "button:has-text('Accept')",
-                "button:has-text('Agree')",
-                "button:has-text('OK')",
-                "input[value*='Accept' i]",
-            ]:
-                try:
-                    btn = page.locator(sel).first
-                    if await btn.count() > 0 and await btn.is_visible():
-                        await btn.click(timeout=3000)
-                        await page.wait_for_timeout(1500)
-                        print(f"      → accepted disclaimer after JS trigger: {sel}")
-                        return
-                except Exception:
-                    continue
+            await page.evaluate("if(typeof acceptDisclaimer === 'function') acceptDisclaimer()")
+            await page.wait_for_timeout(2000)
+            print(f"      → accepted disclaimer via JS: acceptDisclaimer()")
+            return
         except Exception:
             pass
 
@@ -449,44 +404,33 @@ class MontgomeryDocketScraper(DocketScraper):
             except Exception:
                 pass
 
-        # Click search/submit — try many patterns
+        # The search button onclick is: openTab('genSearch',$('#frmGenSearch').serialize())
+        # Try clicking the visible btn-success Search button first, then JS fallback
         submitted = False
-        for sel in [
-            "#gen_search",
-            "#btnSearch",
-            "#searchButton",
-            "button:has-text('Search')",
-            "button:has-text('Go')",
-            "button:has-text('Find')",
-            "input[type='submit']",
-            "button[type='submit']",
-            "input[value*='Search' i]",
-            "button:has-text('Submit')",
-            "a:has-text('Search')",
-            ".btn-search",
-            "button.search",
-            "span:has-text('Search')",
-            "i.fa-search",
-        ]:
-            try:
-                btn = page.locator(sel).first
-                if await btn.count() > 0 and await btn.is_visible():
-                    await btn.click(timeout=5000)
-                    submitted = True
-                    print(f"      → clicked search button: {sel}")
-                    break
-            except Exception:
-                continue
+
+        # The visible Search button is: button.btn.btn-success with onclick containing genSearch
+        try:
+            search_btns = page.locator("button.btn-success:visible")
+            count = await search_btns.count()
+            if count > 0:
+                await search_btns.first.click(timeout=5000)
+                submitted = True
+                print(f"      → clicked btn-success Search button")
+        except Exception as e:
+            print(f"      ⚠ btn-success click failed: {e}")
 
         if not submitted:
-            # Try clicking any visible button near the search form
+            # Fallback: call the JS function directly
             try:
-                await page.locator("#gen_case_number").press("Enter")
+                await page.evaluate("openTab('genSearch',$('#frmGenSearch').serialize())")
                 submitted = True
-                print(f"      → pressed Enter on case number field")
-            except Exception:
-                await page.keyboard.press("Enter")
-                print(f"      → pressed Enter globally")
+                print(f"      → called openTab() via JS directly")
+            except Exception as e:
+                print(f"      ⚠ JS openTab() failed: {e}")
+
+        if not submitted:
+            await page.keyboard.press("Enter")
+            print(f"      → pressed Enter as last resort")
 
         # SPA: wait for the results section to populate
         await page.wait_for_timeout(5000)
