@@ -499,6 +499,15 @@ class MontgomeryDocketScraper(DocketScraper):
         except Exception as e:
             print(f"      ⚠ first row onclick read failed: {e}")
 
+        # Parse the case_id out of the onclick so we can build PDF URLs directly:
+        #   openTab('caseInfo','case_id=NNNN&screen=summary',1,'YYYY CV NNNNN');
+        m_case_id = re.search(r"case_id=(\d+)", first_row_onclick or "")
+        if m_case_id:
+            self._active_case_id = m_case_id.group(1)
+            print(f"      → captured case_id={self._active_case_id}")
+        else:
+            self._active_case_id = ""
+
         clicked_case = False
         try:
             row = page.locator("#tblSearchResults tr:first-child").first
@@ -626,13 +635,24 @@ class MontgomeryDocketScraper(DocketScraper):
             print(f"      ⚠ summary: #Case empty, falling back to body")
             text = await page.inner_text("body")
 
-        # Case title — look for "vs" pattern
+        # Case title — PRO V3 renders it as
+        # "YYYY CV NNNNN: PLAINTIFF NAME vs DEFENDANT NAME"
+        # both inline in the Summary screen and inside the print button header.
         title_m = re.search(
-            r"([A-Z][A-Z\s,\.&\']+(?:VS\.?|V\.)\s+[A-Z][A-Z\s,\.&\']+)",
+            r"\b(\d{4}\s+CV\s+\d+):\s*([A-Z][A-Z0-9 ,.&'/\-]{3,}\s+vs\.?\s+[A-Z][A-Z0-9 ,.&'/\-]{3,})",
             text,
+            re.IGNORECASE,
         )
         if title_m:
-            result.case_title = title_m.group(1).strip().replace("\n", " ")[:200]
+            result.case_title = f"{title_m.group(1)}: {title_m.group(2)}".strip()[:200]
+        else:
+            # Fallback: classic "PLAINTIFF vs DEFENDANT" only.
+            alt = re.search(
+                r"([A-Z][A-Z0-9 ,.&'/\-]{3,}\s+(?:vs\.?|v\.)\s+[A-Z][A-Z0-9 ,.&'/\-]{3,})",
+                text,
+            )
+            if alt:
+                result.case_title = alt.group(1).strip().replace("\n", " ")[:200]
 
         # Filing date
         fd_m = re.search(r"(?:Filing|Filed)\s*(?:Date)?\s*:?\s*(\d{1,2}/\d{1,2}/\d{4})", text, re.IGNORECASE)
@@ -728,10 +748,97 @@ class MontgomeryDocketScraper(DocketScraper):
         await self._extract_judgment_from_pdf(page, result)
 
     async def _extract_judgment_from_pdf(self, page: Page, result: DocketResult) -> None:
-        """Find judgment-related links in the #Case section, extract debt."""
+        """Walk #tblDocketBody, pull judgment docket rows, fetch + parse the PDFs.
+
+        PRO V3 wires docket PDFs through DOWNLOAD <button>s whose onclick is
+        window.open('/Helpers/getDocumentFromOnBase.aspx?docketid=NN&caseid=MM&documenttype=docket').
+        We rebuild that URL from the row id (id="docket_row_NN") and the
+        case_id captured from the result-row onclick, then fetch via
+        page.context.request to preserve cookies/session.
+        """
         if result.prayer_amount > 0:
             return
 
+        case_id = getattr(self, "_active_case_id", "")
+        rows = await page.query_selector_all("#tblDocketBody td.docketRows")
+        print(f"      → docket rows found: {len(rows)} (case_id={case_id or 'unknown'})")
+
+        judgment_keywords = [
+            "summary judgment", "default judgment", "magistrate decision",
+            "final judgment", "final entry", "judgment entry",
+            "decree of foreclosure", "decree in foreclosure", "judgment and decree",
+            "entry of judgment", "judgment", "decree",
+        ]
+
+        candidates = []  # (docket_id, text_preview, priority)
+        for row in rows:
+            try:
+                row_id = await row.get_attribute("id") or ""
+                m = re.match(r"docket_row_(\d+)", row_id)
+                if not m:
+                    continue
+                docket_id = m.group(1)
+                row_text = (await row.inner_text()).strip()
+                tl = row_text.lower()
+                # Higher priority for the longer/more-specific keywords (listed first above).
+                for prio, kw in enumerate(judgment_keywords):
+                    if kw in tl:
+                        candidates.append((docket_id, row_text[:140].replace("\n", " "), prio))
+                        break
+            except Exception:
+                continue
+
+        if not candidates:
+            print(f"      → no judgment docket rows matched keyword list")
+            self._extract_debt_from_text(await page.inner_text("#Case"), result)
+            return
+
+        # Sort by priority (longest keyword first wins).
+        candidates.sort(key=lambda c: c[2])
+        print(f"      → judgment candidates: {len(candidates)}")
+        for docket_id, preview, prio in candidates[:5]:
+            print(f"         · prio={prio} docketid={docket_id} :: {preview}")
+
+        if not case_id:
+            print(f"      ⚠ cannot fetch PDFs without case_id; skipping")
+            self._extract_debt_from_text(await page.inner_text("#Case"), result)
+            return
+
+        req = page.context.request
+        for docket_id, preview, _ in candidates[:5]:
+            url = (
+                f"{BASE_URL}/Helpers/getDocumentFromOnBase.aspx"
+                f"?docketid={docket_id}&caseid={case_id}&documenttype=docket"
+            )
+            try:
+                resp = await req.get(url, timeout=20000)
+                if not resp.ok:
+                    print(f"      ⚠ PDF fetch {docket_id}: HTTP {resp.status}")
+                    continue
+                pdf_bytes = await resp.body()
+                if not pdf_bytes or len(pdf_bytes) < 1000:
+                    print(f"      ⚠ PDF {docket_id}: body too small ({len(pdf_bytes)} bytes)")
+                    continue
+                if pdf_bytes[:4] != b"%PDF":
+                    print(f"      ⚠ PDF {docket_id}: not a PDF (first bytes {pdf_bytes[:8]!r})")
+                    continue
+                amount = extract_debt_from_pdf_bytes(pdf_bytes)
+                if amount:
+                    result.prayer_amount = amount
+                    result.debt_source = f"pdf_extract:docket_{docket_id}"
+                    print(f"      ✅ extracted debt from PDF {docket_id}: ${amount:,.2f}")
+                    return
+                else:
+                    print(f"      → PDF {docket_id} parsed but no debt keyword match")
+            except Exception as e:
+                print(f"      ⚠ PDF fetch {docket_id} failed: {type(e).__name__}: {e}")
+
+        # Last-ditch: scan the docket text itself.
+        self._extract_debt_from_text(await page.inner_text("#Case"), result)
+        return
+
+    async def _extract_judgment_from_pdf_legacy(self, page: Page, result: DocketResult) -> None:
+        """Unused legacy <a>-based extraction kept for reference."""
         case_locator = page.locator("#Case").first
         if await case_locator.count() > 0:
             links = await case_locator.locator("a").element_handles()
@@ -851,29 +958,36 @@ class MontgomeryDocketScraper(DocketScraper):
     # ─── Step 6: Scrape parties ──────────────────────────────────────────
 
     async def _scrape_parties(self, page: Page, result: DocketResult) -> None:
-        """Extract plaintiff and defendants from the Party subscreen."""
+        """Extract plaintiff and defendants from #tblPartyBody.
+
+        PRO V3 renders each party as:
+          <tr class="table-info"><td><div class="row"><div class="col-md-5">
+            <strong>NAME</strong><br><small>TYPE</small>
+          </div></div></td></tr>
+        """
         await self._switch_case_subscreen(page, "Party")
         await self._dump("case_for_parties", "#Case", inline_chars=3000)
 
-        text = ""
-        try:
-            case_el = page.locator("#Case").first
-            if await case_el.count() > 0:
-                text = await case_el.inner_text()
-        except Exception:
-            text = ""
-        if not text.strip():
-            text = await page.inner_text("body")
-
-        p_m = re.search(r"PLAINTIFF\s*:?\s*\n?\s*([^\n]+)", text, re.IGNORECASE)
-        if p_m:
-            result.plaintiff = p_m.group(1).strip()[:200]
-
         defendants = []
-        for m in re.finditer(r"DEFENDANT\s*:?\s*\n?\s*([^\n]+)", text, re.IGNORECASE):
-            name = m.group(1).strip()[:200]
-            if name and name not in defendants:
-                defendants.append(name)
+        party_rows = await page.query_selector_all("#tblPartyBody tr.table-info")
+        print(f"      → party rows: {len(party_rows)}")
+        for row in party_rows:
+            try:
+                name_el = await row.query_selector("strong")
+                type_el = await row.query_selector("small")
+                if not name_el or not type_el:
+                    continue
+                name = (await name_el.inner_text()).strip()[:200]
+                ptype = (await type_el.inner_text()).strip().upper()
+                if not name:
+                    continue
+                if "PLAINTIFF" in ptype and not result.plaintiff:
+                    result.plaintiff = name
+                elif "DEFENDANT" in ptype:
+                    if name not in defendants:
+                        defendants.append(name)
+            except Exception:
+                continue
         result.defendants = defendants
 
         creditor_keywords = [
