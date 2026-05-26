@@ -187,6 +187,24 @@ class MontgomeryDocketScraper(DocketScraper):
                 except Exception as e:
                     print(f"      ⚠ snap failed: {e}")
 
+            async def dump(label, selector="body", inline_chars=2500):
+                """Save container outerHTML to disk and log a truncated copy."""
+                try:
+                    el = page.locator(selector).first
+                    if await el.count() == 0:
+                        print(f"      ⚠ dump {label}: selector '{selector}' not present")
+                        return
+                    html = await el.evaluate("el => el.outerHTML")
+                    ts = datetime.now().strftime("%H%M%S")
+                    path = diag_dir / f"{ts}-{label}.html"
+                    path.write_text(html, encoding="utf-8")
+                    snippet = html.replace("\n", " ")[:inline_chars]
+                    print(f"      🧾 dump {label} ({selector}) bytes={len(html)} → {path.name}")
+                    print(f"         {snippet}")
+                except Exception as e:
+                    print(f"      ⚠ dump {label} failed: {e}")
+            self._dump = dump
+
             try:
                 # ─── Step 1: Load portal and accept disclaimer ───
                 print(f"      ▶ step 1: load portal & accept disclaimer")
@@ -464,73 +482,108 @@ class MontgomeryDocketScraper(DocketScraper):
             body = await page.inner_text("body")
             print(f"      → no results container found. Full page text (first 800): {body[:800].strip()}")
 
-        # Try to find and click a case link in the results
-        # PRO V3 likely renders results as clickable rows or links
-        clicked_case = False
-        for link_sel in [
-            f"a:has-text('{parsed['year']} CV')",
-            f"a:has-text('{parsed['search_text']}')",
-            "#Results a",
-            "#Results table tr a",
-            "#Results table tbody tr:first-child",
-            "a[onclick*='openTab'][onclick*='Case']",
-            "a[onclick*='caseDetail']",
-            "a[onclick*='openCase']",
-            "td a[href='#Case']",
-            "a[href='#Case']",
-        ]:
-            try:
-                link = page.locator(link_sel).first
-                if await link.count() > 0 and await link.is_visible():
-                    await link.click(timeout=5000)
-                    await page.wait_for_timeout(3000)
-                    clicked_case = True
-                    print(f"      → clicked case result: {link_sel}")
-                    break
-            except Exception:
-                continue
+        # Dump the first results row so we can see what's actually clickable.
+        # PRO V3 renders the case number cell as an <a> with an onclick that
+        # invokes openTab('Case', ...) — clicking the <tr> itself does nothing.
+        await self._dump("results_first_row", "#Results table tbody tr:first-child", inline_chars=1500)
 
-        if not clicked_case:
-            # Try clicking the Case Info nav directly — might auto-load first result
+        row_anchors = await page.query_selector_all("#Results table tbody tr:first-child a")
+        print(f"      → first row anchors: {len(row_anchors)}")
+        for a in row_anchors[:8]:
             try:
-                await page.click("a[href='#Case']", timeout=3000)
-                await page.wait_for_timeout(3000)
-                print(f"      → clicked #Case nav directly")
+                a_text = (await a.inner_text()).strip()[:60]
+                a_href = await a.get_attribute("href") or ""
+                a_onclick = await a.get_attribute("onclick") or ""
+                print(f"         · a text='{a_text}' href='{a_href[:60]}' onclick='{a_onclick[:80]}'")
             except Exception:
                 pass
 
-        # Check if we have case detail content now
-        # Look in the #Case section specifically
-        case_text = ""
-        for sel in ["#Case", "#case", "[id*='Case']", "[id*='caseInfo']"]:
+        # Strategy: prefer clicking the case-number anchor inside the first row.
+        # Fall back to any anchor in the row, then to direct JS invocation of
+        # the row's onclick if Playwright misroutes the click.
+        clicked_case = False
+        for link_sel in [
+            f"#Results table tbody tr:first-child a:has-text('{parsed['search_text']}')",
+            f"#Results table tbody tr:first-child a:has-text('{parsed['year']} CV')",
+            "#Results table tbody tr:first-child a[onclick*='Case' i]",
+            "#Results table tbody tr:first-child a[onclick*='openTab' i]",
+            "#Results table tbody tr:first-child td:first-child a",
+            "#Results table tbody tr:first-child a",
+        ]:
             try:
-                el = page.locator(sel).first
-                if await el.count() > 0:
-                    case_text = await el.inner_text()
-                    if case_text.strip() and len(case_text.strip()) > 50:
-                        print(f"      → case container ({sel}) text (first 500): {case_text[:500].strip()}")
-                        break
-            except Exception:
+                link = page.locator(link_sel).first
+                if await link.count() > 0:
+                    await link.scroll_into_view_if_needed(timeout=2000)
+                    await link.click(timeout=5000, force=True)
+                    await page.wait_for_timeout(3500)
+                    clicked_case = True
+                    print(f"      → clicked case anchor: {link_sel}")
+                    break
+            except Exception as e:
+                print(f"      ⚠ click {link_sel} failed: {type(e).__name__}: {e}")
                 continue
 
-        if not case_text.strip():
-            body = await page.inner_text("body")
-            print(f"      → no case container found. Page text (first 500): {body[:500].strip()}")
+        if not clicked_case:
+            # Last resort: synthesize the click via JS on the first row's first link.
+            try:
+                await page.evaluate(
+                    "const a = document.querySelector('#Results table tbody tr a');"
+                    " if (a) { a.click(); }"
+                )
+                await page.wait_for_timeout(3500)
+                clicked_case = True
+                print(f"      → triggered first-row anchor.click() via JS")
+            except Exception as e:
+                print(f"      ⚠ JS row click failed: {e}")
 
-        body = await page.inner_text("body")
-        body_lower = body.lower()
-        has_case = any(kw in body_lower for kw in [
-            "docket", "parties", "filing date",
-            "plaintiff", "defendant", "foreclosure",
-            "case detail", "case status", "judge",
+        # PRO V3 tab switching is independent of data loading. Explicitly click
+        # the #Case nav so the SPA reveals whatever the row click populated.
+        try:
+            case_nav = page.locator("a[href='#Case']").first
+            if await case_nav.count() > 0:
+                await case_nav.click(timeout=3000, force=True)
+                await page.wait_for_timeout(2000)
+                print(f"      → clicked #Case tab nav")
+        except Exception as e:
+            print(f"      ⚠ #Case tab nav failed: {e}")
+
+        await self._dump("case_section", "#Case", inline_chars=3000)
+
+        # Compute case_text strictly from the #Case container; falling back
+        # to body would re-introduce the search-results false positive.
+        case_text = ""
+        try:
+            case_el = page.locator("#Case").first
+            if await case_el.count() > 0:
+                case_text = await case_el.inner_text()
+                print(f"      → #Case inner_text len={len(case_text)} (first 400): {case_text[:400].strip()}")
+        except Exception as e:
+            print(f"      ⚠ #Case inner_text failed: {e}")
+
+        if not case_text.strip():
+            await self._dump("body_after_click", "body", inline_chars=2000)
+
+        case_text_lower = case_text.lower()
+        has_case = any(kw in case_text_lower for kw in [
+            "docket", "filing date", "plaintiff", "defendant",
+            "case status", "case type", "judge",
         ])
         return has_case
 
     # ─── Step 4: Scrape case summary ─────────────────────────────────────
 
     async def _scrape_summary(self, page: Page, result: DocketResult) -> None:
-        """Extract case title, filing date, status from case page."""
-        text = await page.inner_text("body")
+        """Extract case title, filing date, status from the #Case SPA section."""
+        text = ""
+        try:
+            case_el = page.locator("#Case").first
+            if await case_el.count() > 0:
+                text = await case_el.inner_text()
+        except Exception:
+            text = ""
+        if not text.strip():
+            print(f"      ⚠ summary: #Case empty, falling back to body")
+            text = await page.inner_text("body")
 
         # Case title — look for "vs" pattern
         title_m = re.search(
@@ -568,32 +621,34 @@ class MontgomeryDocketScraper(DocketScraper):
     # ─── Step 5: Scrape docket + judgment PDF ────────────────────────────
 
     async def _scrape_docket(self, page: Page, result: DocketResult) -> None:
-        """Navigate to docket, scan for signals, find judgment PDFs."""
-        # Try clicking a Docket / Case Activity tab
-        docket_clicked = False
-        for sel in [
-            "a:has-text('Docket')",
-            "a:has-text('Case Activity')",
-            "a:has-text('Events')",
-            "a:has-text('Entries')",
-            "a:has-text('Case Info')",
-            "a[href*='docket' i]",
-            "a[href*='activity' i]",
-            "a[href*='entries' i]",
-        ]:
-            try:
-                link = page.locator(sel).first
-                if await link.count() > 0:
-                    await link.click(timeout=5000)
-                    await page.wait_for_load_state("domcontentloaded", timeout=15000)
-                    await page.wait_for_timeout(2000)
-                    docket_clicked = True
-                    print(f"      → navigated to docket: {sel}")
-                    break
-            except Exception:
-                continue
+        """Read docket entries from the #Case SPA section, find judgment PDFs.
 
-        docket_text = await page.inner_text("body")
+        PRO V3 renders the docket inline inside the #Case tab — there is no
+        separate Docket page to navigate to. Trying to click a Docket link
+        elsewhere just bounces the user back to the search form.
+        """
+        # Make sure #Case is the active tab.
+        try:
+            case_nav = page.locator("a[href='#Case']").first
+            if await case_nav.count() > 0:
+                await case_nav.click(timeout=3000, force=True)
+                await page.wait_for_timeout(1500)
+        except Exception:
+            pass
+
+        case_locator = page.locator("#Case").first
+        case_exists = await case_locator.count() > 0
+        docket_text = ""
+        if case_exists:
+            try:
+                docket_text = await case_locator.inner_text()
+            except Exception:
+                docket_text = ""
+        if not docket_text.strip():
+            print(f"      ⚠ docket: #Case empty, falling back to body")
+            docket_text = await page.inner_text("body")
+
+        await self._dump("case_for_docket", "#Case", inline_chars=4000)
 
         # Kill signals + proof + competing filers
         result.kill_signals = list(set(
@@ -607,9 +662,13 @@ class MontgomeryDocketScraper(DocketScraper):
         if re.search(r"owner'?s?\s+claim", docket_text, re.IGNORECASE):
             result.owner_filed_claim = True
 
-        # Extract docket events from table rows
+        # Extract docket events from rows inside #Case only (not page-wide
+        # tables, which include the search-results table from the Results tab).
         events = []
-        rows = await page.query_selector_all("table tr, tr")
+        if case_exists:
+            rows = await case_locator.locator("table tr, tr").element_handles()
+        else:
+            rows = await page.query_selector_all("table tr, tr")
         for row in rows:
             row_text = (await row.inner_text()).strip()
             if not row_text:
@@ -634,11 +693,16 @@ class MontgomeryDocketScraper(DocketScraper):
         await self._extract_judgment_from_pdf(page, result)
 
     async def _extract_judgment_from_pdf(self, page: Page, result: DocketResult) -> None:
-        """Find judgment-related links, download PDF, extract debt amount."""
+        """Find judgment-related links in the #Case section, extract debt."""
         if result.prayer_amount > 0:
             return
 
-        links = await page.query_selector_all("a")
+        case_locator = page.locator("#Case").first
+        if await case_locator.count() > 0:
+            links = await case_locator.locator("a").element_handles()
+        else:
+            links = await page.query_selector_all("a")
+        print(f"      → scanning {len(links)} anchors in #Case for judgment links")
         judgment_links = []
 
         for link in links:

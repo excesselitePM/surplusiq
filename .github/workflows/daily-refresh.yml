@@ -147,6 +147,15 @@ jobs:
           yes | python -m core.enrichment.propertyradar --top 50 || echo "::warning::PR enrichment step had issues — continuing with existing enriched data"
         continue-on-error: true
 
+      - name: Upload docket diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: docket-diagnostics-${{ steps.params.outputs.docket_county }}
+          path: data/diagnostics/
+          if-no-files-found: ignore
+          retention-days: 7
+
       - name: Regenerate dashboard data
         id: dashboard
         run: |
