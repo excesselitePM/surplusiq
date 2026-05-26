@@ -775,34 +775,46 @@ class MontgomeryDocketScraper(DocketScraper):
         rows = await page.query_selector_all("#tblDocketBody td.docketRows")
         print(f"      → docket rows found: {len(rows)} (case_id={case_id or 'unknown'})")
 
-        # Ranked from MOST authoritative judgment document to least.
-        # Specific multi-word phrases come before bare "judgment" / "decree".
-        judgment_keywords = [
+        # JUDGMENT requires one of these doc phrases (most-authoritative first).
+        # "judgment" alone is NOT sufficient — that catches clerk fees, lien
+        # releases, etc. The phrase must name an actual judgment instrument.
+        judgment_doc_phrases = [
             "judgment entry and foreclosure decree",
             "judgment and decree of foreclosure",
+            "judgment entry of foreclosure",
             "judgment and decree",
             "decree of foreclosure",
             "decree in foreclosure",
-            "judgment entry",
-            "entry of judgment",
+            "foreclosure decree",
+            "final judgment entry",
             "final judgment",
             "final entry",
+            "judgment entry",
+            "entry of judgment",
+            "magistrate's decision",
             "magistrate decision",
-            "summary judgment",
-            "default judgment",
-            "judgment",
-            "decree",
         ]
-        # Rows whose docket text starts/leads with these are supporting filings
-        # (motions asking for judgment, affidavits supporting them, notices of
-        # filing) — they often contain the same dollar figures but are not the
-        # judgment itself. Deprioritize.
+        # Hard exclusions — any of these in the row text disqualifies it.
+        # Fees, costs, clerk paperwork, lien releases, and judgment-debt
+        # satisfactions look judgment-adjacent but are not the judgment.
+        exclusion_markers = [
+            "fee", "cost statement", "clerk fee", "deposit", "refund",
+            "release of judgment", "release of lien", "release of liens",
+            "partial release", "satisfaction of judgment", "satisfaction",
+            "transcript", "subpoena", "praecipe", "writ of execution",
+            "garnishment",
+        ]
+        # Supporting filings — logged for trail but never fetched. A motion
+        # or affidavit can quote the prayer but is not the order itself.
         supporting_doc_markers = [
             "motion:", "motion for", "affidavit", "notice:", "notice of filing",
             "memorandum", "brief in", "reply in support", "exhibit",
         ]
 
-        candidates = []  # (rank, docket_id, text_preview, prio_in_kw_list, is_supporting)
+        judgment_candidates = []  # (prio, docket_id, preview)
+        supporting_seen = []      # (prio, docket_id, preview) — for log only
+        excluded_count = 0
+
         for row in rows:
             try:
                 row_id = await row.get_attribute("id") or ""
@@ -812,38 +824,50 @@ class MontgomeryDocketScraper(DocketScraper):
                 docket_id = m.group(1)
                 row_text = (await row.inner_text()).strip()
                 tl = row_text.lower()
+                preview = row_text[:160].replace("\n", " ")
+
+                if any(ex in tl for ex in exclusion_markers):
+                    excluded_count += 1
+                    continue
+
                 matched_prio = None
-                for prio, kw in enumerate(judgment_keywords):
-                    if kw in tl:
+                for prio, phrase in enumerate(judgment_doc_phrases):
+                    if phrase in tl:
                         matched_prio = prio
                         break
+
                 if matched_prio is None:
                     continue
-                is_supporting = any(marker in tl for marker in supporting_doc_markers)
-                # rank: lower wins. supporting rows shoved behind ALL non-supporting.
-                rank = (1 if is_supporting else 0, matched_prio)
-                candidates.append((rank, docket_id, row_text[:160].replace("\n", " "), matched_prio, is_supporting))
+
+                if any(sup in tl for sup in supporting_doc_markers):
+                    supporting_seen.append((matched_prio, docket_id, preview))
+                else:
+                    judgment_candidates.append((matched_prio, docket_id, preview))
             except Exception:
                 continue
 
-        if not candidates:
-            print(f"      → no judgment docket rows matched keyword list")
-            self._extract_debt_from_text(await page.inner_text("#Case"), result)
+        judgment_candidates.sort(key=lambda c: c[0])
+        supporting_seen.sort(key=lambda c: c[0])
+
+        print(
+            f"      → judgment candidates: {len(judgment_candidates)} "
+            f"(supporting only: {len(supporting_seen)}, excluded fee/clerk/release: {excluded_count})"
+        )
+        for prio, docket_id, preview in judgment_candidates[:6]:
+            print(f"         · [JUDGMENT] prio={prio} docketid={docket_id} :: {preview}")
+        for prio, docket_id, preview in supporting_seen[:4]:
+            print(f"         · [SUPPORTING — not fetched] prio={prio} docketid={docket_id} :: {preview}")
+
+        if not judgment_candidates:
+            print(f"      → no qualified judgment document; prayer stays $0 (lead → unknown)")
             return
 
-        candidates.sort(key=lambda c: c[0])
-        print(f"      → judgment candidates: {len(candidates)}")
-        for rank, docket_id, preview, prio, is_sup in candidates[:6]:
-            tag = "SUPPORTING" if is_sup else "JUDGMENT"
-            print(f"         · [{tag}] prio={prio} docketid={docket_id} :: {preview}")
-
         if not case_id:
-            print(f"      ⚠ cannot fetch PDFs without case_id; skipping")
-            self._extract_debt_from_text(await page.inner_text("#Case"), result)
+            print(f"      ⚠ cannot fetch PDFs without case_id; prayer stays $0 (lead → unknown)")
             return
 
         req = page.context.request
-        for rank, docket_id, preview, prio, is_sup in candidates[:6]:
+        for prio, docket_id, preview in judgment_candidates[:6]:
             url = (
                 f"{BASE_URL}/Helpers/getDocumentFromOnBase.aspx"
                 f"?docketid={docket_id}&caseid={case_id}&documenttype=docket"
@@ -862,10 +886,9 @@ class MontgomeryDocketScraper(DocketScraper):
                     continue
                 amount, snippet = extract_debt_from_pdf_bytes(pdf_bytes)
                 if amount:
-                    tag = "SUPPORTING" if is_sup else "JUDGMENT"
                     result.prayer_amount = amount
-                    result.debt_source = f"pdf_extract:docket_{docket_id}:{tag.lower()}"
-                    print(f"      ✅ extracted debt from PDF {docket_id} [{tag}]: ${amount:,.2f}")
+                    result.debt_source = f"pdf_extract:docket_{docket_id}:judgment"
+                    print(f"      ✅ extracted debt from PDF {docket_id} [JUDGMENT]: ${amount:,.2f}")
                     print(f"      📄 PDF context (~400 chars around match):")
                     print(f"         {snippet}")
                     return
@@ -874,39 +897,11 @@ class MontgomeryDocketScraper(DocketScraper):
             except Exception as e:
                 print(f"      ⚠ PDF fetch {docket_id} failed: {type(e).__name__}: {e}")
 
-        # Last-ditch: scan the docket text itself.
-        self._extract_debt_from_text(await page.inner_text("#Case"), result)
+        # All qualified judgment PDFs were unreadable or yielded no debt-keyword
+        # match. Per the anti-fabrication rule, prayer stays $0 and the lead
+        # remains unknown — no text-scrape fallback.
+        print(f"      → all qualified judgment PDFs failed; prayer stays $0 (lead → unknown)")
         return
-
-    def _extract_debt_from_text(self, text: str, result: DocketResult) -> None:
-        """Extract debt from inline docket text near judgment keywords."""
-        if result.prayer_amount > 0:
-            return
-
-        text_lower = text.lower()
-        judgment_keywords = [
-            "judgment", "decree", "amount due", "principal",
-            "total amount", "sum of", "awarded", "indebtedness",
-        ]
-
-        dollar_pattern = re.compile(r"\$\s*([\d,]+(?:\.\d{2})?)")
-        amounts = []
-
-        for match in dollar_pattern.finditer(text):
-            try:
-                amt = float(match.group(1).replace(",", ""))
-            except ValueError:
-                continue
-            if amt < 1000:
-                continue
-            start = max(0, match.start() - 500)
-            context = text_lower[start:match.end()]
-            if any(kw in context for kw in judgment_keywords):
-                amounts.append(amt)
-
-        if amounts:
-            result.prayer_amount = max(amounts)
-            result.debt_source = "docket_text_extract"
 
     # ─── Step 6: Scrape parties ──────────────────────────────────────────
 
