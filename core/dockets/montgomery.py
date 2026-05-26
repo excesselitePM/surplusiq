@@ -461,43 +461,64 @@ class MontgomeryDocketScraper(DocketScraper):
             await page.keyboard.press("Enter")
             print(f"      → pressed Enter to submit")
 
-        await page.wait_for_load_state("domcontentloaded", timeout=20000)
-        await page.wait_for_timeout(3000)
+        # SPA: wait for the results section to populate
+        await page.wait_for_timeout(5000)
 
-        # Check if we got results or landed on case detail
+        # Dump post-search page state
+        body = await page.inner_text("body")
+        print(f"      → post-search page text (first 500): {body[:500].strip()}")
+
+        # SPA uses #Results for results — try clicking the Results nav
+        for sel in [
+            "a[href='#Results']",
+            "a:has-text('Results')",
+        ]:
+            try:
+                link = page.locator(sel).first
+                if await link.count() > 0 and await link.is_visible():
+                    await link.click(timeout=3000)
+                    await page.wait_for_timeout(2000)
+                    print(f"      → clicked results nav: {sel}")
+                    break
+            except Exception:
+                continue
+
+        # Now look for case result rows and click into the first one
+        body = await page.inner_text("body")
+        print(f"      → results section text (first 500): {body[:500].strip()}")
+
+        # Try clicking a case link in the results
+        for link_sel in [
+            f"a:has-text('{parsed['year']} CV {parsed['number']}')",
+            f"a:has-text('{parsed['search_text']}')",
+            f"a:has-text('CV')",
+            "table tbody tr:first-child a",
+            "table tbody tr:first-child td:first-child",
+            "table tr:nth-child(2) a",
+            "a[href*='#Case']",
+            "a[href='#Case']",
+            ".case-link",
+            "tr.clickable",
+        ]:
+            try:
+                link = page.locator(link_sel).first
+                if await link.count() > 0 and await link.is_visible():
+                    await link.click(timeout=5000)
+                    await page.wait_for_timeout(3000)
+                    print(f"      → clicked case result: {link_sel}")
+                    break
+            except Exception:
+                continue
+
+        # Check if we're now on case detail (#Case section)
         body = await page.inner_text("body")
         body_lower = body.lower()
+        print(f"      → case detail text (first 500): {body[:500].strip()}")
 
-        # If we're on a results list, click the first matching case
-        if "result" in body_lower or "found" in body_lower:
-            print(f"      → on results page, looking for case link...")
-            for link_sel in [
-                f"a:has-text('{parsed['search_text']}')",
-                f"a:has-text('{parsed['year']} CV {parsed['number']}')",
-                "table tbody tr:first-child a",
-                "table tr:nth-child(2) a",
-                "a[href*='CaseInfo']",
-                "a[href*='caseInfo']",
-                "a[href*='Case']",
-            ]:
-                try:
-                    link = page.locator(link_sel).first
-                    if await link.count() > 0:
-                        await link.click(timeout=5000)
-                        await page.wait_for_load_state("domcontentloaded", timeout=15000)
-                        await page.wait_for_timeout(2000)
-                        print(f"      → clicked case link: {link_sel}")
-                        break
-                except Exception:
-                    continue
-
-        # Verify we have case content
-        body = await page.inner_text("body")
-        body_lower = body.lower()
         has_case = any(kw in body_lower for kw in [
-            "docket", "parties", "filing date", "case title",
-            "plaintiff", "defendant", "foreclosure", "case summary",
-            "case detail", "case information", "case number",
+            "docket", "parties", "filing date",
+            "plaintiff", "defendant", "foreclosure",
+            "case detail", "case status", "judge",
         ])
         return has_case
 
