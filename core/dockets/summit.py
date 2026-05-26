@@ -373,8 +373,15 @@ class SummitDocketScraper(DocketScraper):
             ("#ContentPlaceHolder1_tbCase1Part2",  parsed["month"]),
             ("#ContentPlaceHolder1_tbCase1Part3",  parsed["seq"]),
         ]
-        if parsed["suffix"]:
-            plan.append(("#ContentPlaceHolder1_tbCase1Suffix", parsed["suffix"]))
+        # IMPORTANT: do not fill the Suffix field from auction parcel-letters.
+        # Summit's auction data tags multi-parcel foreclosures as ...A / ...B
+        # / ...C — that letter is the parcel index, not the clerk-side case
+        # suffix. The clerk's case number is CV-YYYY-MM-#### with no suffix,
+        # and submitting the parcel letter triggers the server's
+        # "Is Not A Valid Case Number" validator (recon-verified). If a real
+        # suffix-bearing case format ever shows up, the parser will need to
+        # distinguish parcel letters from clerk suffixes — for now treat
+        # parsed["suffix"] as informational only.
 
         all_ok = True
         for sel, value in plan:
