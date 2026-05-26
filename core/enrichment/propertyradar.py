@@ -55,7 +55,13 @@ from core.loader import load_all_leads, Lead
 # Configuration
 # ═══════════════════════════════════════════════════════════════════════════
 PR_API_BASE = "https://api.propertyradar.com/v1"
-PR_API_TOKEN = os.environ.get("PROPERTYRADAR_TOKEN") or "9ffe6b0ba3006ee59b74184dd200802f3cf42700"
+# Read from environment ONLY. No hardcoded fallback — a missing or empty
+# PROPERTYRADAR_TOKEN must fail the run loudly so we never silently re-use
+# a dead/zero-credit token and call its empty responses "no matches".
+PR_API_TOKEN = (os.environ.get("PROPERTYRADAR_TOKEN") or "").strip()
+# The previous hardcoded fallback (9ffe6b0b…0700) is owner-confirmed dead.
+# If anyone re-introduces it via env, fail just as loudly.
+_DEAD_TOKEN_PREFIX = "9ffe6b0b"
 
 # Conservative rate limit — be polite to their API
 REQUEST_DELAY_SEC = 0.5
@@ -571,8 +577,23 @@ def main():
     args = parser.parse_args()
 
     if not PR_API_TOKEN:
-        print("❌ PROPERTYRADAR_TOKEN not set in environment or in this script.")
+        print(
+            "❌ PROPERTYRADAR_TOKEN env var is missing or empty. "
+            "Set it as a GitHub Actions secret (or export locally) before "
+            "running PR enrichment. No hardcoded fallback is permitted — "
+            "see core/enrichment/propertyradar.py:58 and CLAUDE.md."
+        )
         sys.exit(1)
+    if PR_API_TOKEN.lower().startswith(_DEAD_TOKEN_PREFIX):
+        print(
+            f"❌ PROPERTYRADAR_TOKEN starts with {_DEAD_TOKEN_PREFIX}… — that is "
+            "the owner-confirmed DEAD token (0 credits). Refusing to run with it."
+        )
+        sys.exit(1)
+    print(
+        f"🔑 PR token loaded: prefix={PR_API_TOKEN[:8]}… suffix=…{PR_API_TOKEN[-4:]} "
+        f"length={len(PR_API_TOKEN)}"
+    )
 
     print()
     print("┌" + "─" * 70 + "┐")
