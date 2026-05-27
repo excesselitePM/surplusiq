@@ -569,11 +569,12 @@
             <th data-sort="pr_owner_name">Owner</th>
             <th data-sort="evidence_level">Evidence Level</th>
             <th>Source</th>
+            <th>Clerk Docket</th>
             <th data-sort="sold_to">Sold To</th>
           </tr>
         </thead>
         <tbody id="leads-body">
-          <tr><td colspan="15" class="loading">Loading leads…</td></tr>
+          <tr><td colspan="16" class="loading">Loading leads…</td></tr>
         </tbody>
       </table>
     </div>
@@ -821,11 +822,21 @@
     $("results-count").textContent = filtered.length.toLocaleString();
 
     if (!filtered.length) {
-      tbody.innerHTML = `<tr><td colspan="15" class="loading">No leads match your filters.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="16" class="loading">No leads match your filters.</td></tr>`;
       return;
     }
 
-    const rows = filtered.map(l => `
+    const rows = filtered.map(l => {
+      // Manual-verify clerk-portal link. For Cloudflare-blocked counties
+      // (Franklin, Hamilton) the cell carries a "Verify ⚠" badge so Eric
+      // knows the docket wasn't automated; for the rest a plain "Open ↗".
+      let clerkCell = '—';
+      if (l.clerk_manual_search_url) {
+        const label = l.requires_manual_docket_verify ? 'Verify ⚠' : 'Open ↗';
+        const cls = l.requires_manual_docket_verify ? 'src-link manual-verify' : 'src-link';
+        clerkCell = `<a href="${l.clerk_manual_search_url}" target="_blank" rel="noopener" class="${cls}">${label}</a>`;
+      }
+      return `
       <tr${(l.lead_quality === 'killed') ? ' class="row-killed"' : ''}>
         <td class="numeric surplus-cell">${renderSurplusCell(l)}</td>
         <td>${renderMoneyStatusBadge(l)}</td>
@@ -841,9 +852,11 @@
         <td>${l.pr_owner_name ? `<span class="owner-name">${l.pr_owner_name}</span>` : '<span style="color:var(--text-muted)">—</span>'}</td>
         <td>${renderEvidenceBadge(l)}</td>
         <td>${l.source_url ? `<a href="${l.source_url}" target="_blank" rel="noopener" class="src-link">View</a>` : '—'}</td>
+        <td>${clerkCell}</td>
         <td>${l.sold_to || "—"}</td>
       </tr>
-    `).join("");
+    `;
+    }).join("");
 
     tbody.innerHTML = rows;
   }

@@ -94,6 +94,17 @@ async def run_one(county_id: str, case_number: str, headless: bool, final_sale_p
 
 
 async def run_county(county_id: str, headless: bool, only_case: str | None = None) -> dict:
+    # Cloudflare-blocked counties: no docket automation. These are Eric-approved
+    # PR-fallback counties — the docket step skips them and PropertyRadar
+    # enrichment + the dashboard's manual-verify clerk link carry the load.
+    PR_FALLBACK_COUNTIES = {"franklin-oh", "hamilton-oh"}
+    if county_id in PR_FALLBACK_COUNTIES:
+        print(f"⏭  {county_id} is Cloudflare-blocked. Skipping docket scrape — "
+              f"this county is routed through PropertyRadar enrichment + the "
+              f"dashboard's manual-verify clerk link.")
+        return {"county_id": county_id, "results": [], "skipped": True,
+                "reason": "PR-fallback county (Cloudflare block)"}
+
     if county_id not in SCRAPER_REGISTRY:
         raise SystemExit(f"No docket scraper for {county_id}. Available: {list(SCRAPER_REGISTRY.keys())}")
 

@@ -176,7 +176,18 @@ def export_dashboard_data():
     docket_matches = 0
     total_real_surplus = 0.0
 
+    # CountyConfig lookup for manual-verify clerk links per lead.
+    try:
+        from config.counties import COUNTY_BY_ID
+    except Exception:
+        COUNTY_BY_ID = {}
+    # Counties where the docket is not automatable (Cloudflare). Dashboard
+    # surfaces these prominently with a manual-verify link.
+    CF_BLOCKED = {"franklin-oh", "hamilton-oh"}
+
     for l in leads:
+        cc = COUNTY_BY_ID.get(l.county_id)
+        clerk_search_url = getattr(cc, "clerk_search_url", "") if cc else ""
         payload = {
             "county_id":        l.county_id,
             "county_name":      l.county_name,
@@ -195,6 +206,11 @@ def export_dashboard_data():
             "auction_status":   l.auction_status,
             "score":            l.score,
             "source_url":       getattr(l, "source_url", ""),
+            # Manual-verify clerk portal link — always present so Eric can
+            # eyeball any case directly. For Franklin/Hamilton (Cloudflare-
+            # blocked, PR-fallback only) this is the ONLY path to the docket.
+            "clerk_manual_search_url": clerk_search_url,
+            "requires_manual_docket_verify": l.county_id in CF_BLOCKED,
 
             # Docket-enrichment fields
             "classification":         getattr(l, "classification", ""),
