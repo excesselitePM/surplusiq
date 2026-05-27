@@ -410,6 +410,9 @@
   }
   .surplus-true.positive { color: var(--green, #2ECC71); }
   .surplus-true.negative { color: #ff6b6b; }
+  /* FP-17 Item 1: OH-no-docket — visibly distinct "—" (not a missing
+     field, but a deliberate "we don't know yet, click clerk link"). */
+  .surplus-pending { color: #888; font-style: italic; cursor: help; }
   .surplus-apparent {
     display: block;
     color: var(--text-muted, #888);
@@ -626,6 +629,22 @@
   };
   const cleanAddress = (s) => (s || "").replace(/^Property Address:\s*/i, "").trim();
   function renderSurplusCell(l) {
+    // FP-17 Item 1: blank the Surplus cell for OH leads where the surplus
+    // figure would be computed against opening_bid (which is the fake
+    // 2/3-appraised statutory value for OH, NOT real debt). Eric's rule:
+    // OH leads need a real docket prayer to have a meaningful surplus.
+    // Conditions for "no real surplus number":
+    //   - state == 'OH'  AND
+    //   - no debt_source (or debt_source not in docket_prayer/pdf_extract:*)
+    //     i.e. we never extracted a real prayer for this case
+    const state = (l.state || '').toUpperCase();
+    const ds = l.debt_source || '';
+    const hasRealDebt = ds.startsWith('docket_prayer')
+                     || ds.startsWith('pdf_extract:')
+                     || ds === 'fl_opening_bid';     // FL opening = real judgment
+    if (state === 'OH' && !hasRealDebt) {
+      return '<span class="surplus-pending" title="Surplus pending manual docket verification — OH opening bid is the statutory 2/3-appraised value, NOT real debt. Use the Clerk Docket link to verify the actual judgment amount.">—</span>';
+    }
     const apparent = l.gross_surplus || 0;
     const best = (l.best_real_surplus !== undefined && l.best_real_surplus !== null)
                   ? l.best_real_surplus
