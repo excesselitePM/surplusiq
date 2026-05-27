@@ -220,6 +220,7 @@ jobs:
           path: |
             data/enriched/
             data/dockets/
+            data/raw/
             docs/data/
           if-no-files-found: ignore
           retention-days: 7
