@@ -1,25 +1,27 @@
 {
-  "generated_at": "2026-05-25T15:37:21",
-  "total_leads": 47,
+  "generated_at": "2026-05-27T20:30:17",
+  "total_leads": 55,
   "confirmed_surplus_total": 0,
-  "estimated_surplus_total": 2390543.62,
-  "apparent_surplus_total": 501563.12,
+  "estimated_surplus_total": 0,
+  "apparent_surplus_total": 2488531.63,
+  "docket_verified_positive_count": 7,
+  "docket_verified_positive_total": 233700.0,
   "confirmed_surplus_count": 0,
-  "estimated_surplus_count": 38,
-  "apparent_surplus_count": 6,
-  "killed_count": 3,
-  "red_count": 0,
+  "estimated_surplus_count": 0,
+  "apparent_surplus_count": 39,
+  "killed_count": 0,
+  "red_count": 3,
   "pipeline_ready_count": 0,
-  "pr_matched_count": 41,
-  "docket_matched_count": 3,
+  "pr_matched_count": 21,
+  "docket_matched_count": 20,
   "by_state": {
     "FL": {
-      "leads": 22,
-      "surplus": 2073246.0300000003
+      "leads": 27,
+      "surplus": 2011180.5099999998
     },
     "OH": {
-      "leads": 25,
-      "surplus": 1065432.03
+      "leads": 28,
+      "surplus": 1150532.03
     }
   },
   "by_county": [
@@ -27,25 +29,25 @@
       "county_id": "miami-dade-fl",
       "county_name": "Miami-Dade",
       "state": "FL",
-      "leads": 9,
-      "surplus": 1441472.5200000003,
+      "leads": 10,
+      "surplus": 1338448.63,
       "top_lead": 374855.98
-    },
-    {
-      "county_id": "broward-fl",
-      "county_name": "Broward",
-      "state": "FL",
-      "leads": 12,
-      "surplus": 620930.4199999999,
-      "top_lead": 134160.08
     },
     {
       "county_id": "summit-oh",
       "county_name": "Summit",
       "state": "OH",
-      "leads": 13,
-      "surplus": 526000.0,
-      "top_lead": 57100.0
+      "leads": 16,
+      "surplus": 607800.0,
+      "top_lead": 79000.0
+    },
+    {
+      "county_id": "broward-fl",
+      "county_name": "Broward",
+      "state": "FL",
+      "leads": 11,
+      "surplus": 480942.55,
+      "top_lead": 134160.08
     },
     {
       "county_id": "franklin-oh",
@@ -60,8 +62,16 @@
       "county_name": "Cuyahoga",
       "state": "OH",
       "leads": 3,
-      "surplus": 130080.91,
+      "surplus": 133380.91,
       "top_lead": 73333.0
+    },
+    {
+      "county_id": "duval-fl",
+      "county_name": "Duval",
+      "state": "FL",
+      "leads": 3,
+      "surplus": 129388.45,
+      "top_lead": 69243.65
     },
     {
       "county_id": "hamilton-oh",
@@ -70,6 +80,14 @@
       "leads": 3,
       "surplus": 66900.0,
       "top_lead": 33100.0
+    },
+    {
+      "county_id": "orange-fl",
+      "county_name": "Orange",
+      "state": "FL",
+      "leads": 2,
+      "surplus": 51557.79,
+      "top_lead": 32266.4
     },
     {
       "county_id": "montgomery-oh",
@@ -89,60 +107,23 @@
     }
   ],
   "by_score": {
-    "A+": 7,
-    "A": 12,
-    "B": 19,
-    "C": 9
+    "A+": 6,
+    "A": 13,
+    "B": 23,
+    "C": 11
   },
   "top_5_confirmed_leads": [],
-  "top_5_estimated_leads": [
-    {
-      "county": "Miami-Dade",
-      "state": "FL",
-      "case_number": "2012-041027-CA-01",
-      "address": "3921 SW 154 CT",
-      "surplus": 531661.0,
-      "money_status": "estimated_surplus",
-      "evidence_level": "property_enriched"
-    },
-    {
-      "county": "Broward",
-      "state": "FL",
-      "case_number": "CACE-24-002646",
-      "address": "9235 SW 39 ST",
-      "surplus": 227138.0,
-      "money_status": "estimated_surplus",
-      "evidence_level": "property_enriched"
-    },
-    {
-      "county": "Broward",
-      "state": "FL",
-      "case_number": "CACE-17-022465",
-      "address": "1790 NW 56 AVE",
-      "surplus": 183381.0,
-      "money_status": "estimated_surplus",
-      "evidence_level": "property_enriched"
-    },
-    {
-      "county": "Miami-Dade",
-      "state": "FL",
-      "case_number": "2025A00929",
-      "address": "14095 NE 2 CT",
-      "surplus": 166721.0,
-      "money_status": "estimated_surplus",
-      "evidence_level": "property_enriched"
-    },
-    {
-      "county": "Summit",
-      "state": "OH",
-      "case_number": "CV2025052012 (10524)",
-      "address": "375 REVERE ROAD",
-      "surplus": 103688.0,
-      "money_status": "estimated_surplus",
-      "evidence_level": "property_enriched"
-    }
-  ],
+  "top_5_estimated_leads": [],
   "top_5_apparent_leads": [
+    {
+      "county": "Miami-Dade",
+      "state": "FL",
+      "case_number": "2024A01355",
+      "address": "18975 COLLINS AVE",
+      "surplus": 374855.98,
+      "money_status": "apparent_surplus",
+      "evidence_level": "property_enriched"
+    },
     {
       "county": "Miami-Dade",
       "state": "FL",
@@ -162,31 +143,22 @@
       "evidence_level": "auction_only"
     },
     {
-      "county": "Summit",
-      "state": "OH",
-      "case_number": "CV2025020548B (10546)",
-      "address": "",
-      "surplus": 38600.0,
+      "county": "Miami-Dade",
+      "state": "FL",
+      "case_number": "2025A00929",
+      "address": "14095 NE 2 CT",
+      "surplus": 156581.56,
       "money_status": "apparent_surplus",
       "evidence_level": "auction_only"
     },
     {
       "county": "Broward",
       "state": "FL",
-      "case_number": "CONO-25-085060",
-      "address": "",
-      "surplus": 28907.96,
+      "case_number": "CONO-25-076912",
+      "address": "4011 NW 93 AVE",
+      "surplus": 134160.08,
       "money_status": "apparent_surplus",
-      "evidence_level": "auction_only"
-    },
-    {
-      "county": "Summit",
-      "state": "OH",
-      "case_number": "CV2025052322 (10522)",
-      "address": "",
-      "surplus": 17400.0,
-      "money_status": "apparent_surplus",
-      "evidence_level": "auction_only"
+      "evidence_level": "property_enriched"
     }
   ],
   "coverage": {
