@@ -667,7 +667,10 @@ def main():
         print(f"🧪 PROBE-RADARID radarid={radarid!r}")
         client = PropertyRadarClient(token=PR_API_TOKEN, dry_run=True)
         url = f"{PR_API_BASE}/properties/{radarid}"
-        params = {"Fields": "Card,Overview"}
+        # Card carries the lien/loan fields Eric needs (TotalLoanBalance,
+        # AvailableEquity, PropertyHasOpenLiens, PropertyHasOpenPersonLiens,
+        # AVM, AssessedValue, Owner). Stay under PR's 50-field per-request cap.
+        params = {"Fields": "Card"}
         print(f"  → GET {url}")
         print(f"     params: {json.dumps(params, sort_keys=True)}")
         try:
