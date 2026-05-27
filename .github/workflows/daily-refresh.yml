@@ -245,9 +245,27 @@ jobs:
             exit 0
           fi
 
+          BRANCH="${GITHUB_REF#refs/heads/}"
           DATESTAMP=$(date -u +'%Y-%m-%d %H:%M:%S UTC')
           git commit -m "Daily refresh ${DATESTAMP}"
-          git push origin HEAD:${GITHUB_REF#refs/heads/}
+
+          # Race guard: another commit may have landed on origin during
+          # the ~10-15 min scrape window. Without rebase, the push gets
+          # rejected (non-fast-forward) — this killed run 26537993773.
+          # Retry up to 3 times with pull --rebase between attempts.
+          for attempt in 1 2 3; do
+            if git push origin HEAD:"${BRANCH}"; then
+              echo "Push succeeded on attempt ${attempt}"
+              exit 0
+            fi
+            echo "::warning::Push attempt ${attempt} rejected — pulling --rebase and retrying"
+            if ! git pull --rebase origin "${BRANCH}"; then
+              echo "::error::pull --rebase failed on attempt ${attempt}"
+              exit 1
+            fi
+          done
+          echo "::error::Push failed after 3 attempts (persistent rebase race or auth issue)"
+          exit 1
 
       - name: Skipped commit notice
         if: steps.params.outputs.commit != 'true'
