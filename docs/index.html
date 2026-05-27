@@ -523,42 +523,39 @@
 
 <main class="container">
 
-  <!-- KPIs — Confirmed Surplus shown first; estimated/apparent are secondary -->
+  <!-- FP-23: Verified Surplus headlines; Apparent center; Estimated /
+       Disbursement Filed secondary (both structurally lag freshness window).
+       Pipeline Ready dropped (was always 0 by definition on a 14-day product). -->
   <div class="kpi-grid" id="kpi-grid">
-    <div class="kpi">
-      <div class="kpi-label">Confirmed Surplus</div>
-      <div class="kpi-value surplus" id="kpi-confirmed-surplus">—</div>
-      <div class="kpi-sub"><span id="kpi-confirmed-count">—</span> leads · docket / official proof verified</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">Estimated Surplus</div>
-      <div class="kpi-value" id="kpi-estimated-surplus">—</div>
-      <div class="kpi-sub"><span id="kpi-estimated-count">—</span> leads · PropertyRadar enrichment only</div>
+    <div class="kpi kpi-highlight">
+      <div class="kpi-label">📋 Verified Surplus</div>
+      <div class="kpi-value surplus" id="kpi-docket-verified-surplus">—</div>
+      <div class="kpi-sub"><span id="kpi-docket-verified-count">—</span> leads · court judgment PDF + positive surplus · actionable today</div>
     </div>
     <div class="kpi">
       <div class="kpi-label">Apparent Surplus</div>
       <div class="kpi-value" id="kpi-apparent-surplus">—</div>
       <div class="kpi-sub"><span id="kpi-apparent-count">—</span> leads · auction math only, not verified</div>
     </div>
-    <div class="kpi kpi-highlight">
-      <div class="kpi-label">📋 Docket-Verified Positive</div>
-      <div class="kpi-value surplus" id="kpi-docket-verified-surplus">—</div>
-      <div class="kpi-sub"><span id="kpi-docket-verified-count">—</span> leads · real debt from docket prayer · not yet proof-confirmed</div>
+    <div class="kpi">
+      <div class="kpi-label">Estimated Surplus</div>
+      <div class="kpi-value" id="kpi-estimated-surplus">—</div>
+      <div class="kpi-sub"><span id="kpi-estimated-count">—</span> leads · PropertyRadar-refined (rare on fresh foreclosures)</div>
     </div>
     <div class="kpi">
-      <div class="kpi-label">Pipeline Ready</div>
-      <div class="kpi-value" id="kpi-pipeline-ready">—</div>
-      <div class="kpi-sub">Confirmed leads cleared for outreach</div>
+      <div class="kpi-label">Disbursement Filed</div>
+      <div class="kpi-value" id="kpi-confirmed-surplus">—</div>
+      <div class="kpi-sub"><span id="kpi-confirmed-count">—</span> leads · excess-proceeds filing posted (typically weeks post-sale)</div>
     </div>
   </div>
 
   <!-- Verification methodology note -->
   <div class="verify-note" id="verify-note">
     <strong>How surplus is classified:</strong>
-    <strong>Confirmed surplus</strong> requires both a docket-verified debt figure AND a proof-of-disbursement filing (notice of excess proceeds / certificate of disbursement).
-    <strong>Estimated surplus</strong> is sale price minus PropertyRadar's reported loan balance (only when PR returns a non-zero balance).
-    <strong>Apparent surplus</strong> is auction math only (sale − opening bid); for FL the opening bid IS the judgment amount, for OH the opening bid is a statutory 2/3-appraised figure that does NOT represent real debt.
-    <strong>📋 Docket-Verified Positive</strong> leads carry a real prayer amount extracted from a foreclosure judgment PDF AND a positive true-surplus (sale − prayer); they sit in the apparent_surplus tier until a proof-of-disbursement filing flips them to confirmed — these are the highest-quality leads on the dashboard today and the closest the system gets to actionable money before the courts publish their final disbursement order.
+    <strong>📋 Verified Surplus</strong> — real prayer amount extracted from a foreclosure judgment PDF, positive (sale − prayer), no kill signals. Court-verified and actionable today. The headline metric on this dashboard.
+    <strong>Apparent Surplus</strong> — auction math only (sale − opening bid). For FL the opening bid IS the judgment amount; for OH it is the statutory 2/3-appraised figure that does NOT represent real debt — those rows need manual docket verification via the Clerk Docket link.
+    <strong>Estimated Surplus</strong> — sale price refined by PropertyRadar's reported loan balance (only when PR returns a non-zero balance). Rare on fresh foreclosures because PR data lags.
+    <strong>Disbursement Filed</strong> — the court has posted a notice of excess proceeds / certificate of disbursement. This filing typically arrives weeks after sale — by then leads have aged out of the 14-day freshness window, so this metric is normally $0 / 0 leads on a daily dashboard.
     <span id="verify-note-counts"></span>
   </div>
 
@@ -725,12 +722,12 @@
 
   function renderStatusBadge(l) {
     const cls = (l.classification || '').toLowerCase();
-    // Docket-checked: real prayer amount from a foreclosure judgment doc,
-    // positive (sale − prayer), classification not killed. NOT confirmed
-    // surplus — confirmation requires a proof-of-surplus / disbursement
-    // filing. This is a visual highlight within apparent_surplus.
+    // Verified: real prayer amount from a foreclosure judgment doc,
+    // positive (sale − prayer), classification not killed. NOT yet
+    // disbursement-filed — that filing arrives weeks after sale. This
+    // is the headline-quality lead within the apparent_surplus tier.
     const dvPrefix = l.docket_verified_positive
-      ? '<span class="status-badge dv-positive" title="Real debt from docket prayer amount — positive (sale − prayer). NOT confirmed surplus; still needs proof-of-disbursement filing.">📋 Docket-checked</span> '
+      ? '<span class="status-badge dv-positive" title="Real debt from court judgment PDF · positive surplus · not yet disbursement-filed.">📋 Verified</span> '
       : '';
     if (!cls) {
       // FP-15: replace the bland "—" with a county-aware explanation.
@@ -766,8 +763,8 @@
   function renderMoneyStatusBadge(l) {
     const ms = (l.money_status || 'unknown').toLowerCase();
     const map = {
-      confirmed_surplus: { txt: 'Confirmed Surplus', cls: 'status-green',
-                           tip: 'Docket / official proof verified' },
+      confirmed_surplus: { txt: 'Disbursement Filed', cls: 'status-green',
+                           tip: 'Court has posted notice of excess proceeds / certificate of disbursement' },
       estimated_surplus: { txt: 'Estimated Surplus', cls: 'status-yellow',
                            tip: 'PropertyRadar refined the surplus number (TotalLoanBalance > $0)' },
       apparent_surplus:  { txt: 'Apparent Surplus',  cls: 'status-none',
@@ -829,7 +826,11 @@
 
   function renderKPIs() {
     const s = SUMMARY;
-    // Confirmed surplus is shown first. If $0, show $0 — never hidden.
+    // FP-23: legacy ID `kpi-confirmed-*` now renders the "Disbursement Filed"
+    // card (rightmost, secondary). $0 is the honest steady state — proof-of-
+    // disbursement filings arrive weeks post-sale, well outside the 14-day
+    // freshness window. Kept visible (not hidden) so a non-zero value reads
+    // as a real signal when it does flip.
     $("kpi-confirmed-surplus").textContent = fmtMoney(s.confirmed_surplus_total || 0);
     $("kpi-confirmed-count").textContent   = (s.confirmed_surplus_count || 0).toLocaleString();
 
@@ -839,14 +840,15 @@
     $("kpi-apparent-surplus").textContent  = fmtMoney(s.apparent_surplus_total || 0);
     $("kpi-apparent-count").textContent    = (s.apparent_surplus_count || 0).toLocaleString();
 
-    // FP-16: docket-verified positive is the real headline when
-    // confirmed_surplus is $0 (which is the common case — proof-of-
-    // disbursement filings take days/weeks after the sale). 7 Summit
-    // leads / $233,700 today.
+    // FP-23: Verified Surplus is the dashboard headline — docket-PDF-backed
+    // leads with positive surplus, no kill signals. This is the actionable
+    // metric. The legacy ID `kpi-docket-verified-*` is kept for diff-clarity
+    // but the user-visible label is "Verified Surplus".
     $("kpi-docket-verified-surplus").textContent = fmtMoney(s.docket_verified_positive_total || 0);
     $("kpi-docket-verified-count").textContent   = (s.docket_verified_positive_count || 0).toLocaleString();
 
-    $("kpi-pipeline-ready").textContent    = (s.pipeline_ready_count || 0).toLocaleString();
+    // Pipeline Ready KPI removed (FP-23) — structurally always 0 on a
+    // 14-day product; no longer rendered, no JS write needed.
 
     // FP-19 Item 3: header counts reconcile with table.
     // total_leads is now the POST-FILTER count (matches what's visible
@@ -877,7 +879,7 @@
     }
 
     $("footer-stats").textContent =
-      `${s.total_leads || 0} leads · ${fmtMoney(s.confirmed_surplus_total || 0)} confirmed surplus`;
+      `${s.total_leads || 0} leads · ${fmtMoney(s.docket_verified_positive_total || 0)} verified surplus`;
   }
 
   function renderCounties() {

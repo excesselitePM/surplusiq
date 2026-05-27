@@ -14,7 +14,7 @@ It refreshes automatically every morning at 6 AM Central. Each row is one forecl
 |---|---|
 | **Surplus** | The dollar number that matters. How it's calculated depends on the **Money Status** column. |
 | **Money Status** | The tier — see "Three tiers" below. |
-| **Docket** | What the court docket says about the case (Green / Yellow / Red / Killed / —). A **📋 Docket-checked** badge here is the highest-quality signal — the debt figure came from a real foreclosure judgment, not estimated. |
+| **Docket** | What the court docket says about the case (Green / Yellow / Red / Killed / —). A **📋 Verified** badge here is the highest-quality signal — the debt figure came from a real foreclosure judgment PDF, not estimated. |
 | **Tier** | A simple A+ / A / B / C grade based on the surplus size. Use this to scan for the biggest opportunities first. |
 | **County / St** | Where the auction happened. |
 | **Case #** | The court case number. Copy this when you call the clerk. |
@@ -25,24 +25,29 @@ It refreshes automatically every morning at 6 AM Central. Each row is one forecl
 | **Owner** | The property owner's name (from PropertyRadar enrichment). Use this for skip-tracing and outreach. |
 | **Evidence Level** | How verified the data is. `docket_confirmed` is the strongest. `property_enriched` means PropertyRadar matched. `auction_only` means auction math only. |
 | **Source** | Link to the auction site listing. |
-| **Clerk Docket** | One-click link to the county clerk's case-search portal. **"Verify ⚠"** for Franklin/Hamilton means the docket couldn't be automated — click through to verify the case manually before acting. **"Open ↗"** for other counties means the case detail is reachable but not the only source of truth. |
+| **Clerk Docket** | One-click link to the county clerk's case-search portal. **"Verify ⚠"** for Franklin/Hamilton means the docket couldn't be automated — click through to verify the case manually before acting. **"Open ↗"** for other counties means the case detail is reachable but not the only source of truth. **Tip:** clicking either link auto-copies the case number to your clipboard, so you can ⌘V it into the search field on the portal — a toast in the corner confirms it. |
 | **Sold To** | "3rd Party Bidder" = potential surplus to claim. "Plaintiff" = the foreclosing lender bought it back. |
 
 ---
 
-## Three tiers — what each one means
+## The dashboard headline cards
 
-### 🟢 `confirmed_surplus`
-The court records confirm there's surplus money to claim. This is the gold standard — a real prayer/judgment amount AND a proof-of-disbursement filing (notice of excess proceeds, certificate of disbursement). Currently rare — these filings happen days or weeks after the sale, so most dashboard leads start in lower tiers and get promoted to confirmed as the court paperwork catches up.
+### 📋 Verified Surplus (the one that matters)
+The actionable tier. Each lead in this card has all three of:
+1. A real prayer / judgment amount extracted from a foreclosure judgment PDF
+2. Positive surplus math: `sale price − prayer > 0`
+3. No kill signals on the docket (no vacated sale, no bankruptcy, no prior claim)
 
-### 🟡 `estimated_surplus`
-PropertyRadar returned a real loan balance for this property, and we computed `sale price - loan balance` as the surplus estimate. **Only meaningful when PropertyRadar's TotalLoanBalance is greater than zero.** If PR returned $0 loan balance, the lead drops to apparent (see next section) — we don't pretend PR refined the math when it didn't.
+This is the gold standard for today's product. Court-verified, freshness-filtered, ready for outreach. **Filter by 📋 Verified first. Sort by Surplus descending.**
 
-### ⚪ `apparent_surplus`
-Auction math only — `sale price - opening bid`. For Florida leads this IS real debt math (opening bid is the judgment in FL). For Ohio leads this is unverified arithmetic on a fake number until the docket reveals the real debt. Treat apparent_surplus as "interesting, needs verification" — not as a number to act on without a docket check.
+### Apparent Surplus
+Auction math only — `sale price − opening bid`. For Florida leads this IS real debt math (opening bid is the judgment in FL). For Ohio leads this is unverified arithmetic on a fake number (2/3-appraised statutory value) until the docket reveals the real debt — those rows render the Surplus column as `—` and rely on the Clerk Docket link for manual verification. Treat apparent_surplus as "interesting, needs verification" — not as a number to act on without a docket check.
 
-### Special highlight: 📋 Docket-checked
-A badge that appears next to the Docket column on certain leads. It means: the debt figure on this lead came from a **real prayer amount extracted from a foreclosure judgment PDF**, the math `sale - prayer` is positive, and the case is not killed. These are still classified `apparent_surplus` (not confirmed — they're waiting for the proof-of-disbursement filing), but they're the highest-quality leads on the dashboard. Sort by Surplus and look for 📋 first.
+### Estimated Surplus
+PropertyRadar returned a real loan balance for the property and we computed `sale − loan balance` as the surplus estimate. **Only meaningful when PR's TotalLoanBalance > 0.** Rare on fresh foreclosures because PR's data lags new lender records. When PR returned $0 loan balance, the lead drops to apparent — we don't pretend PR refined the math when it didn't.
+
+### Disbursement Filed (secondary)
+The court has posted a notice of excess proceeds or certificate of disbursement for the case. By definition this filing arrives **weeks after the sale**, by which point leads have aged out of the 14-day freshness window. So this card is normally $0 / 0 leads on a daily dashboard. It's there for completeness — when something flips it, that's a Verified lead the court has already paid out.
 
 ---
 
@@ -61,7 +66,7 @@ A badge that appears next to the Docket column on certain leads. It means: the d
 | **Franklin** | **OH** | ⚠ **Cloudflare-blocked.** PropertyRadar only. Click "Verify ⚠" in the Clerk Docket column to check the docket manually. |
 | **Hamilton** | **OH** | ⚠ **Cloudflare-blocked.** PropertyRadar only. Click "Verify ⚠" in the Clerk Docket column to check the docket manually. |
 
-The 3 OH counties with full docket scraping (Cuyahoga, Montgomery, Summit) are the ones producing 📋 Docket-checked leads.
+The 3 OH counties with full docket scraping (Cuyahoga, Montgomery, Summit) are the ones producing 📋 Verified leads.
 
 ---
 
@@ -96,7 +101,7 @@ Per spec, any lead with a kill signal (motion to vacate, bankruptcy, sale vacate
 
 ## How to read each lead for outreach
 
-1. **Filter by 📋 Docket-checked first.** Sort by Surplus descending. These are leads where the surplus math is backed by a real judgment.
+1. **Filter by 📋 Verified first.** Sort by Surplus descending. These are leads where the surplus math is backed by a real judgment PDF.
 2. **Check the Sold At date.** Anything more than 3-4 days old, the owner may have already been approached by competing claim filers.
 3. **Click Address → Google.** Verify the property exists and the address parses cleanly.
 4. **Click Clerk Docket → portal.** Read the actual docket entries before contacting the owner. Look specifically for:
