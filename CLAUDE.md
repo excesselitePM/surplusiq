@@ -207,6 +207,16 @@ Recovery rule: if a converted wait drops leads in a verification run, the conver
 
 When a test/verification run drops leads, fails to extract, or otherwise produces fewer/worse results than the baseline, that regression IS the report headline — not a footnote, not a "by the way" after the wall-time improvement. Report it the moment it's discovered, not after recovery. Speedup with lost leads is a regression, not a win.
 
+### ONE-SCRAPER-CHANGE-PER-VERIFICATION-RUN RULE
+
+A verification run that includes two unrelated scraper changes is useless if it regresses — you can't tell which change caused it. Hard rule: **one scraper change per Actions verification run**. If two changes are ready, push them as separate commits and trigger separate runs.
+
+Counts as "scraper change": any edit to `core/auction/*`, `core/dockets/*`, or `core/loader.py` that affects how data is scraped, filtered, or merged.
+
+Does NOT count: dashboard JS, README/docs, CLAUDE.md, test files, workflow YAML changes that don't touch scraper logic, CSV export, badge wording. Those can be bundled with a single scraper change in one run because their effect is observable without re-running the scraper.
+
+Violation of this rule (e.g. bundling Broward 500ms fix + Stage 2 Montgomery `wait_for_function` in run 26532517350) means a regression cannot be root-caused without splitting and re-running — wasted time. Don't do it.
+
 **`browser.launch(slow_mo=...)` is BANNED in production.** It injects the supplied delay before EVERY Playwright action — clicks, fills, waits, everything. Useful for debugging visual flow at headed mode; toxic for production wall time. Removed from `core/auction/universal.py:browser.launch` in FP-12.
 
 Stage 1 (FP-12) results: 26 blind sleeps + 1 `slow_mo=250` eliminated from `universal.py` + `cuyahoga.py` + `summit.py`. Stage 2 (FP-13) replaces the Montgomery SPA `wait_for_timeout(5000)` with a `wait_for_function` predicate that returns the instant `#tblSearchResults` populates.
