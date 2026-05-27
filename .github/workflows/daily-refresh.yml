@@ -59,6 +59,11 @@ on:
         required: false
         default: ''
         type: string
+      pr_probe_chain:
+        description: 'PR API end-to-end chain probe (Purchase=0). Pipe-separated STREET|CITY|STATE|ZIP. Runs suggestions → POST /properties → GET /properties/{RadarID} in one shot.'
+        required: false
+        default: ''
+        type: string
 
 permissions:
   contents: write
@@ -129,6 +134,7 @@ jobs:
 
       - name: Run auction scrapers
         id: scrapers
+        if: github.event.inputs.pr_probe_address == '' && github.event.inputs.pr_probe_criteria == '' && github.event.inputs.pr_probe_radarid == '' && github.event.inputs.pr_probe_chain == ''
         run: |
           if [ "${{ steps.params.outputs.county }}" = "all" ]; then
             echo "Running ALL 10 counties (--days=14)"
@@ -143,7 +149,7 @@ jobs:
 
       - name: Run docket enrichment
         id: dockets
-        if: steps.params.outputs.run_dockets == 'true'
+        if: steps.params.outputs.run_dockets == 'true' && github.event.inputs.pr_probe_address == '' && github.event.inputs.pr_probe_criteria == '' && github.event.inputs.pr_probe_radarid == '' && github.event.inputs.pr_probe_chain == ''
         run: |
           echo "Running docket enrichment for: ${{ steps.params.outputs.docket_county }}"
           xvfb-run -a --server-args="-screen 0 1280x800x24" \
@@ -152,14 +158,17 @@ jobs:
 
       - name: PR API probe (Purchase=0, free)
         id: pr_probe
-        if: github.event.inputs.pr_probe_address != '' || github.event.inputs.pr_probe_criteria != '' || github.event.inputs.pr_probe_radarid != ''
+        if: github.event.inputs.pr_probe_address != '' || github.event.inputs.pr_probe_criteria != '' || github.event.inputs.pr_probe_radarid != '' || github.event.inputs.pr_probe_chain != ''
         env:
           PROPERTYRADAR_TOKEN: ${{ secrets.PROPERTYRADAR_TOKEN }}
           PR_PROBE_ADDRESS: ${{ github.event.inputs.pr_probe_address }}
           PR_PROBE_CRITERIA: ${{ github.event.inputs.pr_probe_criteria }}
           PR_PROBE_RADARID: ${{ github.event.inputs.pr_probe_radarid }}
+          PR_PROBE_CHAIN: ${{ github.event.inputs.pr_probe_chain }}
         run: |
-          if [ -n "$PR_PROBE_RADARID" ]; then
+          if [ -n "$PR_PROBE_CHAIN" ]; then
+            python -m core.enrichment.propertyradar --probe-chain "$PR_PROBE_CHAIN"
+          elif [ -n "$PR_PROBE_RADARID" ]; then
             python -m core.enrichment.propertyradar --probe-radarid "$PR_PROBE_RADARID"
           elif [ -n "$PR_PROBE_CRITERIA" ]; then
             python -m core.enrichment.propertyradar --probe-criteria "$PR_PROBE_CRITERIA"
@@ -170,7 +179,7 @@ jobs:
 
       - name: Run PropertyRadar enrichment
         id: pr_enrich
-        if: steps.params.outputs.run_pr == 'true' && github.event.inputs.pr_probe_address == '' && github.event.inputs.pr_probe_criteria == '' && github.event.inputs.pr_probe_radarid == ''
+        if: steps.params.outputs.run_pr == 'true' && github.event.inputs.pr_probe_address == '' && github.event.inputs.pr_probe_criteria == '' && github.event.inputs.pr_probe_radarid == '' && github.event.inputs.pr_probe_chain == ''
         timeout-minutes: 10
         env:
           PROPERTYRADAR_TOKEN: ${{ secrets.PROPERTYRADAR_TOKEN }}

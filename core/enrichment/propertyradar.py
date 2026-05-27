@@ -641,6 +641,12 @@ def main():
                              "endpoint does not deduct exports. Use the docs' "
                              "sample RadarID 'P8A0E18D' (Groundhog Day House) to "
                              "confirm the endpoint works on the current plan.")
+    parser.add_argument("--probe-chain", type=str, default=None, metavar="STREET|CITY|STATE|ZIP",
+                        help="One-shot Purchase=0 chain probe: suggestions → "
+                             "POST /properties (returns RadarID + APN format) → "
+                             "GET /properties/{RadarID} (full Card fieldset). "
+                             "Runs every step in one Actions run so we don't "
+                             "iterate. Forces --dry-run.")
     args = parser.parse_args()
 
     if not PR_API_TOKEN:
@@ -660,6 +666,102 @@ def main():
     print("│  SurplusIQ — PropertyRadar Enrichment".ljust(71) + "│")
     print("└" + "─" * 70 + "┘")
     print()
+
+    # ─── Probe mode: end-to-end chain, Purchase=0 throughout ──────────────
+    if args.probe_chain:
+        parts = args.probe_chain.split("|")
+        if len(parts) != 4:
+            print("❌ --probe-chain must be 'STREET|CITY|STATE|ZIP'")
+            sys.exit(2)
+        street, city, state, zipcode = [p.strip() for p in parts]
+        print(f"🧪 CHAIN street={street!r} city={city!r} state={state!r} zip={zipcode!r}")
+        print(f"        Every step is Purchase=0. No exports will be deducted.")
+        client = PropertyRadarClient(token=PR_API_TOKEN, dry_run=True)
+
+        print()
+        print("─── STEP 1: POST /v1/suggestions/SiteAddress (no Purchase) ───")
+        sug_body = {"Criteria": []}
+        if state:
+            sug_body["Criteria"].append({"name": "SiteState", "value": [state.upper()]})
+        sug_url = f"{PR_API_BASE}/suggestions/SiteAddress"
+        sug_params = {"SuggestionInput": street, "Limit": 5}
+        print(f"  → POST {sug_url}")
+        print(f"     params: {json.dumps(sug_params, sort_keys=True)}")
+        print(f"     body:   {json.dumps(sug_body, sort_keys=True)}")
+        try:
+            sresp = client.session.post(sug_url, params=sug_params, json=sug_body, timeout=30)
+            print(f"  ← {sresp.status_code}  body[:1500]={(sresp.text or '')[:1500]!r}")
+        except Exception as e:
+            print(f"  ← EXCEPTION {type(e).__name__}: {e}")
+            return
+        if sresp.status_code != 200:
+            print(f"  ⛔ suggestions failed; stopping chain")
+            return
+        try:
+            sjson = sresp.json()
+        except Exception as e:
+            print(f"  ⛔ suggestions JSON decode failed: {e}")
+            return
+        sugs = sjson.get("results", [])
+        if not sugs:
+            print(f"  ⛔ no suggestions for {street!r}")
+            return
+        chosen = sugs[0]
+        normalized_criteria = chosen.get("Criteria", [])
+        normalized_label = chosen.get("Label", "")
+        print(f"  → chose suggestion: {normalized_label!r}")
+        print(f"  → normalized criteria:")
+        for c in normalized_criteria:
+            print(f"      · {c}")
+
+        print()
+        print("─── STEP 2: POST /v1/properties with normalized criteria (Purchase=0) ───")
+        # Use Card to get the lien/loan fields.
+        pparams = {"Fields": "Card", "Limit": 5, "Purchase": 0, "Start": 0}
+        purl = f"{PR_API_BASE}/properties"
+        print(f"  → POST {purl}")
+        print(f"     params: {json.dumps(pparams, sort_keys=True)}")
+        print(f"     body:   {json.dumps({'Criteria': normalized_criteria}, sort_keys=True)[:600]}")
+        try:
+            presp = client.session.post(purl, params=pparams, json={"Criteria": normalized_criteria}, timeout=30)
+            print(f"  ← {presp.status_code}  body[:1500]={(presp.text or '')[:1500]!r}")
+        except Exception as e:
+            print(f"  ← EXCEPTION {type(e).__name__}: {e}")
+            return
+        if presp.status_code != 200:
+            print(f"  ⛔ /properties POST failed; cannot get RadarID")
+            return
+        try:
+            pjson = presp.json()
+        except Exception as e:
+            print(f"  ⛔ /properties JSON decode failed: {e}")
+            return
+        results = pjson.get("results", []) or pjson.get("Results", [])
+        if not results:
+            print(f"  ⛔ no /properties results for normalized criteria")
+            return
+        prop = results[0]
+        radarid = prop.get("RadarID")
+        pr_apn = prop.get("APN")
+        pr_addr = prop.get("Address")
+        print(f"  → RadarID={radarid!r}  APN={pr_apn!r}  Address={pr_addr!r}")
+
+        if not radarid:
+            print(f"  ⛔ no RadarID in /properties response")
+            return
+
+        print()
+        print("─── STEP 3: GET /v1/properties/{RadarID} (Purchase=0, Fields=Card) ───")
+        gurl = f"{PR_API_BASE}/properties/{radarid}"
+        gparams = {"Fields": "Card", "Purchase": 0}
+        print(f"  → GET {gurl}")
+        print(f"     params: {json.dumps(gparams, sort_keys=True)}")
+        try:
+            gresp = client.session.get(gurl, params=gparams, timeout=30)
+            print(f"  ← {gresp.status_code}  body[:2500]={(gresp.text or '')[:2500]!r}")
+        except Exception as e:
+            print(f"  ← EXCEPTION {type(e).__name__}: {e}")
+        return
 
     # ─── Probe mode: GET /v1/properties/{RadarID} ─────────────────────────
     if args.probe_radarid:
