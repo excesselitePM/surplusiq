@@ -552,13 +552,39 @@ def load_all_leads(
                 if not lead:
                     continue
 
-                # Filter 1: 3rd party
-                if require_third_party and not lead.is_third_party:
+                # FP-11 docket-rescue: a lead with real docket-extracted
+                # positive true_surplus must NEVER be dropped by the
+                # auction-side third-party / min-gross-surplus filters.
+                # Those filters use sale - opening_bid, which for OH is
+                # arithmetic on the fake 2/3-appraised value — meaningless
+                # without the docket. Once the docket reveals a real prayer
+                # amount and the math clears positively, the lead is
+                # actionable regardless of who won the bid or how much the
+                # auction-side gross surplus computes to.
+                #
+                # We rescue green/yellow AND red leads (red = "competing
+                # filers / additional creditors" per Eric — risky but
+                # still real surplus money). We DO NOT rescue killed.
+                _norm = _normalize_case_for_lookup(lead.case_number)
+                _docket_preview = _docket_lookup.get((lead.county_id, _norm))
+                _docket_rescue = False
+                if _docket_preview:
+                    prayer = float(_docket_preview.get("prayer_amount") or 0)
+                    cls = (_docket_preview.get("classification") or "").lower()
+                    if (prayer > 0
+                            and cls in (_POSITIVE_CLASSIFICATIONS | {"red"})
+                            and cls != "killed"):
+                        ts = float(lead.final_sale_price or 0) - prayer
+                        if ts > 0:
+                            _docket_rescue = True
+
+                # Filter 1: 3rd party (skipped when docket-rescued)
+                if require_third_party and not lead.is_third_party and not _docket_rescue:
                     stats[county_id]["not_3rd_party"] += 1
                     continue
 
-                # Filter 2: minimum surplus
-                if lead.gross_surplus < min_surplus:
+                # Filter 2: minimum surplus (skipped when docket-rescued)
+                if lead.gross_surplus < min_surplus and not _docket_rescue:
                     stats[county_id]["below_min"] += 1
                     continue
 

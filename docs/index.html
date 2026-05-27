@@ -620,10 +620,12 @@
 
   function renderStatusBadge(l) {
     const cls = (l.classification || '').toLowerCase();
-    // Docket-verified positive surplus — the deliverable's highest-quality
-    // signal. Real docket-extracted prayer, positive true_surplus, non-killed.
+    // Docket-checked: real prayer amount from a foreclosure judgment doc,
+    // positive (sale − prayer), classification not killed. NOT confirmed
+    // surplus — confirmation requires a proof-of-surplus / disbursement
+    // filing. This is a visual highlight within apparent_surplus.
     const dvPrefix = l.docket_verified_positive
-      ? '<span class="status-badge dv-positive" title="Docket-extracted prayer + positive true_surplus">🎯 Verified</span> '
+      ? '<span class="status-badge dv-positive" title="Real debt from docket prayer amount — positive (sale − prayer). NOT confirmed surplus; still needs proof-of-disbursement filing.">📋 Docket-checked</span> '
       : '';
     if (!cls) return dvPrefix + '<span class="status-badge status-none" title="No docket data yet">—</span>';
     const labels = {

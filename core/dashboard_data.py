@@ -276,14 +276,20 @@ def export_dashboard_data():
         if bucket == "confirmed_surplus":
             total_real_surplus += amount
 
-        # ── FP-9: priority_rank — surface docket-verified positive-surplus
-        # leads at the top of the dashboard so the 7 Summit YELLOW/RED
-        # leads don't get buried under 40 auction-math rows.
+        # ── FP-9: priority_rank — surface "docket-checked" leads at the
+        # top of the dashboard so Summit YELLOW/RED leads don't get
+        # buried under PR-only and auction-math rows.
+        #
+        # NAMING: the docket_verified_positive field is internal-only.
+        # The visible label is "📋 Docket-checked" — explicitly NOT
+        # "Verified" to avoid implying confirmed_surplus. These leads
+        # are still apparent_surplus until a proof-of-disbursement
+        # filing flips them to confirmed.
         #
         # Rank semantics (lower = higher priority on the dashboard):
         #   0  confirmed_surplus (docket + proof field)
-        #   1  docket-verified positive: real prayer >= $10K, positive
-        #      true_surplus, classification in {green,yellow,red}
+        #   1  docket-checked: real prayer >= $10K, positive (sale−prayer),
+        #      classification in {green,yellow,red}, NOT killed
         #   2  estimated_surplus (PR-refined math, TLB > $0)
         #   3  apparent_surplus with PR intel (owner/liens attached)
         #   4  apparent_surplus, no PR data
@@ -353,7 +359,7 @@ def export_dashboard_data():
     print(f"   ✓ Confirmed: {len(confirmed)} leads / ${confirmed_total:,.0f}")
     print(f"   ✓ Estimated: {len(estimated)} leads / ${estimated_total:,.0f}")
     print(f"   ✓ Apparent:  {len(apparent)} leads / ${apparent_total:,.0f}")
-    print(f"   ✓ 🎯 Docket-verified positive: {len(docket_verified_positive)} leads / ${docket_verified_positive_total:,.0f}")
+    print(f"   ✓ 📋 Docket-checked (real prayer, positive sale−prayer, non-killed): {len(docket_verified_positive)} leads / ${docket_verified_positive_total:,.0f}")
     print(f"   ✓ Killed: {len(killed)} | Red: {len(red)} (excluded from confirmed)")
 
     summary_file = docs_data / "summary.json"

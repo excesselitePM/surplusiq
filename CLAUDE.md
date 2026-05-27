@@ -144,14 +144,29 @@ Enforced in two places:
 
 Eric's spec is the source: "PropertyRadar is a lien REPORT, not a kill switch / not a surplus source." The tier badge must not imply PR contributed to the dollar figure when it didn't.
 
-### DOCKET-VERIFIED POSITIVE BADGE (FP-9)
+### LOADER FILTER DOCKET-RESCUE (FP-11)
 
-A lead earns `docket_verified_positive: True` (and `priority_rank: 1`) when it has:
+`core/loader.py:load_all_leads()` applies four filters: third-party, min-gross-surplus, sale-date-parseable, sale-date-window. The first two use **auction-side data only** (`is_third_party`, `gross_surplus = sale − opening_bid`). For OH this math is meaningless without the docket because `opening_bid` is the fake 2/3-appraised value.
+
+Docket-rescue (FP-11): before applying filters 1 and 2, look up the lead in `_docket_lookup`. If the docket reports:
+- `prayer_amount > 0`, AND
+- `classification in {green, yellow, red}` (NOT killed), AND
+- `(final_sale_price − prayer_amount) > 0`
+
+then the lead is **rescued** from filters 1 and 2 — `is_third_party=False` and `gross_surplus < $10K` no longer drop it. Filters 3 (sale date parseable) and 4 (14-day window) still apply. Killed leads are never rescued.
+
+Background: this fix recovered 3 Summit leads previously dropped — one plaintiff-won case (CV2025031449, RED, $14.5K true surplus) and two thin-opening-bid-margin cases (CV2025094689 RED $11.5K, CV2025115614 YELLOW $17.5K). All three had positive `(sale − prayer)` math but failed the auction-side filters.
+
+### DOCKET-CHECKED BADGE (FP-9)
+
+A lead earns `docket_verified_positive: True` (internal field name — do not rename to avoid breaking historical JSON) and `priority_rank: 1` when it has:
 - A real docket-extracted prayer amount ≥ $10,000
-- A positive `true_surplus`
-- A classification in {green, yellow, red}
+- A positive `true_surplus = sale − prayer`
+- A classification in {green, yellow, red} — NOT killed
 
-These are the highest-quality leads on the dashboard regardless of tier (most will be YELLOW or RED since proof-of-surplus filings are typically days/weeks behind the sale). `leads.json` is sorted by `priority_rank` ascending so docket-verified positives surface above PR-matched apparent leads. The dashboard renders a "🎯 Verified" badge next to the classification.
+The visible dashboard label is **"📋 Docket-checked"**, deliberately NOT "Verified" — these leads sit in `apparent_surplus`, not `confirmed_surplus`. The label communicates that the debt figure came from a real docket prayer (vs auction math), without implying the lead has cleared the proof-of-disbursement gate. Tooltip: "Real debt from docket prayer amount — positive (sale − prayer). NOT confirmed surplus; still needs proof-of-disbursement filing."
+
+`leads.json` is sorted by `priority_rank` ascending so docket-checked leads surface above PR-matched and auction-only rows. Three tiers only: confirmed / estimated / apparent. The badge is a visual highlight within `apparent_surplus`, not a fourth tier.
 
 ### CUYAHOGA PRAYER-FIELD PLAUSIBILITY FLOOR
 
