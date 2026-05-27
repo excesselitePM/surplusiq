@@ -630,6 +630,12 @@ def main():
                         help="One-shot Purchase=0 smoke test against a single address. "
                              "Pipe-separated, e.g. '1253 MCINTOSH AVE|AKRON|OH|44314'. "
                              "Bypasses lead loading. Forces --dry-run.")
+    parser.add_argument("--probe-criteria", type=str, default=None, metavar="JSON",
+                        help="One-shot Purchase=0 smoke test with raw Criteria JSON. "
+                             "Pass a JSON ARRAY, e.g. '[{\"name\":\"APN\",\"value\":[\"6822178\"]}]'. "
+                             "Useful for feasibility-probing whether a criterion "
+                             "is accepted by /properties on the current PR plan. "
+                             "Forces --dry-run.")
     args = parser.parse_args()
 
     if not PR_API_TOKEN:
@@ -649,6 +655,30 @@ def main():
     print("│  SurplusIQ — PropertyRadar Enrichment".ljust(71) + "│")
     print("└" + "─" * 70 + "┘")
     print()
+
+    # ─── Probe mode: raw Criteria JSON, Purchase=0 ────────────────────────
+    if args.probe_criteria:
+        try:
+            criteria = json.loads(args.probe_criteria)
+        except Exception as e:
+            print(f"❌ --probe-criteria must be valid JSON: {e}")
+            sys.exit(2)
+        if not isinstance(criteria, list):
+            print(f"❌ --probe-criteria must be a JSON array of criterion objects")
+            sys.exit(2)
+        print(f"🧪 PROBE-CRITERIA criteria={json.dumps(criteria)}")
+        print(f"                  Purchase=0 forced (free). No credits will be deducted.")
+        client = PropertyRadarClient(token=PR_API_TOKEN, dry_run=True)
+        result = client._properties_call(criteria, label="probe-criteria")
+        print()
+        print("─── PROBE RESULT ───")
+        if isinstance(result, dict):
+            for k in ("results", "Results"):
+                if k in result and isinstance(result[k], list):
+                    result[f"{k}_count_for_log"] = len(result[k])
+                    result[k] = result[k][:1]
+        print(json.dumps(result, indent=2, default=str)[:3000])
+        return
 
     # ─── Probe mode: one address, Purchase=0, full request/response log ───
     if args.probe_address:

@@ -49,6 +49,11 @@ on:
         required: false
         default: ''
         type: string
+      pr_probe_criteria:
+        description: 'PR API smoke test with raw Criteria JSON (Purchase=0, free). JSON array, e.g. [{"name":"APN","value":["6822178"]}]. When set, skips lead enrichment.'
+        required: false
+        default: ''
+        type: string
 
 permissions:
   contents: write
@@ -142,17 +147,22 @@ jobs:
 
       - name: PR API probe (Purchase=0, free)
         id: pr_probe
-        if: github.event.inputs.pr_probe_address != ''
+        if: github.event.inputs.pr_probe_address != '' || github.event.inputs.pr_probe_criteria != ''
         env:
           PROPERTYRADAR_TOKEN: ${{ secrets.PROPERTYRADAR_TOKEN }}
+          PR_PROBE_ADDRESS: ${{ github.event.inputs.pr_probe_address }}
+          PR_PROBE_CRITERIA: ${{ github.event.inputs.pr_probe_criteria }}
         run: |
-          python -m core.enrichment.propertyradar \
-            --probe-address "${{ github.event.inputs.pr_probe_address }}"
+          if [ -n "$PR_PROBE_CRITERIA" ]; then
+            python -m core.enrichment.propertyradar --probe-criteria "$PR_PROBE_CRITERIA"
+          else
+            python -m core.enrichment.propertyradar --probe-address "$PR_PROBE_ADDRESS"
+          fi
         continue-on-error: false
 
       - name: Run PropertyRadar enrichment
         id: pr_enrich
-        if: steps.params.outputs.run_pr == 'true' && github.event.inputs.pr_probe_address == ''
+        if: steps.params.outputs.run_pr == 'true' && github.event.inputs.pr_probe_address == '' && github.event.inputs.pr_probe_criteria == ''
         timeout-minutes: 10
         env:
           PROPERTYRADAR_TOKEN: ${{ secrets.PROPERTYRADAR_TOKEN }}
