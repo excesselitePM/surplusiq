@@ -57,6 +57,31 @@ def load_cases_from_raw(county_id: str) -> list[dict]:
     return records
 
 
+def _case_key_for_county(county_id: str):
+    """Return a callable(raw_case_number)->normalized_case_key for grouping
+    parcels under the same clerk case. Falls back to identity when no
+    parser is registered. Used for multi-parcel blanket-judgment
+    aggregation (see run_county docstring)."""
+    try:
+        if county_id == "summit-oh":
+            from core.dockets.summit import parse_summit_case_number
+            return lambda raw: (parse_summit_case_number(raw) or {}).get("joined") or raw
+        if county_id == "montgomery-oh":
+            from core.dockets.montgomery import parse_montgomery_case_number
+            return lambda raw: (parse_montgomery_case_number(raw) or {}).get("search_text") or raw
+        if county_id == "cuyahoga-oh":
+            from core.dockets.cuyahoga import parse_cuyahoga_case_number
+            def _cuy_key(raw):
+                p = parse_cuyahoga_case_number(raw) or {}
+                if p:
+                    return f"{p.get('case_prefix','CV')}-{p.get('year','????')}-{p.get('number','')}"
+                return raw
+            return _cuy_key
+    except Exception:
+        pass
+    return lambda raw: raw
+
+
 async def run_one(county_id: str, case_number: str, headless: bool, final_sale_price: float = 0.0) -> dict:
     scraper = get_scraper(county_id, headless=headless)
     result = await scraper.scrape_case(case_number)
@@ -79,31 +104,69 @@ async def run_county(county_id: str, headless: bool, only_case: str | None = Non
     if only_case:
         records = [r for r in records if r.get("case_number", "").startswith(only_case[:8])]
 
-    print(f"\n🏛  Cuyahoga docket scrape — processing {len(records)} leads")
+    # ─── Group parcels by clerk-case-key for blanket-judgment aggregation ─
+    # Multiple auction parcels can share ONE foreclosure judgment (e.g.
+    # Summit CV-2025-02-0548 secured 12 parcels jointly and severally for
+    # one $852K judgment). Per-parcel `true_surplus = sale - debt` wrongly
+    # KILLS each parcel even when sum-of-sales clears the debt. Group by
+    # case_key first, scrape the docket once per group, then compare the
+    # AGGREGATE sale across the group to the single prayer amount.
+    case_key_fn = _case_key_for_county(county_id)
+    groups: dict[str, list[dict]] = {}
+    for rec in records:
+        key = case_key_fn(rec.get("case_number", "")) or rec.get("case_number", "")
+        groups.setdefault(key, []).append(rec)
+
+    multi_groups = [k for k, v in groups.items() if len(v) > 1]
+    print(f"\n🏛  {county_id} docket scrape — {len(records)} parcels in {len(groups)} cases "
+          f"({len(multi_groups)} multi-parcel groups)")
     print(f"    Headless: {headless}")
     print()
 
     results = []
-    for i, rec in enumerate(records, 1):
-        case = rec.get("case_number", "")
-        final = float(rec.get("final_sale_price") or 0.0)
-        opening = float(rec.get("opening_bid") or 0.0)
-        apparent = float(rec.get("gross_surplus") or 0.0)
-        print(f"  [{i}/{len(records)}] {case}  (apparent surplus ${apparent:,.0f})")
+    group_idx = 0
+    for case_key, parcels in groups.items():
+        group_idx += 1
+        # Scrape using the first parcel's case number; the clerk lookup is
+        # identical for every parcel in the group.
+        rep = parcels[0]
+        rep_case = rep.get("case_number", "")
+        aggregate_sale = sum(float(p.get("final_sale_price") or 0.0) for p in parcels)
+        aggregate_apparent = sum(float(p.get("gross_surplus") or 0.0) for p in parcels)
 
+        if len(parcels) > 1:
+            print(f"  [{group_idx}/{len(groups)}] {case_key}  ⛓ BLANKET-JUDGMENT GROUP "
+                  f"({len(parcels)} parcels, aggregate sale ${aggregate_sale:,.0f})")
+        else:
+            print(f"  [{group_idx}/{len(groups)}] {rep_case}  "
+                  f"(apparent surplus ${aggregate_apparent:,.0f})")
+
+        # Scrape with aggregate_sale so classify() compares against pooled
+        # proceeds, not just one parcel's sale.
         try:
-            result = await run_one(county_id, case, headless=headless, final_sale_price=final)
+            result = await run_one(
+                county_id, rep_case,
+                headless=headless,
+                final_sale_price=aggregate_sale,
+            )
         except Exception as e:
             print(f"      ⚠ scrape failed: {e}")
             continue
 
         prayer = result.get("prayer_amount", 0.0)
-        true_surplus = final - prayer if prayer > 0 else None
+        # Aggregate true_surplus: pooled sale across the case minus the
+        # single judgment amount. For non-multi-parcel cases this collapses
+        # back to the old (final - prayer) math.
+        true_surplus = aggregate_sale - prayer if prayer > 0 else None
         cls = result.get("classification", "?")
         reason = result.get("classification_reason", "")
 
         if prayer > 0:
-            print(f"      prayer amount: ${prayer:,.0f}   |   true surplus: ${true_surplus:,.0f}")
+            if len(parcels) > 1:
+                print(f"      prayer amount: ${prayer:,.0f}   |   aggregate true surplus: ${true_surplus:,.0f}  "
+                      f"(over {len(parcels)} parcels)")
+            else:
+                print(f"      prayer amount: ${prayer:,.0f}   |   true surplus: ${true_surplus:,.0f}")
         else:
             print(f"      prayer amount: not found")
         print(f"      classification: {cls.upper()}  ({reason})")
@@ -115,15 +178,27 @@ async def run_county(county_id: str, headless: bool, only_case: str | None = Non
             print(f"      ⚠️  competing: {', '.join(result['competing_filers'])}")
         print()
 
-        # Tag with the auction lead's original data for downstream use
-        result["_auction_data"] = {
-            "final_sale_price": final,
-            "opening_bid":      opening,
-            "apparent_surplus": apparent,
-            "true_surplus":     true_surplus,
-            "address":          rec.get("address", ""),
-        }
-        results.append(result)
+        # Emit ONE enriched record per ORIGINAL parcel, all sharing the same
+        # docket result but each carrying its own auction-side data. This
+        # keeps the dashboard's per-parcel rendering intact while the
+        # classification (KILLED/RED/YELLOW/GREEN) honors the aggregated math.
+        for parcel in parcels:
+            parcel_record = dict(result)
+            parcel_record["case_number"] = parcel.get("case_number", "")
+            parcel_record["_auction_data"] = {
+                "final_sale_price": float(parcel.get("final_sale_price") or 0.0),
+                "opening_bid":      float(parcel.get("opening_bid") or 0.0),
+                "apparent_surplus": float(parcel.get("gross_surplus") or 0.0),
+                "true_surplus":     true_surplus,
+                "address":          parcel.get("address", ""),
+            }
+            parcel_record["_blanket_group"] = {
+                "case_key":             case_key,
+                "parcel_count":         len(parcels),
+                "aggregate_sale":       aggregate_sale,
+                "aggregate_apparent":   aggregate_apparent,
+            }
+            results.append(parcel_record)
 
     # Save enriched results
     out_file = DOCKETS_DIR / f"{county_id}_{datetime.now().strftime('%Y-%m-%d')}.jsonl"

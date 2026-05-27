@@ -59,11 +59,15 @@ Template: core/dockets/cuyahoga.py (proven). Base class + shared detectors: core
 County configs live in config/counties.py.
 Hard part: these 4 counties need summary-judgment PDF extraction (pdfplumber is available), not a structured prayer field.
 
+DEFERRED ENHANCEMENTS (do not action pre-emptively)
+
+PR Documents endpoint — `GET /v1/documents/{DocumentID}` returns document-level lien detail (LienPosition, LienType, LienCourtCaseNumber, LoanPosition) — deeper than the property-level lien flags from the Card fieldset. Evaluate ONLY after the property-level fields (PropertyHasOpenLiens, PropertyHasOpenPersonLiens, NumberLoans, TotalLoanBalance, Persons[]) prove too coarse for Eric's "here's the second positions or liens, or none" report on real run data. Do not build pre-emptively.
+
 KNOWN ISSUES (lower priority than the Ohio scrapers)
 
 Dead-browser-context bug in core/auction/universal.py — the day-loop keeps calling page.goto() on a closed page. Should detect a dead context and break.
 Miami-Dade docket (core/dockets/miami_dade.py) blocked by site-wide reCAPTCHA v3. Out of scope for the 2-day Ohio push.
-Multi-parcel blanket-judgment surplus aggregation — when one judgment secures N parcels (e.g. Summit CV-2025-02-0548 → 12 parcels, one $852K judgment), the per-parcel `true_surplus = sale - debt` math marks each parcel KILLED even when total sale across the case clears the debt. Group same-case parcels and compare aggregate sale to the single prayer.
+Multi-parcel blanket-judgment surplus aggregation — FIXED in `core/dockets/enrich.py:run_county`. Parcels are grouped by clerk-case-key (per-county parser: Summit→`joined`, Montgomery→`search_text`, Cuyahoga→derived from `case_prefix/year/number`), the docket is scraped ONCE per group, and `true_surplus = aggregate_sale_across_group - prayer`. classify() is called with the aggregate sale, not per-parcel sale. The dashboard still emits one row per parcel (so each parcel's address/sale are preserved) but all rows in a group share the group's classification.
 
 ## PROPERTYRADAR API
 

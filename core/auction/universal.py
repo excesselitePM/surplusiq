@@ -163,6 +163,13 @@ class UniversalAuctionScraper:
         url = self.build_preview_url(auction_date)
         print(f"    → {url}")
 
+        # Guard: if the page closed during a prior iteration's teardown,
+        # don't even try goto — the caller's is_closed() check will catch it
+        # before the next iteration.
+        if page.is_closed():
+            print(f"    ⚠ page already closed; skipping {auction_date or 'default'}")
+            return []
+
         try:
             await page.goto(url, timeout=30000, wait_until="domcontentloaded")
             await page.wait_for_timeout(3500)
@@ -548,8 +555,15 @@ class UniversalAuctionScraper:
                 all_sales.extend(today_sales)
                 print(f"    → Current page: {len(today_sales)} sales")
 
-                # Scrape previous days
+                # Scrape previous days. Break the loop if the page or its
+                # context has died — otherwise page.goto() in
+                # scrape_preview_page logs "Load error: ... has been closed"
+                # for every remaining day. (Symptom seen on Duval and others
+                # when a CAPTCHA/EULA flow tore down the page mid-run.)
                 for n in range(1, days_back + 1):
+                    if page.is_closed():
+                        print(f"    ⚠ page is closed; aborting day-loop at n={n}")
+                        break
                     check_date = date.today() - timedelta(days=n)
                     day_sales = await self.scrape_preview_page(page, check_date)
                     all_sales.extend(day_sales)
