@@ -316,6 +316,21 @@ def export_dashboard_data():
 
         leads_payload.append(payload)
 
+    # ── FP-14: filter killed leads OUT of the dashboard entirely ───────
+    # Per Eric's May 12 spec: "Killed leads are filtered OUT of the
+    # deliverable, not badged." Killed = motion to vacate, bankruptcy
+    # filed, dismissal, sale vacated, owner already filed claim, funds
+    # already disbursed, escheated to state. These leads have ZERO
+    # actionable surplus opportunity and rendering them — even greyed —
+    # wastes Eric's screen real estate and erodes trust in the
+    # deliverable. Killed-lead data stays in data/dockets/ for audit.
+    pre_kill = len(leads_payload)
+    leads_payload = [p for p in leads_payload
+                     if (p.get("lead_quality") or "").lower() != "killed"
+                     and (p.get("classification") or "").lower() != "killed"]
+    killed_removed = pre_kill - len(leads_payload)
+    print(f"   ✓ Filtered {killed_removed} KILLED leads out of dashboard (FP-14 spec)")
+
     # Sort by priority_rank (asc), then by best_real_surplus (desc) within rank.
     # The dashboard frontend can re-sort but the wire order is the audit order.
     leads_payload.sort(key=lambda p: (p.get("priority_rank", 5), -float(p.get("best_real_surplus", 0) or 0)))

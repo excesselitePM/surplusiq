@@ -86,6 +86,12 @@ A case filed in 2023 can have an auction last week. The recency filter uses the 
 ### Cuyahoga's "prayer field" is unreliable for older cases
 For many older Cuyahoga foreclosures (especially TREASURER vs … tax foreclosures), the "Prayer Amount" field on the case-summary page holds court costs or filing fees ($100–$3K), not the actual judgment. We reject any Cuyahoga prayer under $10K as not-found and treat it the same as "no docket data." Better to honestly say "unknown" than credit a $500 court-cost number as if it were the foreclosure debt.
 
+### Some leads may show a blank address
+If the source auction page didn't include a property address, the dashboard honestly shows blank rather than guessing. The case number, sold-to, and clerk-portal link are still authoritative — click through to verify.
+
+### Killed leads are not shown
+Per spec, any lead with a kill signal (motion to vacate, bankruptcy, sale vacated, owner already filed claim, funds already disbursed, escheated to state) is filtered out of the dashboard entirely. The raw docket data stays on disk for audit, but you won't see those leads on the dashboard — they have zero actionable surplus opportunity.
+
 ---
 
 ## How to read each lead for outreach
