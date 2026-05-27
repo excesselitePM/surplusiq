@@ -198,6 +198,18 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
+      - name: Upload enriched data
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: enriched-data
+          path: |
+            data/enriched/
+            data/dockets/
+            docs/data/
+          if-no-files-found: ignore
+          retention-days: 7
+
       - name: Regenerate dashboard data
         id: dashboard
         run: |
