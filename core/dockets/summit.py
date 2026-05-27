@@ -161,14 +161,27 @@ class SummitDocketScraper(DocketScraper):
 
             try:
                 # ─── Step 1: Disclaimer ─────────────────────────────────────
+                # Each Summit nav step (disclaimer → SelectDivision → Civil →
+                # SearchByCaseNbrCivil) is a classic-ASP page transition with
+                # a known URL pattern. wait_for_url after each click returns
+                # the instant the redirect lands — typically 200-500ms vs the
+                # old flat 1500-2000ms blind sleep at each step. The next
+                # _click_*/dump call already implicitly verifies the page is
+                # ready since it queries the new page's DOM.
                 print(f"      ▶ step 1: load disclaimer page")
                 await page.goto(DISCLAIMER_URL, wait_until="domcontentloaded", timeout=30000)
-                await page.wait_for_timeout(1500)
                 await snap("01_disclaimer")
                 await dump("01_disclaimer_body", "body", inline_chars=2000)
 
                 clicked_agree = await self._click_agree(page)
-                await page.wait_for_timeout(2000)
+                if clicked_agree:
+                    try:
+                        await page.wait_for_url(
+                            lambda u: "SelectDivision" in u,
+                            timeout=8000,
+                        )
+                    except PWTimeout:
+                        pass  # Fall through; next step's selector check is authoritative
                 await snap("02_after_agree")
                 print(f"      → after Agree: url={page.url}")
                 if not clicked_agree:
@@ -179,7 +192,13 @@ class SummitDocketScraper(DocketScraper):
                 # ─── Step 2: Division select → Civil ────────────────────────
                 print(f"      ▶ step 2: navigate to Civil division")
                 await self._click_civil(page)
-                await page.wait_for_timeout(2000)
+                try:
+                    await page.wait_for_url(
+                        lambda u: "PublicSite" in u or "Civil" in u,
+                        timeout=8000,
+                    )
+                except PWTimeout:
+                    pass
                 await snap("03_civil_landing")
                 await dump("03_civil_landing", "body", inline_chars=3000)
                 print(f"      → civil landing: url={page.url}")
@@ -187,7 +206,13 @@ class SummitDocketScraper(DocketScraper):
                 # ─── Step 3: Search by Case Number ──────────────────────────
                 print(f"      ▶ step 3: navigate to Search by Case Number")
                 await self._goto_case_number_search(page)
-                await page.wait_for_timeout(2000)
+                try:
+                    await page.wait_for_url(
+                        lambda u: "SearchByCaseNbrCivil" in u,
+                        timeout=8000,
+                    )
+                except PWTimeout:
+                    pass
                 await snap("04_search_form")
                 await dump("04_search_form", "form, body", inline_chars=4000)
                 print(f"      → search form: url={page.url}")
@@ -231,7 +256,9 @@ class SummitDocketScraper(DocketScraper):
                     )
                     return result
 
-                await page.wait_for_timeout(1500)
+                # CaseDetail.aspx fully renders within domcontentloaded; the
+                # expect_navigation block above already settled on the new
+                # page. No blind sleep needed before snap/dump.
                 await snap("05_case_detail")
                 await dump("05_case_detail", "body", inline_chars=4000)
                 print(f"      → landed on case detail: url={page.url}")

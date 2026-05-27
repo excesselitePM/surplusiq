@@ -176,6 +176,23 @@ The visible dashboard label is **"📋 Docket-checked"**, deliberately NOT "Veri
 
 `core/loader.py:load_all_leads()` enforces a hard 14-day window on the sale/auction date, NOT the case-filing date. A case can be filed in 2023 and auctioned last week — what matters is `_extract_sale_date()`, which pulls from `sale_date` / `sale_datetime` / `auction_date` / `soldDate` / `AUCTIONDATE` fields written by the scraper at point of sale. Never use a case number as a date source.
 
+### SCRAPER WAITS — condition-based, never blind sleeps
+
+Scraper page interactions wait for the THING THE NEXT STEP NEEDS, never for a flat duration. Allowed wait primitives:
+
+- `page.wait_for_selector(...)` — element appears in the DOM
+- `page.wait_for_url(...)` — URL pattern lands (great for classic ASP / postback navigation)
+- `page.wait_for_function(...)` — JS predicate becomes true (the right tool for SPAs)
+- `page.wait_for_load_state("domcontentloaded" | "networkidle", ...)` — page-level lifecycle
+
+`page.wait_for_timeout(N)` and `asyncio.sleep(N)` are BANNED in production scraper paths. Two narrow exceptions:
+1. Polite-pacing between unrelated polite-pacing requests, capped at ~500ms (e.g. `core/auction/universal.py` day-loop)
+2. Polling loops where each iteration's body waits a short tick (~500ms) before re-checking a condition (e.g. `core/dockets/montgomery.py` `#Case` populate poll)
+
+**`browser.launch(slow_mo=...)` is BANNED in production.** It injects the supplied delay before EVERY Playwright action — clicks, fills, waits, everything. Useful for debugging visual flow at headed mode; toxic for production wall time. Removed from `core/auction/universal.py:browser.launch` in FP-12.
+
+Stage 1 (FP-12) results: 26 blind sleeps + 1 `slow_mo=250` eliminated from `universal.py` + `cuyahoga.py` + `summit.py`. Stage 2 (FP-13) replaces the Montgomery SPA `wait_for_timeout(5000)` with a `wait_for_function` predicate that returns the instant `#tblSearchResults` populates.
+
 ### AUCTION SCRAPER PARALLELIZATION
 
 `core/auction/universal.py:run_all()` runs counties concurrently via `asyncio.gather` bounded by a `Semaphore`. Defaults:

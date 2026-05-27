@@ -132,13 +132,14 @@ class UniversalAuctionScraper:
                 btn = await page.query_selector(selector)
                 if btn:
                     await btn.click()
-                    await page.wait_for_timeout(2000)
                     print(f"    ✓ Agreed to T&C")
                     # Montgomery's EULA redirects to home page after agreement.
                     # Re-navigate to the target preview URL.
+                    # The 2000ms post-click sleep is dropped — the subsequent
+                    # page.goto already establishes a fresh domcontentloaded
+                    # wait, which subsumes any post-T&C settling time.
                     if target_url:
                         await page.goto(target_url, wait_until="domcontentloaded", timeout=30000)
-                        await page.wait_for_timeout(1500)
                     return
         except Exception:
             pass
@@ -173,7 +174,32 @@ class UniversalAuctionScraper:
 
         try:
             await page.goto(url, timeout=30000, wait_until="domcontentloaded")
-            await page.wait_for_timeout(3500)
+            # Condition-based wait: the Grant Street auction page is "ready"
+            # the instant the first auction item div renders OR a known
+            # empty-page marker appears. Selectors cover both FL and OH
+            # platforms + the Ohio diagnostic-HTML variants. 8s max but
+            # typical 300-1500ms in practice — replaces a flat 3500ms blind
+            # sleep that fired on every day-loop iteration.
+            try:
+                await page.wait_for_selector(
+                    ", ".join([
+                        "div.AUCTION_ITEM",
+                        "div.AITEM",
+                        "[id^='Area_W']",
+                        "div.product",
+                        "div.news-box",
+                        # Empty-page / no-auctions / login markers — return fast
+                        ".NO_AUCTIONS_TODAY",
+                        ".noAuctionsScheduled",
+                        "div.LOGIN_FORM",
+                    ]),
+                    timeout=8000,
+                    state="attached",
+                )
+            except PWTimeout:
+                # Page never rendered an item or known marker — fall through
+                # to the existing fallback regex_extract path.
+                pass
             await self.handle_terms_agreement(page, target_url=url)
             await self.handle_captcha(page)
         except PWTimeout:
@@ -206,7 +232,18 @@ class UniversalAuctionScraper:
             if not has_next:
                 break
             page_num += 1
-            await page.wait_for_timeout(2500)
+            # Wait for the next page's first auction item to render. Faster
+            # than a flat 2500ms blind sleep — fires the instant the new
+            # page DOM is ready. Falls through if no item appears within 5s
+            # (the page probably has fewer pages than the safety limit).
+            try:
+                await page.wait_for_selector(
+                    "div.AUCTION_ITEM, div.AITEM, [id^='Area_W'], div.product, div.news-box",
+                    timeout=5000,
+                    state="attached",
+                )
+            except PWTimeout:
+                pass
             more_sales = await self._extract_auction_items(page, auction_date)
             sales.extend(more_sales)
 
@@ -532,7 +569,11 @@ class UniversalAuctionScraper:
         async with async_playwright() as pw:
             browser = await pw.chromium.launch(
                 headless=run_headless,
-                slow_mo=250,
+                # NO slow_mo in production — that injects a 250ms pause before
+                # every Playwright action and silently 5-10x slows the entire
+                # scrape. Scraper waits should be condition-based
+                # (wait_for_selector / wait_for_url / wait_for_function),
+                # never global throttles. See CLAUDE.md → "Scraper waits".
                 args=["--no-sandbox", "--disable-blink-features=AutomationControlled"],
             )
             context = await browser.new_context(
@@ -546,9 +587,10 @@ class UniversalAuctionScraper:
             page = await context.new_page()
 
             try:
-                # Load homepage first for session establishment
+                # Load homepage first for session establishment.
+                # goto() already waits for the DOM; the extra 2000ms sleep
+                # was a hold-over from the slow_mo era and adds nothing.
                 await page.goto(self.base_url, timeout=30000)
-                await page.wait_for_timeout(2000)
                 await self.handle_terms_agreement(page)
 
                 # Scrape current page (today/most recent)
@@ -570,7 +612,11 @@ class UniversalAuctionScraper:
                     all_sales.extend(day_sales)
                     if day_sales:
                         print(f"    → {check_date}: {len(day_sales)} sales")
-                    await asyncio.sleep(1.5)
+                    # Polite-pacing between day-iterations; condition-based
+                    # waits replaced the slow_mo and the 3.5s preview-page
+                    # sleep, so a smaller polite pause is enough to avoid
+                    # hammering Grant Street's CDN.
+                    await asyncio.sleep(0.5)
 
             except Exception as e:
                 print(f"    ❌ Error: {e}")

@@ -221,11 +221,12 @@ class CuyahogaDocketScraper(DocketScraper):
             el = await page.query_selector(sel)
             if el:
                 await el.click()
-                await page.wait_for_timeout(800)
+                # _submit_search's first action is wait_for_selector on the
+                # case-type dropdown, which is the condition we want — the
+                # blind 800ms sleep added nothing useful.
                 return
         # Fallback — click the label text
         await page.click("text=CIVIL SEARCH BY CASE")
-        await page.wait_for_timeout(800)
 
     # ─── Step 3: Fill form and submit ───
     async def _submit_search(self, page: Page, parsed: dict) -> bool:
@@ -241,11 +242,12 @@ class CuyahogaDocketScraper(DocketScraper):
         type_sel = "select#SheetContentPlaceHolder_civilCaseSearch_ddlCaseType"
         await page.wait_for_selector(type_sel, timeout=10000)
         await page.select_option(type_sel, value="CIVIL")
+        # networkidle already handles the postback settling; drop the
+        # follow-up 1000ms blind sleep that fired even on cache hits.
         try:
             await page.wait_for_load_state("networkidle", timeout=5000)
         except Exception:
             pass
-        await page.wait_for_timeout(1000)
 
         # ── Case Year ──
         year_sel = "select#SheetContentPlaceHolder_civilCaseSearch_ddlCaseYear"
@@ -255,19 +257,29 @@ class CuyahogaDocketScraper(DocketScraper):
             await page.wait_for_load_state("networkidle", timeout=5000)
         except Exception:
             pass
-        await page.wait_for_timeout(1000)
 
         # ── Case Number ──
         num_sel = "input#SheetContentPlaceHolder_civilCaseSearch_txtCaseNum"
         await page.wait_for_selector(num_sel, timeout=10000)
         await page.fill(num_sel, parsed["number"])
-        await page.wait_for_timeout(500)
 
         # ── Submit ──
+        # Replace the post-submit 2000ms blind sleep with a URL-based
+        # condition: Cuyahoga's CaseSummary postback always lands on a URL
+        # containing "CaseInformation_Summary" or "CaseSummary" (this exact
+        # check was already the return value below — it's the page's own
+        # success marker). Returns the instant the redirect lands.
         submit_sel = "input#SheetContentPlaceHolder_civilCaseSearch_btnSubmitCase"
         await page.click(submit_sel)
-        await page.wait_for_load_state("domcontentloaded", timeout=20000)
-        await page.wait_for_timeout(2000)
+        try:
+            await page.wait_for_url(
+                lambda u: "CaseInformation_Summary" in u or "CaseSummary" in u,
+                timeout=10000,
+            )
+        except PWTimeout:
+            # Search failed (no such case) — page stays on the search form.
+            # Caller treats False return as "not found".
+            pass
 
         return "CaseInformation_Summary" in page.url or "CaseSummary" in page.url
 
@@ -342,7 +354,9 @@ class CuyahogaDocketScraper(DocketScraper):
         try:
             await page.click("a:has-text('Docket')")
             await page.wait_for_load_state("domcontentloaded", timeout=15000)
-            await page.wait_for_timeout(1000)
+            # No blind sleep — the next operation reads inner_text("body")
+            # which doesn't need additional render time. ASP.NET PostBacks
+            # are settled by domcontentloaded.
         except Exception:
             return  # Docket page not accessible; skip
 
@@ -387,7 +401,7 @@ class CuyahogaDocketScraper(DocketScraper):
         try:
             await page.click("a:has-text('Parties')")
             await page.wait_for_load_state("domcontentloaded", timeout=15000)
-            await page.wait_for_timeout(800)
+            # No blind sleep — same reasoning as _scrape_docket_page.
         except Exception:
             return
 
