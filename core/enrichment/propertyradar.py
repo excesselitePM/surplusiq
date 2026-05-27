@@ -670,7 +670,8 @@ def main():
         # Card carries the lien/loan fields Eric needs (TotalLoanBalance,
         # AvailableEquity, PropertyHasOpenLiens, PropertyHasOpenPersonLiens,
         # AVM, AssessedValue, Owner). Stay under PR's 50-field per-request cap.
-        params = {"Fields": "Card"}
+        # GET /properties/{RadarID} also requires Purchase — 0 = free read.
+        params = {"Fields": "Card", "Purchase": 0}
         print(f"  → GET {url}")
         print(f"     params: {json.dumps(params, sort_keys=True)}")
         try:
