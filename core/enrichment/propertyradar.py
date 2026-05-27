@@ -636,6 +636,11 @@ def main():
                              "Useful for feasibility-probing whether a criterion "
                              "is accepted by /properties on the current PR plan. "
                              "Forces --dry-run.")
+    parser.add_argument("--probe-radarid", type=str, default=None, metavar="RADARID",
+                        help="GET /v1/properties/{RadarID} smoke test. Free — this "
+                             "endpoint does not deduct exports. Use the docs' "
+                             "sample RadarID 'P8A0E18D' (Groundhog Day House) to "
+                             "confirm the endpoint works on the current plan.")
     args = parser.parse_args()
 
     if not PR_API_TOKEN:
@@ -655,6 +660,23 @@ def main():
     print("│  SurplusIQ — PropertyRadar Enrichment".ljust(71) + "│")
     print("└" + "─" * 70 + "┘")
     print()
+
+    # ─── Probe mode: GET /v1/properties/{RadarID} ─────────────────────────
+    if args.probe_radarid:
+        radarid = args.probe_radarid.strip()
+        print(f"🧪 PROBE-RADARID radarid={radarid!r}")
+        client = PropertyRadarClient(token=PR_API_TOKEN, dry_run=True)
+        url = f"{PR_API_BASE}/properties/{radarid}"
+        params = {"Fields": "Card,Overview"}
+        print(f"  → GET {url}")
+        print(f"     params: {json.dumps(params, sort_keys=True)}")
+        try:
+            resp = client.session.get(url, params=params, timeout=30)
+            head = (resp.text or "")[:1200]
+            print(f"  ← {resp.status_code}  body[:1200]={head!r}")
+        except Exception as e:
+            print(f"  ← EXCEPTION {type(e).__name__}: {e}")
+        return
 
     # ─── Probe mode: raw Criteria JSON, Purchase=0 ────────────────────────
     if args.probe_criteria:

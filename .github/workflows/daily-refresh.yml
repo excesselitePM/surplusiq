@@ -54,6 +54,11 @@ on:
         required: false
         default: ''
         type: string
+      pr_probe_radarid:
+        description: 'PR API smoke test: GET /v1/properties/{RadarID}. Free (no exports deducted). Use P8A0E18D for the docs sample. When set, skips lead enrichment.'
+        required: false
+        default: ''
+        type: string
 
 permissions:
   contents: write
@@ -147,13 +152,16 @@ jobs:
 
       - name: PR API probe (Purchase=0, free)
         id: pr_probe
-        if: github.event.inputs.pr_probe_address != '' || github.event.inputs.pr_probe_criteria != ''
+        if: github.event.inputs.pr_probe_address != '' || github.event.inputs.pr_probe_criteria != '' || github.event.inputs.pr_probe_radarid != ''
         env:
           PROPERTYRADAR_TOKEN: ${{ secrets.PROPERTYRADAR_TOKEN }}
           PR_PROBE_ADDRESS: ${{ github.event.inputs.pr_probe_address }}
           PR_PROBE_CRITERIA: ${{ github.event.inputs.pr_probe_criteria }}
+          PR_PROBE_RADARID: ${{ github.event.inputs.pr_probe_radarid }}
         run: |
-          if [ -n "$PR_PROBE_CRITERIA" ]; then
+          if [ -n "$PR_PROBE_RADARID" ]; then
+            python -m core.enrichment.propertyradar --probe-radarid "$PR_PROBE_RADARID"
+          elif [ -n "$PR_PROBE_CRITERIA" ]; then
             python -m core.enrichment.propertyradar --probe-criteria "$PR_PROBE_CRITERIA"
           else
             python -m core.enrichment.propertyradar --probe-address "$PR_PROBE_ADDRESS"
@@ -162,7 +170,7 @@ jobs:
 
       - name: Run PropertyRadar enrichment
         id: pr_enrich
-        if: steps.params.outputs.run_pr == 'true' && github.event.inputs.pr_probe_address == '' && github.event.inputs.pr_probe_criteria == ''
+        if: steps.params.outputs.run_pr == 'true' && github.event.inputs.pr_probe_address == '' && github.event.inputs.pr_probe_criteria == '' && github.event.inputs.pr_probe_radarid == ''
         timeout-minutes: 10
         env:
           PROPERTYRADAR_TOKEN: ${{ secrets.PROPERTYRADAR_TOKEN }}
