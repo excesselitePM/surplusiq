@@ -114,8 +114,31 @@ def _surplus_for_payload(payload_lead: dict) -> tuple:
     """
     money_status = (payload_lead.get("money_status") or "unknown").strip().lower()
 
+    # FP-18 Item 2 (display bug fix): when a lead has BOTH a real docket
+    # prayer (≥ $10K, debt_source=docket_prayer/pdf_extract:*) AND a
+    # positive true_surplus, use true_surplus as the displayed amount
+    # REGARDLESS OF TIER. Previously docket-checked YELLOW/RED Summit
+    # leads (which sit in apparent_surplus because no proof-of-disbursement
+    # filing yet) returned gross_surplus = sale - opening_bid, which is
+    # meaningless OH arithmetic. CV2025094689 showed $0 instead of its
+    # real $11,461 true_surplus; CV2025115614 showed $2,800 instead of
+    # its real $17,532. Both jump above $10K with this fix.
+    prayer = float(payload_lead.get("prayer_amount") or 0)
+    ts = payload_lead.get("true_surplus")
+    debt_src = payload_lead.get("debt_source") or ""
+    has_real_docket_debt = (
+        prayer >= 10000.0
+        and ts is not None
+        and ts > 0
+        and (debt_src.startswith("docket_prayer")
+             or debt_src.startswith("pdf_extract:"))
+    )
+    if has_real_docket_debt:
+        return (float(ts), money_status if money_status in
+                ("confirmed_surplus", "estimated_surplus", "apparent_surplus")
+                else "apparent_surplus")
+
     if money_status == "confirmed_surplus":
-        # Proof gate already passed in the loader => true_surplus is real.
         ts = payload_lead.get("true_surplus")
         return (float(ts) if ts is not None else 0.0, "confirmed_surplus")
 
@@ -330,6 +353,26 @@ def export_dashboard_data():
                      and (p.get("classification") or "").lower() != "killed"]
     killed_removed = pre_kill - len(leads_payload)
     print(f"   ✓ Filtered {killed_removed} KILLED leads out of dashboard (FP-14 spec)")
+
+    # ── FP-18 Item 2: $5K min-surplus floor safety net ────────────────
+    # After the display-bug fix lifts docket-checked leads to their real
+    # true_surplus, a near-zero number should be exceptionally rare. But
+    # if the math genuinely produces sub-$5K (e.g. tax-deed sale where
+    # debt nearly equals sale), those leads aren't actionable and should
+    # not occupy dashboard real estate. Eric's standard: filter, don't
+    # silently drop — count is logged AND audit fields in summary.json
+    # preserve the pre-filter total.
+    MIN_DISPLAY_SURPLUS = 5000.0
+    pre_floor = len(leads_payload)
+    below_floor = [p for p in leads_payload
+                   if (p.get("best_real_surplus") or 0) < MIN_DISPLAY_SURPLUS]
+    leads_payload = [p for p in leads_payload
+                     if (p.get("best_real_surplus") or 0) >= MIN_DISPLAY_SURPLUS]
+    floor_removed = pre_floor - len(leads_payload)
+    print(f"   ✓ Filtered {floor_removed} sub-${MIN_DISPLAY_SURPLUS:,.0f} leads out of dashboard (FP-18 floor)")
+    if below_floor:
+        for p in below_floor[:5]:
+            print(f"      below-floor: {p.get('county_id'):<14} {p.get('case_number','?'):<24}  best=${p.get('best_real_surplus') or 0:,.0f}")
 
     # Sort by priority_rank (asc), then by best_real_surplus (desc) within rank.
     # The dashboard frontend can re-sort but the wire order is the audit order.
