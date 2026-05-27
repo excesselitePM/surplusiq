@@ -549,6 +549,7 @@
         <option value="C">C ($10K+)</option>
       </select>
       <button class="filter-clear" id="filter-clear">Clear</button>
+      <button class="filter-clear" id="csv-export" title="Download the currently-filtered, currently-sorted leads as CSV. Includes every column visible on the dashboard.">⬇ Download CSV</button>
       <div class="results-count"><strong id="results-count">—</strong> shown</div>
     </div>
 
@@ -899,6 +900,63 @@
       $("filter-score").value = "";
       applyFilters();
     });
+    $("csv-export").addEventListener("click", downloadCsv);
+  }
+
+  // ─── CSV export ───────────────────────────────────────
+  // Generates from the currently-filtered, currently-sorted `filtered`
+  // array. Columns mirror the visible dashboard table (Surplus / Money
+  // Status / Docket / Tier / County / State / Case # / Address / Sale
+  // Price / Opening Bid / Sold At / Owner / Evidence Level / Source /
+  // Clerk Docket / Sold To). Plus a few audit columns (debt_source,
+  // pr_total_loan_balance, true_surplus) so a CSV reviewer can verify
+  // the dashboard numbers against their provenance.
+  function csvEscape(v) {
+    if (v === null || v === undefined) return "";
+    const s = String(v);
+    return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  }
+  function downloadCsv() {
+    if (!filtered.length) { alert("No leads to export."); return; }
+    const cols = [
+      ["Surplus",              l => Math.round(l.best_real_surplus || 0)],
+      ["Money Status",         l => l.money_status || ""],
+      ["Docket Classification",l => l.classification || ""],
+      ["Docket Checked",       l => l.docket_verified_positive ? "yes" : ""],
+      ["Tier",                 l => l.score || ""],
+      ["County",               l => l.county_name || ""],
+      ["State",                l => l.state || ""],
+      ["Case Number",          l => l.case_number || ""],
+      ["Address",              l => cleanAddress(l.address) || ""],
+      ["Sale Price",           l => Math.round(l.final_sale_price || 0)],
+      ["Opening Bid",          l => Math.round(l.opening_bid || 0)],
+      ["Sold At",              l => l.sale_datetime || l.sale_date || ""],
+      ["Owner",                l => l.pr_owner_name || ""],
+      ["Evidence Level",       l => l.evidence_level || ""],
+      ["Auction Source URL",   l => l.source_url || ""],
+      ["Clerk Docket URL",     l => l.clerk_manual_search_url || ""],
+      ["Sold To",              l => l.sold_to || ""],
+      // Audit columns — provenance + raw numbers behind each tier
+      ["debt_source",          l => l.debt_source || ""],
+      ["prayer_amount",        l => Math.round(l.prayer_amount || 0)],
+      ["true_surplus",         l => l.true_surplus === null || l.true_surplus === undefined ? "" : Math.round(l.true_surplus)],
+      ["pr_total_loan_balance",l => Math.round(l.pr_total_loan_balance || 0)],
+      ["pr_match",             l => l.pr_match ? "true" : "false"],
+      ["kill_signals",         l => (l.kill_signals || []).join("|")],
+      ["sale_date_iso",        l => l.sale_date || ""],
+    ];
+    const header = cols.map(c => csvEscape(c[0])).join(",");
+    const rows = filtered.map(l => cols.map(c => csvEscape(c[1](l))).join(","));
+    const csv = "﻿" + header + "\n" + rows.join("\n") + "\n";  // UTF-8 BOM for Excel
+    const today = new Date().toISOString().slice(0, 10);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `surplusiq_leads_${today}_${filtered.length}rows.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(link.href);
   }
 
   // ─── Init ─────────────────────────────────────────────
