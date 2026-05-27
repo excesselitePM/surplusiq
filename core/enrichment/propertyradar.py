@@ -724,8 +724,11 @@ def main():
 
         print()
         print("─── STEP 2: POST /v1/properties with normalized criteria (Purchase=0) ───")
-        # Use Card to get the lien/loan fields.
-        pparams = {"Fields": "Card", "Limit": 5, "Purchase": 0, "Start": 0}
+        # Under Purchase=0 PR docs say "counts/RadarID only" — request just
+        # RadarID to test whether the ID is returned without burning an
+        # export. If results stay empty, Purchase=1 is the only way to
+        # learn the RadarID (1 export per lookup).
+        pparams = {"Fields": "RadarID", "Limit": 5, "Purchase": 0, "Start": 0}
         purl = f"{PR_API_BASE}/properties"
         print(f"  → POST {purl}")
         print(f"     params: {json.dumps(pparams, sort_keys=True)}")
