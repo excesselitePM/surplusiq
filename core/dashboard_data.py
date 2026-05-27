@@ -421,9 +421,17 @@ def export_dashboard_data():
     print(f"   ✓ Killed: {len(killed)} | Red: {len(red)} (excluded from confirmed)")
 
     summary_file = docs_data / "summary.json"
+    # FP-19 Item 3: total_leads is the POST-FILTER (visible) count.
+    # The raw pre-filter count + per-filter breakdown stays in the
+    # payload as separate audit fields, so anyone inspecting summary.json
+    # can reconcile every dropped lead.
     summary_payload = {
         "generated_at":           summary["generated_at"],
-        "total_leads":            summary["total_leads"],
+        "total_leads":            len(leads_payload),               # visible
+        "total_leads_pre_filter": summary["total_leads"],            # raw scraped
+        "killed_filtered_count":  killed_removed,                    # FP-14
+        "below_floor_filtered_count": floor_removed,                  # FP-18
+        "min_display_surplus":    MIN_DISPLAY_SURPLUS,                # FP-18 threshold
 
         # FP-4: separated, honestly-labeled totals. No single "total_surplus"
         # that conflates confirmed money with auction guesses.

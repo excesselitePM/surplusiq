@@ -781,14 +781,26 @@
 
     $("kpi-pipeline-ready").textContent    = (s.pipeline_ready_count || 0).toLocaleString();
 
-    // Methodology note — show the lead-disposition counts honestly.
+    // FP-19 Item 3: header counts reconcile with table.
+    // total_leads is now the POST-FILTER count (matches what's visible
+    // in the table). Pre-filter total + filter breakdown shown as a
+    // small audit-trail line so Eric can see WHERE leads went.
+    const visible = s.total_leads || 0;
+    const preFilter = s.total_leads_pre_filter || visible;
+    const killedFiltered = s.killed_filtered_count || 0;
+    const floorFiltered = s.below_floor_filtered_count || 0;
+    const filterParts = [];
+    if (killedFiltered) filterParts.push(`${killedFiltered} killed`);
+    if (floorFiltered)  filterParts.push(`${floorFiltered} below $${(s.min_display_surplus || 5000).toLocaleString()}`);
+    const auditLine = (preFilter > visible)
+      ? `(${preFilter} raw scraped → ${filterParts.join(" + ")} filtered → ${visible} visible)`
+      : '';
     const noteCounts = [
-      `${s.total_leads || 0} total leads`,
-      `${s.killed_count || 0} killed`,
+      `${visible} visible leads`,
       `${s.red_count || 0} red-flagged`,
       `${s.docket_matched_count || 0} docket-reviewed`,
       `${s.pr_matched_count || 0} property-enriched`,
-    ].join(" · ");
+    ].join(" · ") + (auditLine ? '  ' + auditLine : '');
     $("verify-note-counts").textContent = noteCounts;
 
     if (s.generated_at) {
