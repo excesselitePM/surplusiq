@@ -423,6 +423,7 @@
   .status-badge.status-killed  { background: rgba(120, 120, 120, 0.2); color: #999; }
   .status-badge.status-unknown { background: rgba(150, 150, 150, 0.1); color: #777; }
   .status-badge.status-none    { background: rgba(100, 130, 200, 0.1); color: #6688cc; }
+  .status-badge.dv-positive    { background: rgba(46, 204, 113, 0.30); color: #2ECC71; font-weight: 600; }
 
   /* Subtle row tint for killed leads */
   tr.row-killed {
@@ -619,7 +620,12 @@
 
   function renderStatusBadge(l) {
     const cls = (l.classification || '').toLowerCase();
-    if (!cls) return '<span class="status-badge status-none" title="No docket data yet">—</span>';
+    // Docket-verified positive surplus — the deliverable's highest-quality
+    // signal. Real docket-extracted prayer, positive true_surplus, non-killed.
+    const dvPrefix = l.docket_verified_positive
+      ? '<span class="status-badge dv-positive" title="Docket-extracted prayer + positive true_surplus">🎯 Verified</span> '
+      : '';
+    if (!cls) return dvPrefix + '<span class="status-badge status-none" title="No docket data yet">—</span>';
     const labels = {
       green:   '✓ Green',
       yellow:  'Yellow',
@@ -631,7 +637,7 @@
     const reason = (l.classification_reason || '').replace(/"/g, '&quot;');
     const signals = (l.kill_signals || []).join(', ');
     const tooltip = reason + (signals ? ' — signals: ' + signals : '');
-    return '<span class="status-badge status-' + cls + '" title="' + tooltip + '">' + label + '</span>';
+    return dvPrefix + '<span class="status-badge status-' + cls + '" title="' + tooltip + '">' + label + '</span>';
   }
 
   function renderMoneyStatusBadge(l) {
@@ -640,9 +646,9 @@
       confirmed_surplus: { txt: 'Confirmed Surplus', cls: 'status-green',
                            tip: 'Docket / official proof verified' },
       estimated_surplus: { txt: 'Estimated Surplus', cls: 'status-yellow',
-                           tip: 'Based on PropertyRadar enrichment — not verified' },
+                           tip: 'PropertyRadar refined the surplus number (TotalLoanBalance > $0)' },
       apparent_surplus:  { txt: 'Apparent Surplus',  cls: 'status-none',
-                           tip: 'Auction math only — not verified' },
+                           tip: 'Auction math only. PR intel may still attach (owner, lien flags)' },
       no_surplus:        { txt: 'No Surplus',        cls: 'status-killed',
                            tip: 'Killed / no collectible surplus' },
       unknown:           { txt: 'Unknown',           cls: 'status-unknown',

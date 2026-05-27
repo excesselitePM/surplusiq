@@ -120,12 +120,17 @@ def _surplus_for_payload(payload_lead: dict) -> tuple:
         return (float(ts) if ts is not None else 0.0, "confirmed_surplus")
 
     if money_status == "estimated_surplus":
-        # PropertyRadar estimate, or docket-reviewed-but-unproven.
+        # PR-refined surplus only when TLB > $0 — the same FP-8 rule that
+        # _reassign_status_after_pr enforces. Defensive double-check here
+        # so docket-reviewed-but-unproven leads (which the loader also tags
+        # estimated_surplus when has_pr is True) can't slip through with
+        # an unrefined number.
+        tlb = float(payload_lead.get("pr_total_loan_balance") or 0)
         pr = payload_lead.get("real_surplus_estimate")
-        if pr is not None:
+        if tlb > 0 and pr is not None:
             return (float(pr), "estimated_surplus")
-        # docket-reviewed green/yellow without proof: fall back to apparent
-        return (float(payload_lead.get("gross_surplus", 0.0)), "estimated_surplus")
+        # No real refinement — surplus number is auction math.
+        return (float(payload_lead.get("gross_surplus", 0.0)), "apparent_surplus")
 
     if money_status == "no_surplus":
         return (0.0, "no_surplus")
@@ -137,12 +142,20 @@ def _surplus_for_payload(payload_lead: dict) -> tuple:
 def _reassign_status_after_pr(payload: dict) -> None:
     """
     Re-run the verification status model on a payload dict AFTER PR enrichment
-    has been merged. The loader assigns status on raw Lead objects before PR
-    data exists; a PR-matched lead that had no docket classification must be
-    upgraded from auction_only to property_enriched / estimated_surplus.
+    has been merged. Three-tier model honesty (FP-8):
 
-    This NEVER upgrades a lead to confirmed_surplus — PR cannot confirm surplus
-    (spec Part 4). Leads already docket-classified are left untouched.
+      estimated_surplus  REQUIRES pr_total_loan_balance > 0 — i.e. PR actually
+                         refined the surplus arithmetic. A PR match with
+                         TotalLoanBalance == $0 means PR couldn't refine
+                         the math (data lag — freshly-foreclosed property
+                         hasn't propagated through PR's source data yet),
+                         so the lead drops to apparent_surplus. The PR
+                         data (owner, lien flags, tax_delinquency, distress)
+                         stays attached as INTEL FIELDS on the lead.
+
+      This NEVER upgrades a lead to confirmed_surplus — PR cannot confirm
+      surplus (spec Part 4). Leads already docket-classified are left
+      untouched.
     """
     classification = (payload.get("classification") or "").strip().lower()
 
@@ -150,13 +163,21 @@ def _reassign_status_after_pr(payload: dict) -> None:
     if classification in _POSITIVE_CLASSIFICATIONS or classification in _NEGATIVE_CLASSIFICATIONS:
         return
 
-    # No docket classification, but PR matched => property_enriched.
-    if payload.get("pr_match"):
-        payload["research_status"] = "property_enriched"
-        payload["money_status"]    = "estimated_surplus"
-        payload["evidence_level"]  = "property_enriched"
-        payload["lead_quality"]    = "unknown"
-        payload["pipeline_ready"]  = False
+    if not payload.get("pr_match"):
+        return
+
+    tlb = float(payload.get("pr_total_loan_balance") or 0)
+    payload["research_status"] = "property_enriched"
+    payload["evidence_level"]  = "property_enriched"
+    payload["lead_quality"]    = "unknown"
+    payload["pipeline_ready"]  = False
+    if tlb > 0:
+        # Real arithmetic refinement — PR's TLB lets us subtract debt.
+        payload["money_status"] = "estimated_surplus"
+    else:
+        # PR match but no debt data; auction math is what we have. PR
+        # intel (owner / lien flags / tax delinquency) stays in the payload.
+        payload["money_status"] = "apparent_surplus"
 
 
 def export_dashboard_data():
@@ -254,7 +275,43 @@ def export_dashboard_data():
         if bucket == "confirmed_surplus":
             total_real_surplus += amount
 
+        # ── FP-9: priority_rank — surface docket-verified positive-surplus
+        # leads at the top of the dashboard so the 7 Summit YELLOW/RED
+        # leads don't get buried under 40 auction-math rows.
+        #
+        # Rank semantics (lower = higher priority on the dashboard):
+        #   0  confirmed_surplus (docket + proof field)
+        #   1  docket-verified positive: real prayer >= $10K, positive
+        #      true_surplus, classification in {green,yellow,red}
+        #   2  estimated_surplus (PR-refined math, TLB > $0)
+        #   3  apparent_surplus with PR intel (owner/liens attached)
+        #   4  apparent_surplus, no PR data
+        #   5  killed / no_surplus (still shown but de-emphasized)
+        cls_lc = (payload.get("classification") or "").lower()
+        ts = payload.get("true_surplus")
+        prayer = float(payload.get("prayer_amount") or 0)
+        DOCKET_VERIFIED_MIN_PRAYER = 10000.0
+        if bucket == "confirmed_surplus":
+            payload["priority_rank"] = 0
+        elif (cls_lc in ("green", "yellow", "red")
+              and prayer >= DOCKET_VERIFIED_MIN_PRAYER
+              and ts is not None and ts > 0):
+            payload["priority_rank"] = 1
+            payload["docket_verified_positive"] = True
+        elif bucket == "estimated_surplus":
+            payload["priority_rank"] = 2
+        elif bucket == "apparent_surplus" and payload.get("pr_match"):
+            payload["priority_rank"] = 3
+        elif bucket == "apparent_surplus":
+            payload["priority_rank"] = 4
+        else:
+            payload["priority_rank"] = 5
+
         leads_payload.append(payload)
+
+    # Sort by priority_rank (asc), then by best_real_surplus (desc) within rank.
+    # The dashboard frontend can re-sort but the wire order is the audit order.
+    leads_payload.sort(key=lambda p: (p.get("priority_rank", 5), -float(p.get("best_real_surplus", 0) or 0)))
 
     leads_file = docs_data / "leads.json"
     with open(leads_file, "w") as f:
@@ -273,10 +330,12 @@ def export_dashboard_data():
     apparent  = [p for p in leads_payload if _bucket(p) == "apparent_surplus"]
     killed    = [p for p in leads_payload if (p.get("lead_quality") or "") == "killed"]
     red       = [p for p in leads_payload if (p.get("lead_quality") or "") == "red"]
+    docket_verified_positive = [p for p in leads_payload if p.get("docket_verified_positive")]
 
     confirmed_total = sum(p.get("best_real_surplus", 0) for p in confirmed)
     estimated_total = sum(p.get("best_real_surplus", 0) for p in estimated)
     apparent_total  = sum(p.get("best_real_surplus", 0) for p in apparent)
+    docket_verified_positive_total = sum(p.get("best_real_surplus", 0) for p in docket_verified_positive)
 
     def _top5(bucket_list):
         s = sorted(bucket_list, key=lambda p: p.get("best_real_surplus", 0), reverse=True)
@@ -293,6 +352,7 @@ def export_dashboard_data():
     print(f"   ✓ Confirmed: {len(confirmed)} leads / ${confirmed_total:,.0f}")
     print(f"   ✓ Estimated: {len(estimated)} leads / ${estimated_total:,.0f}")
     print(f"   ✓ Apparent:  {len(apparent)} leads / ${apparent_total:,.0f}")
+    print(f"   ✓ 🎯 Docket-verified positive: {len(docket_verified_positive)} leads / ${docket_verified_positive_total:,.0f}")
     print(f"   ✓ Killed: {len(killed)} | Red: {len(red)} (excluded from confirmed)")
 
     summary_file = docs_data / "summary.json"
@@ -305,6 +365,11 @@ def export_dashboard_data():
         "confirmed_surplus_total":  confirmed_total,
         "estimated_surplus_total":  estimated_total,
         "apparent_surplus_total":   apparent_total,
+        # FP-9 headline: how many leads have a docket-extracted prayer AND
+        # positive true_surplus AND a non-killed classification. These are
+        # the highest-quality leads on the dashboard.
+        "docket_verified_positive_count": len(docket_verified_positive),
+        "docket_verified_positive_total": docket_verified_positive_total,
 
         "confirmed_surplus_count":  len(confirmed),
         "estimated_surplus_count":  len(estimated),

@@ -301,12 +301,32 @@ class CuyahogaDocketScraper(DocketScraper):
                         pass
                 setattr(result, field_name if field_name != "last_disposition_date" else "last_activity_date", val)
 
-        # Prayer Amount — the critical field
+        # Prayer Amount — the critical field. Cuyahoga's "Prayer Amount"
+        # field is unreliable for many older foreclosure cases: it often
+        # holds court costs / filing fees / small-claim ancillary amounts
+        # ($100-$3K range), not the actual judgment principal. Real
+        # foreclosure judgments are in the $50K-$300K+ range. We reject
+        # anything under MIN_PLAUSIBLE_PRAYER as not-found so the
+        # downstream true_surplus math doesn't credit court-cost noise as
+        # a real judgment. (Anti-fabrication: prefer "unknown" over a
+        # bogus tiny number that classifies a $50K-surplus property as
+        # GREEN/YELLOW.)
+        MIN_PLAUSIBLE_PRAYER = 10000.0
         m = re.search(r"Prayer Amount:\s*\$?([\d,]+(?:\.\d{2})?)", text)
         if m:
             try:
-                result.prayer_amount = float(m.group(1).replace(",", ""))
-                result.debt_source = "prayer_field"
+                raw = float(m.group(1).replace(",", ""))
+                if raw >= MIN_PLAUSIBLE_PRAYER:
+                    result.prayer_amount = raw
+                    result.debt_source = "prayer_field"
+                else:
+                    print(f"      ⚠ rejected prayer_field=${raw:,.2f} as implausible "
+                          f"for a foreclosure (floor: ${MIN_PLAUSIBLE_PRAYER:,.0f}); "
+                          f"treating as not-found")
+                    result.classification_reason = (
+                        f"prayer_field=${raw:,.2f} rejected as below ${MIN_PLAUSIBLE_PRAYER:,.0f} "
+                        f"foreclosure-judgment plausibility floor"
+                    )
             except ValueError:
                 pass
 

@@ -134,6 +134,29 @@ If the chain fails at any step (suggestion has no match, RadarID lookup empty, G
 
 `core/dashboard_data.py:_load_pr_enrichment` only loads `all_enriched_<today>.json` — never older files. Any lead missing from today's PR run drops back to its docket-derived tier (or `apparent_surplus` if no docket data). A failed or skipped PR step must NOT leave yesterday's `estimated_surplus` badges sitting on the dashboard. This is the only way `estimated_surplus` can mean "real this-run PR data" rather than "we ran PR once weeks ago and the badge stuck."
 
+### TIER PROVENANCE — estimated_surplus REQUIRES PR TLB > $0 (FP-8)
+
+`estimated_surplus` means "PR refined the SURPLUS NUMBER" — not "PR matched the property." A PR match with `TotalLoanBalance == $0` (the dominant case — freshly foreclosed properties haven't propagated through PR's source data yet) drops the lead to `apparent_surplus`. The PR data (owner, lien flags, tax_delinquency, distress score) still attaches as INTEL FIELDS on the lead, but the surplus tier honestly reflects "auction math only."
+
+Enforced in two places:
+- `_reassign_status_after_pr` only sets `money_status = estimated_surplus` when `pr_total_loan_balance > 0`.
+- `_surplus_for_payload` defensively checks `tlb > 0` even for leads the loader pre-tagged `estimated_surplus`.
+
+Eric's spec is the source: "PropertyRadar is a lien REPORT, not a kill switch / not a surplus source." The tier badge must not imply PR contributed to the dollar figure when it didn't.
+
+### DOCKET-VERIFIED POSITIVE BADGE (FP-9)
+
+A lead earns `docket_verified_positive: True` (and `priority_rank: 1`) when it has:
+- A real docket-extracted prayer amount ≥ $10,000
+- A positive `true_surplus`
+- A classification in {green, yellow, red}
+
+These are the highest-quality leads on the dashboard regardless of tier (most will be YELLOW or RED since proof-of-surplus filings are typically days/weeks behind the sale). `leads.json` is sorted by `priority_rank` ascending so docket-verified positives surface above PR-matched apparent leads. The dashboard renders a "🎯 Verified" badge next to the classification.
+
+### CUYAHOGA PRAYER-FIELD PLAUSIBILITY FLOOR
+
+`core/dockets/cuyahoga.py:_scrape_summary_page` rejects any `Prayer Amount` value below $10,000 as implausible for a foreclosure judgment. For many older Cuyahoga cases the "Prayer Amount" field on the case-summary page holds court costs / filing fees / small-claim amounts (typical range $100–$3K), not the actual judgment principal. Below-floor values are logged and `prayer_amount` stays 0 so downstream `true_surplus` math doesn't credit fee noise as a real judgment.
+
 ### RECENCY FILTER (sale-date, not case-filing-date)
 
 `core/loader.py:load_all_leads()` enforces a hard 14-day window on the sale/auction date, NOT the case-filing date. A case can be filed in 2023 and auctioned last week — what matters is `_extract_sale_date()`, which pulls from `sale_date` / `sale_datetime` / `auction_date` / `soldDate` / `AUCTIONDATE` fields written by the scraper at point of sale. Never use a case number as a date source.
