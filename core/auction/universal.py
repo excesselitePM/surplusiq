@@ -174,31 +174,19 @@ class UniversalAuctionScraper:
 
         try:
             await page.goto(url, timeout=30000, wait_until="domcontentloaded")
-            # Condition-based wait: the Grant Street auction page is "ready"
-            # the instant the first auction item div renders OR a known
-            # empty-page marker appears. Selectors cover both FL and OH
-            # platforms + the Ohio diagnostic-HTML variants. 8s max but
-            # typical 300-1500ms in practice — replaces a flat 3500ms blind
-            # sleep that fired on every day-loop iteration.
+            # Grant Street auction pages are JS-heavy and render the
+            # auction-item DOM asynchronously after domcontentloaded fires.
+            # FP-12 first tried wait_for_selector against a union of known
+            # item selectors, but that lost ALL FL counties (run 26520090637:
+            # broward 16→0, miami-dade 12→0, duval 2→0, lee 1→0, orange 1→0)
+            # — either state="attached" fired on a placeholder before items
+            # populated, OR the selector list was incomplete for FL's DOM.
+            # Network-idle is the safer wait here: it lets the XHR/JS that
+            # populates the auction list finish before we extract. Still
+            # faster than the old 3500ms blind sleep on most pages.
             try:
-                await page.wait_for_selector(
-                    ", ".join([
-                        "div.AUCTION_ITEM",
-                        "div.AITEM",
-                        "[id^='Area_W']",
-                        "div.product",
-                        "div.news-box",
-                        # Empty-page / no-auctions / login markers — return fast
-                        ".NO_AUCTIONS_TODAY",
-                        ".noAuctionsScheduled",
-                        "div.LOGIN_FORM",
-                    ]),
-                    timeout=8000,
-                    state="attached",
-                )
+                await page.wait_for_load_state("networkidle", timeout=8000)
             except PWTimeout:
-                # Page never rendered an item or known marker — fall through
-                # to the existing fallback regex_extract path.
                 pass
             await self.handle_terms_agreement(page, target_url=url)
             await self.handle_captcha(page)
@@ -232,16 +220,10 @@ class UniversalAuctionScraper:
             if not has_next:
                 break
             page_num += 1
-            # Wait for the next page's first auction item to render. Faster
-            # than a flat 2500ms blind sleep — fires the instant the new
-            # page DOM is ready. Falls through if no item appears within 5s
-            # (the page probably has fewer pages than the safety limit).
+            # Pagination wait — same FL-loss concern as the preview-page
+            # wait above. networkidle is the safe condition.
             try:
-                await page.wait_for_selector(
-                    "div.AUCTION_ITEM, div.AITEM, [id^='Area_W'], div.product, div.news-box",
-                    timeout=5000,
-                    state="attached",
-                )
+                await page.wait_for_load_state("networkidle", timeout=5000)
             except PWTimeout:
                 pass
             more_sales = await self._extract_auction_items(page, auction_date)

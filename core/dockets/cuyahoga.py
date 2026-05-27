@@ -354,9 +354,12 @@ class CuyahogaDocketScraper(DocketScraper):
         try:
             await page.click("a:has-text('Docket')")
             await page.wait_for_load_state("domcontentloaded", timeout=15000)
-            # No blind sleep — the next operation reads inner_text("body")
-            # which doesn't need additional render time. ASP.NET PostBacks
-            # are settled by domcontentloaded.
+            # ASP.NET PostBack settle. networkidle catches the back-half
+            # of the panel re-render that domcontentloaded misses.
+            try:
+                await page.wait_for_load_state("networkidle", timeout=5000)
+            except Exception:
+                pass
         except Exception:
             return  # Docket page not accessible; skip
 
@@ -401,7 +404,10 @@ class CuyahogaDocketScraper(DocketScraper):
         try:
             await page.click("a:has-text('Parties')")
             await page.wait_for_load_state("domcontentloaded", timeout=15000)
-            # No blind sleep — same reasoning as _scrape_docket_page.
+            try:
+                await page.wait_for_load_state("networkidle", timeout=5000)
+            except Exception:
+                pass
         except Exception:
             return
 
