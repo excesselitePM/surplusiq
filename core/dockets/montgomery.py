@@ -462,15 +462,31 @@ class MontgomeryDocketScraper(DocketScraper):
             await page.keyboard.press("Enter")
             print(f"      → pressed Enter as last resort")
 
-        # SPA: openTab() fires an AJAX call that populates the #Results section.
-        # Wait for the response, then look for results content.
-        await page.wait_for_timeout(5000)
+        # SPA: openTab() fires an AJAX call that populates the #Results
+        # section. Per CLAUDE.md (placeholder-container trap, FP-12 Stage 1
+        # lesson): we must wait for ACTUAL POPULATED ROWS inside
+        # #tblSearchResults, not just for the wrapper to attach — the
+        # wrapper exists before openTab returns. wait_for_function counts
+        # rows directly; safe because it bypasses the placeholder trap
+        # that broke FL leads in Stage 1.
+        try:
+            await page.wait_for_function(
+                "() => { const t = document.querySelector('#tblSearchResults'); "
+                "return t && t.querySelectorAll('tr').length > 0; }",
+                timeout=8000,
+            )
+            print(f"      → #tblSearchResults populated")
+        except PWTimeout:
+            print(f"      ⚠ #tblSearchResults did not populate within 8s — "
+                  f"falling back to existing post-click logic")
 
         # The SPA has sections: #Home (search), #Results, #Case, etc.
         # After search, #Results should now have content. Click it.
         try:
             await page.click("a[href='#Results']", timeout=3000)
-            await page.wait_for_timeout(2000)
+            # No blind sleep — #tblSearchResults is already populated
+            # (wait_for_function above) or the timeout fell through. The
+            # next operation (row dump) tolerates an empty table.
             print(f"      → clicked #Results nav")
         except Exception:
             print(f"      ⚠ could not click #Results nav")

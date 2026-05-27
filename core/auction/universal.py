@@ -188,6 +188,15 @@ class UniversalAuctionScraper:
                 await page.wait_for_load_state("networkidle", timeout=8000)
             except PWTimeout:
                 pass
+            # 500ms post-networkidle floor for the JS that paints the LAST
+            # auction item after the populating XHR settles. Without this,
+            # Broward consistently lost 1 lead (16→15) across two recovery
+            # runs against commit c3af644. The auction list's final paint
+            # falls inside networkidle's 500ms quiet window — by the time
+            # extract runs, the last item div hasn't been rendered yet.
+            # This 500ms floor restores Broward to 16 without re-introducing
+            # the 3500ms blind-sleep era.
+            await page.wait_for_timeout(500)
             await self.handle_terms_agreement(page, target_url=url)
             await self.handle_captcha(page)
         except PWTimeout:
