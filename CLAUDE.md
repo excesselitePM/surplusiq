@@ -67,39 +67,72 @@ Multi-parcel blanket-judgment surplus aggregation — when one judgment secures 
 
 ## PROPERTYRADAR API
 
-Token: `PROPERTYRADAR_TOKEN` is a GitHub Actions secret AND must be exported locally for any local test. There is NO hardcoded fallback. The `9ffe6b0b…0700` token (previously mislabeled "dead" in earlier notes) is the live funded token. The token guard fails loud on missing/empty ONLY — it must never reject a token by prefix.
+Token: `PROPERTYRADAR_TOKEN` is a GitHub Actions secret AND must be exported locally for any local test. NO hardcoded fallback. The `9ffe6b0b…0700` token is live and funded (~33,781 free exports as of 2026-05-26). The token guard fails loud on missing/empty ONLY — it must never reject a token by prefix. Earlier CLAUDE.md guidance calling this token "dead" was wrong; so was prior guidance about `SiteAddress`/`SiteCity`/`SiteState` being correct criterion names — those were WRONG field names. Credit use is authorized; do not ask before each Purchase=1 call.
 
-Request shape (verified against developers.propertyradar.com):
-- POST `https://api.propertyradar.com/v1/properties`
-- Header: `Authorization: Bearer <token>`
-- Body: `{"Criteria": [{"name":"<CriteriaName>","value":[...]}, …]}` — top-level "Criteria" is always an array; each item is a single-criterion object. Nested criteria use the same shape (e.g. `PropertyType: [{"name":"PType","value":["SFR"]}]`). Never send a raw address string at the top level.
-- Query params: `Fields` (comma-separated PR field names), `Limit`, `Start`, `Purchase` (see below).
+### VERIFIED PRODUCTION CHAIN (Purchase=1 verified end-to-end 2026-05-26 against PBD4D8F5)
 
-Address-criterion field names for the `/properties` endpoint — empirically verified by Purchase=0 probe (PR returns "Unexpected Criterion: X" with the exact bad name when wrong):
-- `SiteAddress` ✓
-- `ZipFive` ✓
-- `SiteCity` ✗ rejected by `/properties` (works elsewhere; don't send here)
-- `SiteState` ✗ rejected by `/properties` (use it only as a suggestion-endpoint scope criterion)
-- Best primary lookup: SiteAddress + ZipFive. When ZipFive is missing, fall through to the suggestion endpoint instead of adding city/state to /properties.
+```
+STEP 1: POST https://api.propertyradar.com/v1/suggestions/SiteAddress
+        Query: SuggestionInput="<street>, <city>, <state> <zip>"   (Limit=5)
+        Body : {"Criteria": []}                                    (body REQUIRED, array can be empty)
+        →    : {"results": [{"Criteria":[{name:Address,value:...},
+                                          {name:City,...},
+                                          {name:State,...},
+                                          {name:ZipFive,...}],
+                              "Label":"..."}]}
+        Free, no export deducted.
 
-Suggestion endpoint `/v1/suggestions/SiteAddress` accepts SiteState as a scoping criterion (and uses the `SiteAddressInput` body field, not the `SuggestionInput` query param).
+STEP 2: POST https://api.propertyradar.com/v1/properties
+        Query: Fields=RadarID, Limit=5, Purchase=0, Start=0   (Purchase REQUIRED)
+        Body : {"Criteria": <step-1 Criteria verbatim>}
+        →    : {"results": [{"RadarID":"PXXXXXXX"}], "totalResultCount":1}
+        Free under Purchase=0 — returns RadarID without burning an export.
 
-Purchase parameter — billing-critical:
-- `Purchase=0` → counts/RadarID only, returns NO property data, does NOT deduct an export. ALWAYS use this when changing request shape.
-- `Purchase=1` → returns full property data, counts as one export per match.
-- Workflow rule: any time the request format changes, validate end-to-end with the `pr_probe_address` workflow input first (Purchase=0). Only switch to the normal enrichment step after the probe confirms a non-zero result count for a known address.
+STEP 3: GET  https://api.propertyradar.com/v1/properties/{RadarID}
+        Query: Fields=Card, Purchase=1                       (Purchase REQUIRED)
+        →    : {"results": [{...full Card payload...}]}
+        Burns 1 export per call. Card payload includes Owner, AssessedValue,
+        TotalLoanBalance, AvailableEquity, AVM, PropertyHasOpenLiens,
+        PropertyHasOpenPersonLiens, isFreeAndClear, isCashBuyer, inForeclosure,
+        inTaxDelinquency, DistressScore, Persons[] (with PersonHasOpenLiens,
+        inBankruptcy, inProbate, isDeceased per person).
+```
 
-Suggestion endpoint (used as a fallback when direct address criteria miss):
-- POST `https://api.propertyradar.com/v1/suggestions/SiteAddress`
-- Body: `{"SiteAddressInput": "<street>", "Limit": N, "Criteria": [{"name":"SiteState","value":["XX"]}]}` — input field is `SiteAddressInput`, NOT `SuggestionInput`.
-- Returns canonical Criteria you re-post to `/properties`.
+### CRITERION NAMES (the source of every earlier 400)
 
-Local smoke test:
+The suggestion endpoint returns the canonical names; mirror them:
+- `Address`  ✓  (NOT `SiteAddress` — that name produces "Unexpected Criterion")
+- `City`     ✓  (NOT `SiteCity`)
+- `State`    ✓  (NOT `SiteState`)
+- `ZipFive`  ✓
+
+Nothing in the address-lookup chain is plan-gated; every previous "feature not included in your subscription" error was caused by wrong field names. The current plan accepts the chain above.
+
+### PURCHASE PARAMETER (billing-critical)
+
+- `Purchase=0` is preview-only by design — returns counts and (for `/properties` POST) RadarIDs. No record payload. Required on `/properties` POST and `GET /properties/{RadarID}`.
+- `Purchase=1` returns full data and deducts 1 export per matched property on `/properties`, 1 export per call on `GET /properties/{RadarID}`.
+- Workflow rule: any time the request shape changes, validate with the `pr_probe_chain` workflow input first (it now uses Purchase=1 by default — burns 1 export per probe but proves end-to-end). Free shape-only probes still available via `pr_probe_criteria` (Purchase=0 on POST).
+
+### LOCAL SMOKE TEST
+
 ```
 PROPERTYRADAR_TOKEN=<token> python -m core.enrichment.propertyradar \
-  --probe-address "1253 MCINTOSH AVE|AKRON|OH|44314"
+  --probe-chain "1253 MCINTOSH AVE|AKRON|OH|44314"
 ```
-This forces Purchase=0 and prints the exact request + response body so any format regression is visible in one run.
+Prints the full three-step trace including the Card payload on success.
+
+### ANTI-FABRICATION
+
+If the chain fails at any step (suggestion has no match, RadarID lookup empty, GET errors), the lead must keep its docket-derived classification or fall back to `apparent_surplus`. NEVER fabricate a `pr_*` field or upgrade a tier without real this-run PR data.
+
+### NO STALE TIERS RULE (FP-7)
+
+`core/dashboard_data.py:_load_pr_enrichment` only loads `all_enriched_<today>.json` — never older files. Any lead missing from today's PR run drops back to its docket-derived tier (or `apparent_surplus` if no docket data). A failed or skipped PR step must NOT leave yesterday's `estimated_surplus` badges sitting on the dashboard. This is the only way `estimated_surplus` can mean "real this-run PR data" rather than "we ran PR once weeks ago and the badge stuck."
+
+### RECENCY FILTER (sale-date, not case-filing-date)
+
+`core/loader.py:load_all_leads()` enforces a hard 14-day window on the sale/auction date, NOT the case-filing date. A case can be filed in 2023 and auctioned last week — what matters is `_extract_sale_date()`, which pulls from `sale_date` / `sale_datetime` / `auction_date` / `soldDate` / `AUCTIONDATE` fields written by the scraper at point of sale. Never use a case number as a date source.
 
 SCOPE DISCIPLINE
 

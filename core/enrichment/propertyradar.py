@@ -63,49 +63,6 @@ PR_API_TOKEN = (os.environ.get("PROPERTYRADAR_TOKEN") or "").strip()
 # Conservative rate limit — be polite to their API
 REQUEST_DELAY_SEC = 0.5
 
-# Fields we want returned per property — using PropertyRadar's REAL field names
-PR_FIELDS = [
-    "RadarID",
-    "Address",
-    "City",
-    "State",
-    "ZipFive",
-    "County",
-    "APN",
-    "PType",
-    "Owner",
-    "OwnerFirstName",
-    "OwnerLastName",
-    "OwnerAddress",
-    "OwnerCity",
-    "OwnerState",
-    "OwnerZipFive",
-    "OwnerPhone",
-    "OwnerEmail",
-    "isSameMailingOrExempt",
-    "AVM",
-    "AssessedValue",
-    "AvailableEquity",
-    "EquityPercent",
-    "TotalLoanBalance",
-    "NumberLoans",
-    "FirstAmount",
-    "FirstDate",
-    "FirstPurpose",
-    "FirstLenderOriginal",
-    "LastTransferRecDate",
-    "LastTransferValue",
-    "Beds",
-    "Baths",
-    "SqFt",
-    "YearBuilt",
-    "Pool",
-    "isListedForSale",
-    "isMailVacant",
-    "isSiteVacant",
-    "inForeclosure",
-]
-
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Data classes
@@ -200,9 +157,14 @@ class PropertyRadarClient:
         return resp
 
     def _properties_call(self, criteria: list, *, label: str) -> dict:
-        """Single POST to /v1/properties. Purchase honored by self.dry_run."""
+        """Single POST to /v1/properties — debug helper for --probe-criteria.
+
+        Uses Fields=Card to match the production GET path. NOTE: under
+        Purchase=0 the response carries counts only (no record bodies);
+        under Purchase=1 every matched property burns one export.
+        """
         params = {
-            "Fields": ",".join(PR_FIELDS),
+            "Fields": "Card",
             "Limit": 5,
             "Purchase": 0 if self.dry_run else 1,
             "Start": 0,
@@ -231,104 +193,147 @@ class PropertyRadarClient:
             return {"error": f"json decode: {e}", "body": (resp.text or "")[:500]}
 
     def search_by_address(self, street: str, city: str, state: str, zipcode: str = "") -> dict:
-        """Look up a property by address against /v1/properties.
+        """Verified three-step PR lookup chain (Purchase=1 chain verified
+        2026-05-26 against RadarID PBD4D8F5 / 1253 MCINTOSH AVE):
 
-        PropertyRadar Criteria field names (verbatim from
-        developers.propertyradar.com): SiteAddress, SiteCity, SiteState,
-        ZipFive. Each criterion is {"name": "<X>", "value": [...]} per the
-        Criteria Reference. There is no raw-address parameter.
+          STEP 1: POST /v1/suggestions/SiteAddress
+                  body  = {"Criteria": []}
+                  query = SuggestionInput = "<street>, <city>, <state> <zip>"
+                  → returns normalized {Address, City, State, ZipFive} with
+                    BARE field names (NOT SiteAddress/SiteCity/SiteState —
+                    those were a documentation mis-read).
 
-        Strategy:
-          1. Direct POST /v1/properties with whatever address fields we have.
-             This is the fast path for clean addresses.
-          2. If that returns 0 matches and we have a street, fall back to
-             POST /v1/suggestions/SiteAddress (input field name is
-             SiteAddressInput, NOT SuggestionInput), take the top suggestion's
-             returned Criteria, and re-query /v1/properties.
+          STEP 2: POST /v1/properties  (Fields=RadarID, Purchase=0)
+                  body  = {"Criteria": <suggestion's Criteria>}
+                  → returns {"results": [{"RadarID": "..."}, ...]}
+                    FREE — no export deducted.
 
-        Purchase: 0 when self.dry_run (free; counts/RadarID only), 1 otherwise.
+          STEP 3: GET  /v1/properties/{RadarID}  (Fields=Card, Purchase=1)
+                  → returns the full Card fieldset including Owner,
+                    TotalLoanBalance, AssessedValue, PropertyHasOpenLiens,
+                    PropertyHasOpenPersonLiens, isFreeAndClear, AVM,
+                    AvailableEquity, NumberLoans, Persons[], etc.
+                    Costs 1 export per lookup.
+
+        Purchase=0 throughout the chain when self.dry_run, which makes the
+        final GET return only counts (no payload). Use dry_run for
+        feasibility tests only.
+
+        Return shape mirrors the old contract: the dict from STEP 3 with
+        the property record at results[0]. Errors return {"error": "..."}
+        so callers can distinguish "API failure" from "no match".
         """
         if not street and not city and not zipcode:
             return {"error": "no address components to search"}
 
-        # ─── STEP 1: direct properties query with what we have ────────────
-        # PropertyRadar /v1/properties accepts SiteAddress + ZipFive as
-        # address-anchored criteria. SiteCity and SiteState are NOT valid
-        # at /properties (the API returns "Unexpected Criterion: SiteCity"
-        # / "Unexpected Criterion: SiteState" — verified via probe run
-        # 26481516049). City/state are only used for the suggestion
-        # fallback below. Address + zip is enough to disambiguate in
-        # practice; when zip is missing we fall through to suggestions.
-        direct_criteria = []
-        if street:
-            direct_criteria.append({"name": "SiteAddress", "value": [street]})
-        if zipcode:
-            direct_criteria.append({"name": "ZipFive", "value": [zipcode]})
+        # ─── STEP 1: suggestions (free) ───────────────────────────────────
+        sug_input = (street or "").strip()
+        if city:    sug_input += f", {city}"
+        if state:   sug_input += f", {state.upper()}"
+        if zipcode: sug_input += f" {zipcode}"
+        if not sug_input:
+            return {"error": "no usable address components"}
 
-        if not direct_criteria:
-            return {"error": "no usable criteria after filtering (need street or zip)"}
-
-        data = self._properties_call(direct_criteria, label="direct")
-        if "error" in data:
-            return data
-
-        results = data.get("results") or data.get("Results") or []
-        total = data.get("totalResultCount") or data.get("totalCount") or len(results)
-        self.total_cost_usd += float(data.get("totalCost") or 0)
-        if results or not street:
-            return data
-
-        # ─── STEP 2: fall back to suggestion → normalized criteria ────────
-        # PropertyRadar stores addresses with ordinal suffixes ("154TH" not
-        # "154"), so unnormalized strings can miss. /v1/suggestions/SiteAddress
-        # returns canonical Criteria we can re-query with. The suggestion
-        # endpoint accepts SiteState as a scoping criterion (unlike the
-        # /properties endpoint, where it's rejected).
-        suggest_body = {"SiteAddressInput": street, "Limit": 5}
-        if state:
-            suggest_body["Criteria"] = [
-                {"name": "SiteState", "value": [state.upper()]}
-            ]
         self.calls_made += 1
         try:
-            sresp = self._post(
-                "/suggestions/SiteAddress",
-                params={},
-                body=suggest_body,
-                label="suggest",
+            sresp = self.session.post(
+                f"{PR_API_BASE}/suggestions/SiteAddress",
+                params={"SuggestionInput": sug_input, "Limit": 5},
+                json={"Criteria": []},
+                timeout=30,
             )
+            time.sleep(REQUEST_DELAY_SEC)
+            print(f"  → suggest 200? {sresp.status_code==200}  input={sug_input!r}")
         except Exception as e:
             self.errors += 1
             return {"error": f"suggestion: {e}"}
 
         if sresp.status_code != 200:
             self.errors += 1
-            return {
-                "error": f"suggestion HTTP {sresp.status_code}",
-                "body": (sresp.text or "")[:500],
-            }
+            return {"error": f"suggestion HTTP {sresp.status_code}",
+                    "body": (sresp.text or "")[:500]}
         try:
             sjson = sresp.json()
         except Exception as e:
-            return {"error": f"suggestion json decode: {e}", "body": (sresp.text or "")[:500]}
+            self.errors += 1
+            return {"error": f"suggestion json decode: {e}",
+                    "body": (sresp.text or "")[:500]}
 
-        sugs = sjson.get("results") or sjson.get("Results") or []
+        sugs = sjson.get("results") or []
         if not sugs:
-            return {
-                "results": [], "totalCost": 0, "resultCount": 0,
-                "totalResultCount": 0, "_no_suggestion_match": True,
-            }
+            return {"results": [], "totalResultCount": 0,
+                    "_no_suggestion_match": True}
         normalized_criteria = sugs[0].get("Criteria") or []
         normalized_label = sugs[0].get("Label", "")
         if not normalized_criteria:
             self.errors += 1
-            return {"error": "suggestion response missing Criteria"}
+            return {"error": "suggestion missing Criteria"}
 
-        data2 = self._properties_call(normalized_criteria, label="post-suggest")
-        if "error" not in data2:
-            data2["_normalized_label"] = normalized_label
-            self.total_cost_usd += float(data2.get("totalCost") or 0)
-        return data2
+        # ─── STEP 2: RadarID lookup (free under Purchase=0) ───────────────
+        self.calls_made += 1
+        try:
+            id_resp = self.session.post(
+                f"{PR_API_BASE}/properties",
+                params={"Fields": "RadarID", "Limit": 5, "Purchase": 0, "Start": 0},
+                json={"Criteria": normalized_criteria},
+                timeout=30,
+            )
+            time.sleep(REQUEST_DELAY_SEC)
+        except Exception as e:
+            self.errors += 1
+            return {"error": f"radarid lookup: {e}"}
+        if id_resp.status_code != 200:
+            self.errors += 1
+            return {"error": f"radarid lookup HTTP {id_resp.status_code}",
+                    "body": (id_resp.text or "")[:500]}
+        try:
+            id_json = id_resp.json()
+        except Exception as e:
+            self.errors += 1
+            return {"error": f"radarid json decode: {e}",
+                    "body": (id_resp.text or "")[:500]}
+
+        radar_results = id_json.get("results") or []
+        if not radar_results:
+            return {"results": [], "totalResultCount": 0,
+                    "_no_radarid_match": True, "_normalized_label": normalized_label}
+        radarid = radar_results[0].get("RadarID")
+        if not radarid:
+            self.errors += 1
+            return {"error": "radarid lookup missing RadarID in first result"}
+
+        # ─── STEP 3: full Card payload (1 export per call under Purchase=1) ─
+        purchase_flag = 0 if self.dry_run else 1
+        self.calls_made += 1
+        try:
+            full_resp = self.session.get(
+                f"{PR_API_BASE}/properties/{radarid}",
+                params={"Fields": "Card", "Purchase": purchase_flag},
+                timeout=30,
+            )
+            time.sleep(REQUEST_DELAY_SEC)
+        except Exception as e:
+            self.errors += 1
+            return {"error": f"full lookup: {e}"}
+        if full_resp.status_code != 200:
+            self.errors += 1
+            return {"error": f"full lookup HTTP {full_resp.status_code}",
+                    "body": (full_resp.text or "")[:500]}
+        try:
+            full_json = full_resp.json()
+        except Exception as e:
+            self.errors += 1
+            return {"error": f"full lookup json decode: {e}",
+                    "body": (full_resp.text or "")[:500]}
+
+        # Track spend
+        if not self.dry_run:
+            self.total_cost_usd += float(full_json.get("totalCost") or 0)
+            self.credits_burned += 1
+
+        full_json["_normalized_label"] = normalized_label
+        full_json["_radar_id"] = radarid
+        return full_json
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Address normalization
@@ -443,41 +448,40 @@ def map_pr_record_to_enriched(lead: Lead, pr_record: dict, match_count: int) -> 
         e.enriched_at = datetime.now().isoformat()
         return derive_intelligence(e)
 
+    # The Card fieldset from GET /v1/properties/{RadarID} carries the
+    # canonical fields we map below. Owner-mailing fields are not in Card —
+    # they live in the Persons sub-resource and ListingsTab fieldset.
     e.pr_match = True
     e.pr_match_count = match_count
     e.pr_radar_id = pr_record.get("RadarID")
-    e.pr_owner_name = pr_record.get("Owner") or (
-        f"{pr_record.get('OwnerFirstName', '')} {pr_record.get('OwnerLastName', '')}".strip()
+    e.pr_owner_name = pr_record.get("Owner")
+    # Card doesn't expose mailing address split — best-effort from Persons
+    persons = pr_record.get("Persons") or []
+    if persons and isinstance(persons[0], dict):
+        # Persons array has minimal contact info; pull what we can
+        e.pr_owner_name = e.pr_owner_name or persons[0].get("EntityName")
+    # AVM and AvailableEquity ARE in the Card fieldset, but per the spec
+    # Card swaps them for AssessedValue/TotalLoanBalance when AssessedValue
+    # is the better value proxy. Take whichever is present.
+    e.pr_estimated_value = float(
+        pr_record.get("AVM") or pr_record.get("AssessedValue") or 0
     )
-    e.pr_mailing_address = pr_record.get("OwnerAddress")
-    e.pr_mailing_city = pr_record.get("OwnerCity")
-    e.pr_mailing_state = pr_record.get("OwnerState")
-    e.pr_mailing_zip = pr_record.get("OwnerZipFive")
-    e.pr_estimated_value = float(pr_record.get("AVM") or 0)
     e.pr_total_loan_balance = float(pr_record.get("TotalLoanBalance") or 0)
     e.pr_available_equity = float(pr_record.get("AvailableEquity") or 0)
-    e.pr_first_loan_amount = float(pr_record.get("FirstAmount") or 0)
-    e.pr_first_loan_type = pr_record.get("FirstPurpose")
-    # PR doesn't expose 2nd loan amount directly — derive: total - first if multiple loans exist
-    num_loans = pr_record.get("NumberLoans") or 0
-    if num_loans > 1 and e.pr_total_loan_balance > 0 and e.pr_first_loan_amount > 0:
-        e.pr_second_loan_amount = max(0, e.pr_total_loan_balance - e.pr_first_loan_amount)
-    else:
-        e.pr_second_loan_amount = 0
-    # YearsOwned isn't a direct field — calculate from LastTransferRecDate
-    last_xfer = pr_record.get("LastTransferRecDate")
-    if last_xfer:
-        try:
-            from datetime import datetime as _dt
-            xfer_year = _dt.fromisoformat(str(last_xfer).replace("Z", "+00:00")).year
-            e.pr_years_owned = datetime.now().year - xfer_year
-        except Exception:
-            e.pr_years_owned = None
-    e.pr_owner_occupied = pr_record.get("isSameMailingOrExempt")
-    # PR doesn't expose tax delinquency or involuntary lien directly via API fields
-    e.pr_in_tax_delinquency = None
-    # Use NumberLoans > 1 as proxy for "additional encumbrances exist"
-    e.pr_involuntary_lien = (num_loans or 0) > 1
+    # Card doesn't carry FirstAmount/FirstPurpose; leave at defaults
+    e.pr_first_loan_amount = 0.0
+    e.pr_first_loan_type = None
+    e.pr_second_loan_amount = 0.0
+    # PropertyRadar gives real lien signals directly via PropertyHasOpenLiens
+    # (any active lien on the property) and PropertyHasOpenPersonLiens
+    # (active personal liens against the owner). These are 0/1 ints.
+    has_property_liens = pr_record.get("PropertyHasOpenLiens")
+    has_person_liens = pr_record.get("PropertyHasOpenPersonLiens")
+    e.pr_involuntary_lien = bool(
+        (has_property_liens or 0) or (has_person_liens or 0)
+    )
+    e.pr_in_tax_delinquency = bool(pr_record.get("inTaxDelinquency") or 0)
+    e.pr_owner_occupied = bool(pr_record.get("isSameMailingOrExempt") or 0)
     e.pr_property_type = pr_record.get("PType")
     e.pr_year_built = pr_record.get("YearBuilt")
     e.pr_sqft = pr_record.get("SqFt")

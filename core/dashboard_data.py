@@ -35,20 +35,29 @@ DOCKET_VERIFIED_CLASSIFICATIONS = {"green", "yellow", "red", "killed"}
 
 
 def _load_pr_enrichment() -> dict:
-    """Load the most recent PropertyRadar enrichment file."""
+    """Load TODAY's PropertyRadar enrichment file only.
+
+    Hard rule (FP-7 anti-stale): a lead may only be tagged estimated_surplus
+    when this-run PR data backs it. We refuse to merge enrichment older than
+    today — that prevents a stale tier badge from surviving a failed or
+    skipped PR step. If no file dated today exists, return an empty lookup
+    so every lead drops to apparent_surplus (or its docket-derived tier).
+    """
     enriched_dir = PROJECT_ROOT / "data" / "enriched"
     if not enriched_dir.exists():
         return {}
 
-    files = sorted(enriched_dir.glob("all_enriched_*.json"))
-    if not files:
+    from datetime import date as _date
+    today_str = _date.today().isoformat()
+    todays_file = enriched_dir / f"all_enriched_{today_str}.json"
+    if not todays_file.exists():
+        print(f"   📡 PropertyRadar enrichment: no file for today ({today_str}) — "
+              f"all leads will use docket-derived or apparent_surplus tier")
         return {}
 
-    latest = files[-1]
-    print(f"   📡 PropertyRadar enrichment: loading {latest.name}")
-
+    print(f"   📡 PropertyRadar enrichment: loading {todays_file.name} (today only)")
     try:
-        with open(latest) as f:
+        with open(todays_file) as f:
             records = json.load(f)
     except Exception as e:
         print(f"   ⚠ Failed to load PR enrichment: {e}")
@@ -57,12 +66,16 @@ def _load_pr_enrichment() -> dict:
     lookup = {}
     matched = 0
     for r in records:
+        # Only keep records the PR client actually matched this run.
+        # Records with pr_match=False are no-match leads that should drop
+        # back to apparent_surplus.
+        if not r.get("pr_match"):
+            continue
         key = (r.get("county_id", ""), r.get("case_number", ""))
         lookup[key] = r
-        if r.get("pr_match"):
-            matched += 1
+        matched += 1
 
-    print(f"   ✓ {len(lookup)} PR enrichment records ({matched} matched)")
+    print(f"   ✓ {len(records)} PR enrichment records loaded, {matched} matched this run")
     return lookup
 
 
