@@ -126,6 +126,18 @@
     height: 2px;
     background: linear-gradient(90deg, var(--accent), var(--accent-2));
   }
+  /* FP-16: the docket-verified-positive card is the real headline most
+     days (confirmed_surplus is usually $0 because the courts publish
+     disbursement filings days/weeks after the sale). Highlight visually. */
+  .kpi.kpi-highlight {
+    border-color: rgba(46, 204, 113, 0.6);
+    background: linear-gradient(180deg, rgba(46, 204, 113, 0.08), var(--bg-card));
+  }
+  .kpi.kpi-highlight::before {
+    background: #2ECC71;
+    height: 3px;
+  }
+  .kpi.kpi-highlight .kpi-value { color: #2ECC71; }
   .kpi-label {
     font-size: 11px;
     text-transform: uppercase;
@@ -493,6 +505,11 @@
       <div class="kpi-value" id="kpi-apparent-surplus">—</div>
       <div class="kpi-sub"><span id="kpi-apparent-count">—</span> leads · auction math only, not verified</div>
     </div>
+    <div class="kpi kpi-highlight">
+      <div class="kpi-label">📋 Docket-Verified Positive</div>
+      <div class="kpi-value surplus" id="kpi-docket-verified-surplus">—</div>
+      <div class="kpi-sub"><span id="kpi-docket-verified-count">—</span> leads · real debt from docket prayer · not yet proof-confirmed</div>
+    </div>
     <div class="kpi">
       <div class="kpi-label">Pipeline Ready</div>
       <div class="kpi-value" id="kpi-pipeline-ready">—</div>
@@ -503,9 +520,10 @@
   <!-- Verification methodology note -->
   <div class="verify-note" id="verify-note">
     <strong>How surplus is classified:</strong>
-    Confirmed surplus requires docket or official proof fields.
-    Estimated surplus is based on enrichment.
-    Apparent surplus is based on auction math only.
+    <strong>Confirmed surplus</strong> requires both a docket-verified debt figure AND a proof-of-disbursement filing (notice of excess proceeds / certificate of disbursement).
+    <strong>Estimated surplus</strong> is sale price minus PropertyRadar's reported loan balance (only when PR returns a non-zero balance).
+    <strong>Apparent surplus</strong> is auction math only (sale − opening bid); for FL the opening bid IS the judgment amount, for OH the opening bid is a statutory 2/3-appraised figure that does NOT represent real debt.
+    <strong>📋 Docket-Verified Positive</strong> leads carry a real prayer amount extracted from a foreclosure judgment PDF AND a positive true-surplus (sale − prayer); they sit in the apparent_surplus tier until a proof-of-disbursement filing flips them to confirmed — these are the highest-quality leads on the dashboard today and the closest the system gets to actionable money before the courts publish their final disbursement order.
     <span id="verify-note-counts"></span>
   </div>
 
@@ -734,6 +752,13 @@
 
     $("kpi-apparent-surplus").textContent  = fmtMoney(s.apparent_surplus_total || 0);
     $("kpi-apparent-count").textContent    = (s.apparent_surplus_count || 0).toLocaleString();
+
+    // FP-16: docket-verified positive is the real headline when
+    // confirmed_surplus is $0 (which is the common case — proof-of-
+    // disbursement filings take days/weeks after the sale). 7 Summit
+    // leads / $233,700 today.
+    $("kpi-docket-verified-surplus").textContent = fmtMoney(s.docket_verified_positive_total || 0);
+    $("kpi-docket-verified-count").textContent   = (s.docket_verified_positive_count || 0).toLocaleString();
 
     $("kpi-pipeline-ready").textContent    = (s.pipeline_ready_count || 0).toLocaleString();
 
