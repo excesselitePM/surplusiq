@@ -680,11 +680,19 @@ def main():
 
         print()
         print("─── STEP 1: POST /v1/suggestions/SiteAddress (no Purchase) ───")
+        # NOTE: SiteState is rejected on /suggestions/SiteAddress on this
+        # plan ("Unexpected Criterion: SiteState"), so we send no scope
+        # criteria. The body is required, but an empty Criteria array
+        # appears to be accepted.
         sug_body = {"Criteria": []}
-        if state:
-            sug_body["Criteria"].append({"name": "SiteState", "value": [state.upper()]})
         sug_url = f"{PR_API_BASE}/suggestions/SiteAddress"
-        sug_params = {"SuggestionInput": street, "Limit": 5}
+        # Encode state + zip into the SuggestionInput string instead — that
+        # matches what the docs example shows for disambiguating addresses.
+        sug_input = street
+        if city: sug_input += f", {city}"
+        if state: sug_input += f", {state.upper()}"
+        if zipcode: sug_input += f" {zipcode}"
+        sug_params = {"SuggestionInput": sug_input, "Limit": 5}
         print(f"  → POST {sug_url}")
         print(f"     params: {json.dumps(sug_params, sort_keys=True)}")
         print(f"     body:   {json.dumps(sug_body, sort_keys=True)}")
