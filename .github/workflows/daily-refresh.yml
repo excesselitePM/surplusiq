@@ -198,6 +198,17 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
+      - name: Regenerate dashboard data
+        id: dashboard
+        run: |
+          python -m core.dashboard_data
+        continue-on-error: false
+
+      # MUST run AFTER dashboard regen — otherwise this artifact captures
+      # the git-committed (stale) docs/data/* files, not the freshly built
+      # ones. The PR enrichment files in data/enriched/ exist either way,
+      # but docs/data/leads.json + summary.json only update during the
+      # dashboard step above.
       - name: Upload enriched data
         if: always()
         uses: actions/upload-artifact@v4
@@ -209,12 +220,6 @@ jobs:
             docs/data/
           if-no-files-found: ignore
           retention-days: 7
-
-      - name: Regenerate dashboard data
-        id: dashboard
-        run: |
-          python -m core.dashboard_data
-        continue-on-error: false
 
       - name: Show what changed
         run: |
