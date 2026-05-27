@@ -159,6 +159,38 @@
   }
   .kpi-value.surplus { color: var(--green); }
 
+  /* ─── Toast (FP-22: copy case# on link-click → paste into clerk search) ─ */
+  .sq-toast {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translate(-50%, 0);
+    background: var(--bg-card-2);
+    border: 1px solid var(--accent);
+    color: var(--text);
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    z-index: 10000;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.45);
+    opacity: 0;
+    animation: sq-toast-in 0.18s ease-out forwards;
+    transition: opacity 0.3s ease-out;
+    max-width: 90vw;
+    white-space: nowrap;
+  }
+  @keyframes sq-toast-in {
+    from { opacity: 0; transform: translate(-50%, 8px); }
+    to   { opacity: 1; transform: translate(-50%, 0); }
+  }
+  .sq-toast-case {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    color: var(--accent-2);
+    user-select: all;
+    padding: 0 4px;
+  }
+
   /* ─── Section ──────────────────────────────────────────── */
   .section {
     background: var(--bg-card);
@@ -628,6 +660,41 @@
     return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
   };
   const cleanAddress = (s) => (s || "").replace(/^Property Address:\s*/i, "").trim();
+
+  // ─── FP-22: copy case# to clipboard on link-click ───────────────────
+  // Background: every county clerk + auction portal we link out to is a
+  // home/search page, not a case-detail deep link (Grant Street + every
+  // clerk SPA blocks unauthenticated query-param deep-linking). Eric was
+  // landing on a search form and having to re-type the 15-char case
+  // number. Fix: copy it on click and toast a paste reminder. The link
+  // still opens normally — we do not preventDefault.
+  function sqCopyAndToast(caseNum) {
+    if (!caseNum) return;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(caseNum)
+        .then(()  => sqToast(`Case ${caseNum} copied — paste in the search field`, false))
+        .catch(() => sqToast(caseNum, true));
+    } else {
+      sqToast(caseNum, true);
+    }
+  }
+  function sqToast(textOrCase, manual) {
+    // Remove any existing toast so a rapid second click doesn't stack.
+    document.querySelectorAll(".sq-toast").forEach(n => n.remove());
+    const t = document.createElement("div");
+    t.className = "sq-toast";
+    if (manual) {
+      t.innerHTML = `Copy <span class="sq-toast-case">${textOrCase}</span> manually`;
+    } else {
+      t.textContent = textOrCase;
+    }
+    document.body.appendChild(t);
+    setTimeout(() => { t.style.opacity = "0"; }, 1700);
+    setTimeout(() => t.remove(), 2050);
+  }
+  // Make global so inline onclick can reach them.
+  window.sqCopyAndToast = sqCopyAndToast;
+
   function renderSurplusCell(l) {
     // FP-17 Item 1: blank the Surplus cell for OH leads where the surplus
     // figure would be computed against opening_bid (which is the fake
@@ -908,6 +975,10 @@
     }
 
     const rows = filtered.map(l => {
+      // FP-22: every clerk + auction link copies the case# on click and
+      // toasts "paste in the search field". JSON.stringify safely escapes
+      // case numbers that contain quotes, spaces, or parens.
+      const caseArg = JSON.stringify(l.case_number || "");
       // Manual-verify clerk-portal link. For Cloudflare-blocked counties
       // (Franklin, Hamilton) the cell carries a "Verify ⚠" badge so Eric
       // knows the docket wasn't automated; for the rest a plain "Open ↗".
@@ -915,7 +986,7 @@
       if (l.clerk_manual_search_url) {
         const label = l.requires_manual_docket_verify ? 'Verify ⚠' : 'Open ↗';
         const cls = l.requires_manual_docket_verify ? 'src-link manual-verify' : 'src-link';
-        clerkCell = `<a href="${l.clerk_manual_search_url}" target="_blank" rel="noopener" class="${cls}">${label}</a>`;
+        clerkCell = `<a href="${l.clerk_manual_search_url}" target="_blank" rel="noopener" class="${cls}" onclick='sqCopyAndToast(${caseArg})'>${label}</a>`;
       }
       return `
       <tr${(l.lead_quality === 'killed') ? ' class="row-killed"' : ''}>
@@ -932,7 +1003,7 @@
         <td>${l.sale_datetime || fmtDate(l.sale_date)}</td>
         <td>${l.pr_owner_name ? `<span class="owner-name">${l.pr_owner_name}</span>` : '<span style="color:var(--text-muted)">—</span>'}</td>
         <td>${renderEvidenceBadge(l)}</td>
-        <td>${l.source_url ? `<a href="${l.source_url}" target="_blank" rel="noopener" class="src-link">View</a>` : '—'}</td>
+        <td>${l.source_url ? `<a href="${l.source_url}" target="_blank" rel="noopener" class="src-link" onclick='sqCopyAndToast(${caseArg})'>View</a>` : '—'}</td>
         <td>${clerkCell}</td>
         <td>${l.sold_to || "—"}</td>
       </tr>
