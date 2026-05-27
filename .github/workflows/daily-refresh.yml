@@ -35,7 +35,7 @@ on:
         default: true
         type: boolean
       docket_county:
-        description: 'Docket scraper to run when run_dockets is on. "auto" = cuyahoga-oh. Set a specific county-id to test a new docket scraper in isolation.'
+        description: 'Docket scraper(s) to run when run_dockets is on. "auto" = all working docket counties in parallel (cuyahoga-oh, montgomery-oh, summit-oh). A single county-id (e.g. summit-oh) runs ONLY that county. A comma-separated list runs those specific counties.'
         required: false
         default: 'auto'
         type: string
@@ -117,8 +117,11 @@ jobs:
           [ -z "$DOCKET_COUNTY" ] && DOCKET_COUNTY="auto"
           [ -z "$COMMIT" ]        && COMMIT="true"
 
-          # docket_county "auto" resolves to cuyahoga-oh (the proven scraper).
-          [ "$DOCKET_COUNTY" = "auto" ] && DOCKET_COUNTY="cuyahoga-oh"
+          # docket_county "auto" resolves to "all_working", the literal value
+          # that core/dockets/enrich.py expands to every verified scraper
+          # (cuyahoga-oh, montgomery-oh, summit-oh) and runs them in parallel
+          # via run_counties_parallel(). A single county-id still runs serially.
+          [ "$DOCKET_COUNTY" = "auto" ] && DOCKET_COUNTY="all_working"
 
           echo "county=$COUNTY"               >> "$GITHUB_OUTPUT"
           echo "run_dockets=$RUN_DOCKETS"      >> "$GITHUB_OUTPUT"

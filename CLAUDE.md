@@ -168,7 +168,27 @@ These are the highest-quality leads on the dashboard regardless of tier (most wi
 - **Headed runs (local): cap = 1 (serial).** Some scrapers pause for `input()` on CAPTCHA / EULA flow — overlapping prompts from concurrent scrapers would be unusable.
 - **`PARALLEL_SCRAPERS` env var** overrides the cap (clamped 1–10) for debugging.
 - **Per-county isolation**: `asyncio.gather(return_exceptions=True)` captures crashes per county; failures are logged and the batch continues. One county's crash never aborts the others.
-- Wall time impact: ~15 min (sequential) → ~5–6 min (cap=3).
+- Wall time impact: ~79 min (sequential) → ~31 min (cap=3, 2.57× speedup). Ceiling is the slowest single county since wall time = `max(per_county_time)` when one county exceeds total work / cap.
+
+### DOCKET SCRAPER PARALLELIZATION
+
+`core/dockets/enrich.py:run_counties_parallel()` mirrors the auction-step pattern:
+- **`docket_county` workflow input** accepts a single county-id, a comma-separated list, or the special value `all_working` (expands to the `WORKING_DOCKET_COUNTIES` constant: `cuyahoga-oh, montgomery-oh, summit-oh`). The default `auto` resolves to `all_working` so the Daily Refresh runs every verified docket scraper in one pass.
+- **Concurrency cap = 3 in CI, 1 headed.** Same rationale as auction step (CDN, runner RAM, headed input-prompt collisions).
+- **`PARALLEL_DOCKETS` env var** overrides (clamped 1–10).
+- **Per-county isolation** via `asyncio.gather(return_exceptions=True)`. A docket scraper crash never aborts the batch; other counties still save.
+- Loader picks up any `data/dockets/*_*.jsonl` file at dashboard-regen time — no today-only restriction — so docket data from prior runs merges naturally with this run's output.
+
+To add a new docket scraper to the parallel default: prove it on real Actions runs first, then append the county-id to `WORKING_DOCKET_COUNTIES` in `core/dockets/enrich.py`.
+
+### STATE-AWARE SURPLUS RULE (FL vs OH opening_bid)
+
+Per Eric's May 12 call:
+- **Ohio** — `opening_bid` is the **statutory 2/3-appraised value, NOT real debt**. The only valid OH debt figure is the docket prayer/writ/judgment amount. No prayer ⇒ `true_surplus = None`. Enforced in `core/loader.py:_merge_docket_data`.
+- **Florida** — `opening_bid` **IS the judgment amount** (set from the FL auction calendar). Real-debt math is `sale_price − opening_bid`. **AUDIT FINDING (2026-05-27):** the loader does NOT yet wire this rule through — FL leads with no docket scraper get `true_surplus = None` and tag `apparent_surplus`, blending them with auction-only OH leads. FL leads are under-tiered as a result.
+- **Caveat regardless of state:** auction math alone is never `confirmed_surplus`. Confirmation still requires a docket kill-signal check (motion to vacate / bankruptcy / dismissal / proof of disbursement / etc.).
+
+Fix to FL under-tiering is APPROVED IN PRINCIPLE but NOT YET IMPLEMENTED — requires owner sign-off on tier-name and `debt_source` value before changing `_merge_docket_data`. See conversation 2026-05-27 audit report.
 
 SCOPE DISCIPLINE
 

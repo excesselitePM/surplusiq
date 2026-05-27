@@ -14,6 +14,7 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
+import os
 import sys
 from pathlib import Path
 from datetime import datetime
@@ -235,14 +236,95 @@ async def run_county(county_id: str, headless: bool, only_case: str | None = Non
     return {"county_id": county_id, "results": results}
 
 
+# Working docket scrapers — verified to produce real prayer amounts. Used as
+# the expansion target for the `all_working` shorthand below. Hamilton +
+# Franklin are Cloudflare-blocked and Miami-Dade is reCAPTCHA-blocked, so
+# they are excluded from the default group. Add to this set ONLY after a
+# scraper proves itself on real run data.
+WORKING_DOCKET_COUNTIES = ["cuyahoga-oh", "montgomery-oh", "summit-oh"]
+
+
+DEFAULT_PARALLEL_DOCKETS = 3
+
+
+def _resolve_parallel_cap(headless: bool) -> int:
+    """Concurrency cap for parallel docket runs. Mirrors the auction
+    scraper's _resolve_parallel_cap — see core/auction/universal.py.
+    Headed runs ALWAYS serial (some docket scrapers may pause for input).
+    Headless default = 3. PARALLEL_DOCKETS env override clamped 1–10."""
+    if not headless:
+        return 1
+    raw = os.environ.get("PARALLEL_DOCKETS", "").strip()
+    if raw.isdigit():
+        return max(1, min(10, int(raw)))
+    return DEFAULT_PARALLEL_DOCKETS
+
+
+async def _run_county_isolated(county_id: str, sem: asyncio.Semaphore,
+                                headless: bool, only_case: str | None) -> dict:
+    """Wrap a single county docket run in the concurrency semaphore so the
+    runner only ever sees `cap` concurrent Chromium contexts. Exceptions
+    propagate up to asyncio.gather(return_exceptions=True) at the batch
+    level — one county's crash never aborts the others."""
+    async with sem:
+        return await run_county(county_id, headless=headless, only_case=only_case)
+
+
+async def run_counties_parallel(county_ids: list[str], headless: bool,
+                                  only_case: str | None = None) -> dict:
+    """Run docket scrapers for every county in `county_ids` concurrently,
+    bounded by the same cap/env-override pattern as the auction scrapers.
+    Per-county failures are isolated (return_exceptions=True): one crash
+    never aborts the others, and successful counties still save their data."""
+    cap = _resolve_parallel_cap(headless)
+    print(f"\n🏛  Parallel docket scrape — {len(county_ids)} counties, cap={cap}, headless={headless}")
+    sem = asyncio.Semaphore(cap)
+    results = await asyncio.gather(
+        *(_run_county_isolated(cid, sem, headless, only_case) for cid in county_ids),
+        return_exceptions=True,
+    )
+    all_results: dict[str, dict] = {}
+    failures: list[tuple[str, BaseException]] = []
+    for cid, r in zip(county_ids, results):
+        if isinstance(r, BaseException):
+            failures.append((cid, r))
+            all_results[cid] = {"county_id": cid, "results": [], "error": str(r)}
+        else:
+            all_results[cid] = r
+    if failures:
+        print(f"\n⚠  {len(failures)}/{len(county_ids)} docket counties failed (others still saved):")
+        for cid, exc in failures:
+            print(f"     ❌ {cid}: {type(exc).__name__}: {exc}")
+    else:
+        print(f"\n✅ All {len(county_ids)} docket counties completed successfully")
+    return all_results
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("county_id", help="County identifier, e.g. cuyahoga-oh")
+    ap.add_argument("county_id",
+                    help="County identifier (e.g. cuyahoga-oh), a comma-separated "
+                         "list (e.g. cuyahoga-oh,montgomery-oh,summit-oh), or the "
+                         "special value 'all_working' to run every verified docket "
+                         "scraper in parallel.")
     ap.add_argument("--case", help="Run against one specific case number prefix only")
     ap.add_argument("--headed", action="store_true", help="Show browser window (default: headless)")
     args = ap.parse_args()
 
-    asyncio.run(run_county(args.county_id, headless=not args.headed, only_case=args.case))
+    headless = not args.headed
+
+    if args.county_id == "all_working":
+        targets = list(WORKING_DOCKET_COUNTIES)
+    elif "," in args.county_id:
+        targets = [s.strip() for s in args.county_id.split(",") if s.strip()]
+    else:
+        targets = [args.county_id]
+
+    if len(targets) == 1:
+        # Single-county path — preserve existing serial behavior + logging
+        asyncio.run(run_county(targets[0], headless=headless, only_case=args.case))
+    else:
+        asyncio.run(run_counties_parallel(targets, headless=headless, only_case=args.case))
 
 
 if __name__ == "__main__":
