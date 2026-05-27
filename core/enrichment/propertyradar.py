@@ -762,9 +762,10 @@ def main():
             return
 
         print()
-        print("─── STEP 3: GET /v1/properties/{RadarID} (Purchase=0, Fields=Card) ───")
+        print("─── STEP 3: GET /v1/properties/{RadarID} (Purchase=1, Fields=Card) ───")
+        print("    💸 Purchase=1 — burns 1 export credit (33,781 available).")
         gurl = f"{PR_API_BASE}/properties/{radarid}"
-        gparams = {"Fields": "Card", "Purchase": 0}
+        gparams = {"Fields": "Card", "Purchase": 1}
         print(f"  → GET {gurl}")
         print(f"     params: {json.dumps(gparams, sort_keys=True)}")
         try:
