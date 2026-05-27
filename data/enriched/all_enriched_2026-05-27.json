@@ -40,7 +40,7 @@
     "is_clean_surplus": true,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-05-27T20:29:13.402350"
+    "enriched_at": "2026-05-27T21:18:32.760507"
   },
   {
     "county_id": "miami-dade-fl",
@@ -83,7 +83,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-05-27T20:29:13.402423"
+    "enriched_at": "2026-05-27T21:18:32.760640"
   },
   {
     "county_id": "miami-dade-fl",
@@ -126,7 +126,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-05-27T20:29:13.402439"
+    "enriched_at": "2026-05-27T21:18:32.760653"
   },
   {
     "county_id": "miami-dade-fl",
@@ -169,7 +169,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-05-27T20:29:14.019237"
+    "enriched_at": "2026-05-27T21:18:33.374092"
   },
   {
     "county_id": "broward-fl",
@@ -212,7 +212,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-05-27T20:29:16.260323"
+    "enriched_at": "2026-05-27T21:18:35.692790"
   },
   {
     "county_id": "miami-dade-fl",
@@ -255,7 +255,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-05-27T20:29:16.880755"
+    "enriched_at": "2026-05-27T21:18:36.309342"
   },
   {
     "county_id": "franklin-oh",
@@ -298,7 +298,7 @@
     "is_clean_surplus": true,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-05-27T20:29:19.178196"
+    "enriched_at": "2026-05-27T21:18:38.568185"
   },
   {
     "county_id": "miami-dade-fl",
@@ -341,7 +341,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-05-27T20:29:19.794406"
+    "enriched_at": "2026-05-27T21:18:39.176702"
   },
   {
     "county_id": "summit-oh",
@@ -384,7 +384,7 @@
     "is_clean_surplus": true,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-05-27T20:29:22.091236"
+    "enriched_at": "2026-05-27T21:18:41.401711"
   },
   {
     "county_id": "broward-fl",
@@ -427,7 +427,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-05-27T20:29:24.396004"
+    "enriched_at": "2026-05-27T21:18:43.726421"
   },
   {
     "county_id": "cuyahoga-oh",
@@ -470,7 +470,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-05-27T20:29:25.011073"
+    "enriched_at": "2026-05-27T21:18:44.333347"
   },
   {
     "county_id": "franklin-oh",
@@ -513,7 +513,7 @@
     "is_clean_surplus": true,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-05-27T20:29:27.253180"
+    "enriched_at": "2026-05-27T21:18:46.625259"
   },
   {
     "county_id": "duval-fl",
@@ -556,7 +556,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-05-27T20:29:27.876765"
+    "enriched_at": "2026-05-27T21:18:47.240490"
   },
   {
     "county_id": "broward-fl",
@@ -599,7 +599,7 @@
     "is_clean_surplus": true,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-05-27T20:29:30.234778"
+    "enriched_at": "2026-05-27T21:18:49.601676"
   },
   {
     "county_id": "miami-dade-fl",
@@ -642,7 +642,7 @@
     "is_clean_surplus": true,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-05-27T20:29:32.528067"
+    "enriched_at": "2026-05-27T21:18:51.889669"
   },
   {
     "county_id": "miami-dade-fl",
@@ -685,7 +685,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-05-27T20:29:33.149456"
+    "enriched_at": "2026-05-27T21:18:52.503116"
   },
   {
     "county_id": "summit-oh",
@@ -728,7 +728,7 @@
     "is_clean_surplus": true,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-05-27T20:29:35.432028"
+    "enriched_at": "2026-05-27T21:18:54.826769"
   },
   {
     "county_id": "broward-fl",
@@ -771,7 +771,7 @@
     "is_clean_surplus": true,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-05-27T20:29:37.734535"
+    "enriched_at": "2026-05-27T21:18:57.096616"
   },
   {
     "county_id": "franklin-oh",
@@ -814,7 +814,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-05-27T20:29:38.381855"
+    "enriched_at": "2026-05-27T21:18:57.724021"
   },
   {
     "county_id": "miami-dade-fl",
@@ -857,7 +857,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-05-27T20:29:38.381904"
+    "enriched_at": "2026-05-27T21:18:57.724100"
   },
   {
     "county_id": "summit-oh",
@@ -900,7 +900,7 @@
     "is_clean_surplus": true,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-05-27T20:29:40.745839"
+    "enriched_at": "2026-05-27T21:19:00.000115"
   },
   {
     "county_id": "montgomery-oh",
@@ -943,7 +943,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-05-27T20:29:41.365802"
+    "enriched_at": "2026-05-27T21:19:00.647966"
   },
   {
     "county_id": "summit-oh",
@@ -986,7 +986,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-05-27T20:29:41.982969"
+    "enriched_at": "2026-05-27T21:19:01.256665"
   },
   {
     "county_id": "franklin-oh",
@@ -1029,7 +1029,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-05-27T20:29:42.607429"
+    "enriched_at": "2026-05-27T21:19:01.870033"
   },
   {
     "county_id": "summit-oh",
@@ -1072,7 +1072,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-05-27T20:29:43.226343"
+    "enriched_at": "2026-05-27T21:19:02.481729"
   },
   {
     "county_id": "summit-oh",
@@ -1115,7 +1115,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-05-27T20:29:43.867054"
+    "enriched_at": "2026-05-27T21:19:03.093489"
   },
   {
     "county_id": "duval-fl",
@@ -1158,7 +1158,7 @@
     "is_clean_surplus": true,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-05-27T20:29:46.201022"
+    "enriched_at": "2026-05-27T21:19:05.392437"
   },
   {
     "county_id": "summit-oh",
@@ -1201,7 +1201,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-05-27T20:29:46.828084"
+    "enriched_at": "2026-05-27T21:19:06.004258"
   },
   {
     "county_id": "summit-oh",
@@ -1244,7 +1244,7 @@
     "is_clean_surplus": true,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-05-27T20:29:49.089570"
+    "enriched_at": "2026-05-27T21:19:08.258286"
   },
   {
     "county_id": "summit-oh",
@@ -1287,7 +1287,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-05-27T20:29:49.704324"
+    "enriched_at": "2026-05-27T21:19:08.875383"
   },
   {
     "county_id": "summit-oh",
@@ -1330,7 +1330,7 @@
     "is_clean_surplus": true,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-05-27T20:29:52.061429"
+    "enriched_at": "2026-05-27T21:19:11.084019"
   },
   {
     "county_id": "summit-oh",
@@ -1373,7 +1373,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-05-27T20:29:52.061492"
+    "enriched_at": "2026-05-27T21:19:11.084104"
   },
   {
     "county_id": "summit-oh",
@@ -1416,7 +1416,7 @@
     "is_clean_surplus": true,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-05-27T20:29:54.514668"
+    "enriched_at": "2026-05-27T21:19:13.357810"
   },
   {
     "county_id": "cuyahoga-oh",
@@ -1459,7 +1459,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-05-27T20:29:55.128745"
+    "enriched_at": "2026-05-27T21:19:13.970219"
   },
   {
     "county_id": "hamilton-oh",
@@ -1502,7 +1502,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-05-27T20:29:55.743769"
+    "enriched_at": "2026-05-27T21:19:14.584287"
   },
   {
     "county_id": "orange-fl",
@@ -1545,7 +1545,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-05-27T20:29:56.365027"
+    "enriched_at": "2026-05-27T21:19:15.197835"
   },
   {
     "county_id": "franklin-oh",
@@ -1588,7 +1588,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-05-27T20:29:57.015456"
+    "enriched_at": "2026-05-27T21:19:15.805775"
   },
   {
     "county_id": "miami-dade-fl",
@@ -1631,7 +1631,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-05-27T20:29:57.639167"
+    "enriched_at": "2026-05-27T21:19:16.420441"
   },
   {
     "county_id": "broward-fl",
@@ -1674,7 +1674,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-05-27T20:29:57.639219"
+    "enriched_at": "2026-05-27T21:19:16.420520"
   },
   {
     "county_id": "summit-oh",
@@ -1717,7 +1717,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-05-27T20:29:59.856705"
+    "enriched_at": "2026-05-27T21:19:18.689459"
   },
   {
     "county_id": "cuyahoga-oh",
@@ -1760,7 +1760,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-05-27T20:30:00.470664"
+    "enriched_at": "2026-05-27T21:19:19.295783"
   },
   {
     "county_id": "broward-fl",
@@ -1803,7 +1803,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-05-27T20:30:01.142670"
+    "enriched_at": "2026-05-27T21:19:19.910763"
   },
   {
     "county_id": "broward-fl",
@@ -1820,21 +1820,21 @@
     "score": "C",
     "pr_match": true,
     "pr_match_count": 1,
-    "pr_radar_id": "P7832CAA",
-    "pr_owner_name": "VELLUCCI,ANNA",
+    "pr_radar_id": "P7832CC9",
+    "pr_owner_name": "CEPEDA,MARIA C",
     "pr_mailing_address": null,
     "pr_mailing_city": null,
     "pr_mailing_state": null,
     "pr_mailing_zip": null,
-    "pr_estimated_value": 119666.0,
+    "pr_estimated_value": 123037.0,
     "pr_total_loan_balance": 0.0,
-    "pr_available_equity": 119666.0,
+    "pr_available_equity": 123037.0,
     "pr_first_loan_amount": 0.0,
     "pr_first_loan_type": null,
     "pr_second_loan_amount": 0.0,
     "pr_years_owned": null,
-    "pr_owner_occupied": false,
-    "pr_in_tax_delinquency": true,
+    "pr_owner_occupied": true,
+    "pr_in_tax_delinquency": false,
     "pr_involuntary_lien": false,
     "pr_property_type": "CND",
     "pr_year_built": 1975,
@@ -1843,10 +1843,10 @@
     "pr_bathrooms": 2.0,
     "real_surplus_estimate": 24652.64,
     "debt_coverage_ratio": 0.0,
-    "is_clean_surplus": false,
+    "is_clean_surplus": true,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-05-27T20:30:03.485262"
+    "enriched_at": "2026-05-27T21:19:22.223310"
   },
   {
     "county_id": "broward-fl",
@@ -1889,7 +1889,7 @@
     "is_clean_surplus": true,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-05-27T20:30:05.819358"
+    "enriched_at": "2026-05-27T21:19:24.470037"
   },
   {
     "county_id": "orange-fl",
@@ -1932,7 +1932,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-05-27T20:30:06.442017"
+    "enriched_at": "2026-05-27T21:19:25.086139"
   },
   {
     "county_id": "hamilton-oh",
@@ -1975,7 +1975,7 @@
     "is_clean_surplus": true,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-05-27T20:30:09.874103"
+    "enriched_at": "2026-05-27T21:19:27.296751"
   },
   {
     "county_id": "summit-oh",
@@ -2018,7 +2018,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-05-27T20:30:09.874180"
+    "enriched_at": "2026-05-27T21:19:27.296834"
   },
   {
     "county_id": "hamilton-oh",
@@ -2061,7 +2061,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-05-27T20:30:12.458309"
+    "enriched_at": "2026-05-27T21:19:29.642427"
   },
   {
     "county_id": "broward-fl",
@@ -2104,7 +2104,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-05-27T20:30:13.082954"
+    "enriched_at": "2026-05-27T21:19:30.265232"
   },
   {
     "county_id": "duval-fl",
@@ -2147,6 +2147,6 @@
     "is_clean_surplus": true,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-05-27T20:30:15.454310"
+    "enriched_at": "2026-05-27T21:19:32.501599"
   }
 ]
