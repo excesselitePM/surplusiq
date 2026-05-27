@@ -161,6 +161,15 @@ These are the highest-quality leads on the dashboard regardless of tier (most wi
 
 `core/loader.py:load_all_leads()` enforces a hard 14-day window on the sale/auction date, NOT the case-filing date. A case can be filed in 2023 and auctioned last week — what matters is `_extract_sale_date()`, which pulls from `sale_date` / `sale_datetime` / `auction_date` / `soldDate` / `AUCTIONDATE` fields written by the scraper at point of sale. Never use a case number as a date source.
 
+### AUCTION SCRAPER PARALLELIZATION
+
+`core/auction/universal.py:run_all()` runs counties concurrently via `asyncio.gather` bounded by a `Semaphore`. Defaults:
+- **Headless runs (CI): cap = 3.** Five+ OH counties share the Grant Street backend at `sheriffsaleauction.ohio.gov`; higher concurrency risks CDN rate-limiting from a single runner IP. The GitHub Actions standard runner (7 GB RAM, 2 vCPU) handles 3 concurrent Chromium contexts comfortably; 5+ with xvfb starts squeezing.
+- **Headed runs (local): cap = 1 (serial).** Some scrapers pause for `input()` on CAPTCHA / EULA flow — overlapping prompts from concurrent scrapers would be unusable.
+- **`PARALLEL_SCRAPERS` env var** overrides the cap (clamped 1–10) for debugging.
+- **Per-county isolation**: `asyncio.gather(return_exceptions=True)` captures crashes per county; failures are logged and the batch continues. One county's crash never aborts the others.
+- Wall time impact: ~15 min (sequential) → ~5–6 min (cap=3).
+
 SCOPE DISCIPLINE
 
 Narrow, scoped changes. State exactly what changed and what did not.

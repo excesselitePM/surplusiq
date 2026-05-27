@@ -22,6 +22,7 @@ Extracts from each auction item:
 
 import asyncio
 import json
+import os
 import re
 import sys
 from datetime import datetime, date, timedelta
@@ -622,14 +623,70 @@ async def run_one(county_id: str, headless: bool = True, days_back: int = 7):
     return await scraper.scrape(days_back=days_back, headless=headless)
 
 
-async def run_all(headless: bool = True, days_back: int = 7):
-    """Run all 10 counties sequentially."""
-    all_results = {}
-    for county in ALL_COUNTIES:
+DEFAULT_PARALLEL_SCRAPERS = 3
+
+
+def _resolve_parallel_cap(headless: bool) -> int:
+    """Compute the concurrency cap for run_all.
+
+    - Headed runs ALWAYS serial (1). Some scrapers pause for input() on a
+      CAPTCHA/EULA flow, and overlapping prompts from concurrent scrapers
+      would be unusable.
+    - Headless runs default to DEFAULT_PARALLEL_SCRAPERS (3). Cap chosen
+      because 5+ OH counties share the Grant Street auction backend at
+      sheriffsaleauction.ohio.gov — too much concurrency risks CDN
+      rate-limiting from a single runner IP. The GitHub Actions standard
+      runner (7 GB RAM, 2 vCPU) also comfortably handles 3 concurrent
+      Chromium contexts (~1.2-1.5 GB combined) but starts squeezing at
+      5+ with xvfb in the mix.
+    - PARALLEL_SCRAPERS env var overrides (clamped 1-10) for debugging.
+    """
+    if not headless:
+        return 1
+    raw = os.environ.get("PARALLEL_SCRAPERS", "").strip()
+    if raw.isdigit():
+        return max(1, min(10, int(raw)))
+    return DEFAULT_PARALLEL_SCRAPERS
+
+
+async def _run_one_isolated(county, sem: asyncio.Semaphore, headless: bool, days_back: int):
+    """Wrap a single scrape in the concurrency semaphore so the runner
+    only ever sees `cap` concurrent Chromium contexts. Any exception is
+    re-raised so asyncio.gather(return_exceptions=True) can capture it
+    at the batch level — one county's crash never aborts the others."""
+    async with sem:
         scraper = UniversalAuctionScraper(county)
-        results = await scraper.scrape(days_back=days_back, headless=headless)
-        all_results[county.id] = results
-        await asyncio.sleep(3)
+        return await scraper.scrape(days_back=days_back, headless=headless)
+
+
+async def run_all(headless: bool = True, days_back: int = 7):
+    """Run all counties — parallel by default, bounded by a semaphore.
+
+    See _resolve_parallel_cap for the concurrency rationale. Per-county
+    failures are isolated: a county that raises is logged and skipped;
+    successful counties still write their data.
+    """
+    cap = _resolve_parallel_cap(headless)
+    print(f"\n🏛  Parallel auction scrape — {len(ALL_COUNTIES)} counties, cap={cap}, headless={headless}")
+    sem = asyncio.Semaphore(cap)
+    results = await asyncio.gather(
+        *(_run_one_isolated(c, sem, headless, days_back) for c in ALL_COUNTIES),
+        return_exceptions=True,
+    )
+
+    all_results: dict[str, list] = {}
+    failures: list[tuple[str, BaseException]] = []
+    for county, r in zip(ALL_COUNTIES, results):
+        if isinstance(r, BaseException):
+            failures.append((county.id, r))
+            all_results[county.id] = []
+        else:
+            all_results[county.id] = r
+
+    if failures:
+        print(f"\n⚠  {len(failures)}/{len(ALL_COUNTIES)} counties failed (other counties' data still saved):")
+        for cid, exc in failures:
+            print(f"     ❌ {cid}: {type(exc).__name__}: {exc}")
     return all_results
 
 
