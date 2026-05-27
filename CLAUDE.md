@@ -189,6 +189,24 @@ Scraper page interactions wait for the THING THE NEXT STEP NEEDS, never for a fl
 1. Polite-pacing between unrelated polite-pacing requests, capped at ~500ms (e.g. `core/auction/universal.py` day-loop)
 2. Polling loops where each iteration's body waits a short tick (~500ms) before re-checking a condition (e.g. `core/dockets/montgomery.py` `#Case` populate poll)
 
+### CHOOSING THE RIGHT WAIT PRIMITIVE — placeholder-container trap
+
+When converting a blind sleep that previously allowed time for **JS-rendered content** to appear, the order of preference is:
+
+1. **`wait_for_load_state("networkidle", timeout=N)`** — first choice for JS-populated lists. Waits for the browser to register no network activity for 500ms; the XHRs that populate the content have finished by then. Doesn't care which selectors match — works regardless of DOM shape.
+
+2. **`wait_for_function("() => document.querySelectorAll('SEL').length > N", timeout=N)`** — second choice. The predicate counts ACTUAL populated content rows, so it can't be fooled by an empty placeholder container.
+
+3. **`wait_for_selector("SEL", state="visible")`** — only when (a) you can fully enumerate every selector variant the page might render AND (b) the matched element is the rendered-with-data element, not its placeholder container.
+
+**`wait_for_selector(..., state="attached")` is a trap for JS lists.** "Attached" returns the instant the element node exists in the DOM — including empty placeholder wrapper `div`s that JS populates with child rows afterward. Stage 1 of FP-12 lost ALL 5 FL counties (32 leads) by using `state="attached"` on a wrapper selector; the wait returned in milliseconds while the actual auction items were still being fetched, and `_extract_auction_items` then ran on an empty wrapper.
+
+Recovery rule: if a converted wait drops leads in a verification run, the conversion is wrong. Default back to `networkidle` and re-evaluate. Never ship a conversion that's faster but lossy.
+
+### REGRESSION REPORTING RULE
+
+When a test/verification run drops leads, fails to extract, or otherwise produces fewer/worse results than the baseline, that regression IS the report headline — not a footnote, not a "by the way" after the wall-time improvement. Report it the moment it's discovered, not after recovery. Speedup with lost leads is a regression, not a win.
+
 **`browser.launch(slow_mo=...)` is BANNED in production.** It injects the supplied delay before EVERY Playwright action — clicks, fills, waits, everything. Useful for debugging visual flow at headed mode; toxic for production wall time. Removed from `core/auction/universal.py:browser.launch` in FP-12.
 
 Stage 1 (FP-12) results: 26 blind sleeps + 1 `slow_mo=250` eliminated from `universal.py` + `cuyahoga.py` + `summit.py`. Stage 2 (FP-13) replaces the Montgomery SPA `wait_for_timeout(5000)` with a `wait_for_function` predicate that returns the instant `#tblSearchResults` populates.
