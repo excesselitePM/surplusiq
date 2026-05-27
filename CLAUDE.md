@@ -181,14 +181,24 @@ These are the highest-quality leads on the dashboard regardless of tier (most wi
 
 To add a new docket scraper to the parallel default: prove it on real Actions runs first, then append the county-id to `WORKING_DOCKET_COUNTIES` in `core/dockets/enrich.py`.
 
-### STATE-AWARE SURPLUS RULE (FL vs OH opening_bid)
+### STATE-AWARE SURPLUS RULE (FL vs OH opening_bid) — FP-10
 
-Per Eric's May 12 call:
-- **Ohio** — `opening_bid` is the **statutory 2/3-appraised value, NOT real debt**. The only valid OH debt figure is the docket prayer/writ/judgment amount. No prayer ⇒ `true_surplus = None`. Enforced in `core/loader.py:_merge_docket_data`.
-- **Florida** — `opening_bid` **IS the judgment amount** (set from the FL auction calendar). Real-debt math is `sale_price − opening_bid`. **AUDIT FINDING (2026-05-27):** the loader does NOT yet wire this rule through — FL leads with no docket scraper get `true_surplus = None` and tag `apparent_surplus`, blending them with auction-only OH leads. FL leads are under-tiered as a result.
-- **Caveat regardless of state:** auction math alone is never `confirmed_surplus`. Confirmation still requires a docket kill-signal check (motion to vacate / bankruptcy / dismissal / proof of disbursement / etc.).
+Per Eric's May 12 call. Implemented 2026-05-27 in `core/loader.py:_parse_lead` + `_apply_docket_to_lead`.
 
-Fix to FL under-tiering is APPROVED IN PRINCIPLE but NOT YET IMPLEMENTED — requires owner sign-off on tier-name and `debt_source` value before changing `_merge_docket_data`. See conversation 2026-05-27 audit report.
+- **Ohio** — `opening_bid` is the **statutory 2/3-appraised value, NOT real debt**. The only valid OH debt is the docket prayer amount. No prayer ⇒ `true_surplus = None`, `debt_source = ""`.
+- **Florida** — `opening_bid` **IS the judgment amount** (set from the FL auction calendar). `_parse_lead` pre-populates `true_surplus = sale_price - opening_bid` and `debt_source = "fl_opening_bid"` for FL leads at load time. A docket prayer (from a future Miami-Dade-style scraper) OVERRIDES the opening-bid figure in `_apply_docket_to_lead` and flips `debt_source` to `"docket_prayer"` (or county-specific PDF marker).
+
+`debt_source` values:
+- `""` — no debt known (OH without docket).
+- `"fl_opening_bid"` — Florida opening-bid math.
+- `"docket_prayer"` — generic docket prayer amount.
+- `"pdf_extract:docket_row_NN:judgment"` — Montgomery/Summit PDF extraction.
+
+**ZERO NEW TIERS, ZERO NEW BADGES.** Eric's three tiers stand: confirmed / estimated / apparent. A FL lead with `debt_source="fl_opening_bid"` and no docket data sits in `apparent_surplus` — same tier as everything else without a docket pass. The `debt_source` field is provenance only, not a tier signal.
+
+**Confirmation rule is uniform across states:** `true_surplus` alone never promotes a lead to `confirmed_surplus`. The lead must clear `_has_required_proof` — `classification in {green, yellow}` + `proof_of_surplus` non-empty + docket_url/source_url present + sale_date + final_sale_price > 0 — which only happens after a docket pass. FL leads await a Miami-Dade/Broward/etc. docket scraper for any path to confirmed.
+
+Verified by `tests.test_verification` T9 (FL opening_bid → apparent_surplus) and T10 (OH opening_bid stays fake).
 
 SCOPE DISCIPLINE
 

@@ -104,20 +104,25 @@ def test_2_killed_excluded_from_confirmed():
 # TEST 3 — PropertyRadar match w/ estimate → property_enriched / estimated
 # ──────────────────────────────────────────────────────────────────────
 def test_3_propertyradar_is_estimated_not_confirmed():
+    # Updated for FP-8: estimated_surplus requires PR TotalLoanBalance > $0.
+    # A PR match with TLB > $0 means PR actually refined the surplus arithmetic
+    # (sale price minus reported encumbrance). A PR match with TLB = $0 falls
+    # to apparent_surplus per FP-8 — that's a separate test below.
     lead = _base_lead(classification="")     # no docket classification
     lead.true_surplus = None
     assign_status_fields(lead)               # loader: auction_only first
     payload = _to_payload(lead)
     payload["pr_match"] = True
+    payload["pr_total_loan_balance"] = 220000.0  # FP-8: REAL refinement
     payload["real_surplus_estimate"] = 88000.0
     _reassign_status_after_pr(payload)        # PR merge re-tags it
     amount, bucket = _surplus_for_payload(payload)
-    check("T3: PR match → research_status property_enriched",
+    check("T3: PR match (TLB>0) → research_status property_enriched",
           payload["research_status"] == "property_enriched",
           f"research_status={payload['research_status']}")
-    check("T3: PR match → money_status estimated_surplus",
+    check("T3: PR match (TLB>0) → money_status estimated_surplus",
           payload["money_status"] == "estimated_surplus")
-    check("T3: PR match is NOT confirmed_surplus",
+    check("T3: PR match (TLB>0) is NOT confirmed_surplus",
           bucket != "confirmed_surplus", f"bucket={bucket}")
 
 
@@ -207,6 +212,77 @@ def test_7_red_not_ready_not_counted():
 
 
 # ──────────────────────────────────────────────────────────────────────
+# TEST 8 — FP-8: PR match with TLB=$0 must DROP to apparent (no tier inflation)
+# ──────────────────────────────────────────────────────────────────────
+def test_8_pr_match_zero_tlb_drops_to_apparent():
+    lead = _base_lead(classification="")
+    lead.true_surplus = None
+    assign_status_fields(lead)
+    payload = _to_payload(lead)
+    payload["pr_match"] = True
+    payload["pr_total_loan_balance"] = 0.0       # FP-8: NO real refinement
+    payload["real_surplus_estimate"] = payload["gross_surplus"]
+    _reassign_status_after_pr(payload)
+    amount, bucket = _surplus_for_payload(payload)
+    check("T8: PR match + TLB=$0 → money_status apparent_surplus",
+          payload["money_status"] == "apparent_surplus",
+          f"money_status={payload['money_status']}")
+    check("T8: PR match + TLB=$0 → bucket apparent_surplus",
+          bucket == "apparent_surplus", f"bucket={bucket}")
+    check("T8: PR match + TLB=$0 → pr_match field stays True (intel preserved)",
+          payload["pr_match"] is True)
+
+
+# ──────────────────────────────────────────────────────────────────────
+# TEST 9 — FP-10: FL lead with no docket gets fl_opening_bid debt_source
+# and stays apparent_surplus (NOT a new tier, NOT confirmed)
+# ──────────────────────────────────────────────────────────────────────
+def test_9_fl_opening_bid_debt_source():
+    from core.loader import _parse_lead
+    fl_lead = _parse_lead({
+        "opening_bid": 100000,
+        "final_sale_price": 175000,
+        "case_number": "FL-TEST-9",
+        "address": "999 OCEAN BLVD",
+        "is_third_party": True,
+    }, "miami-dade-fl", "test.jsonl")
+    assign_status_fields(fl_lead)
+    check("T9: FL lead with opening_bid + sale → true_surplus = sale - opening",
+          fl_lead.true_surplus == 75000.0,
+          f"true_surplus={fl_lead.true_surplus}")
+    check("T9: FL lead → debt_source = 'fl_opening_bid'",
+          fl_lead.debt_source == "fl_opening_bid",
+          f"debt_source={fl_lead.debt_source!r}")
+    check("T9: FL lead with no docket → money_status apparent_surplus (NOT confirmed, NOT estimated)",
+          fl_lead.money_status == "apparent_surplus",
+          f"money_status={fl_lead.money_status}")
+    check("T9: FL lead with no docket → pipeline_ready False (needs kill-signal check)",
+          fl_lead.pipeline_ready is False)
+
+
+# ──────────────────────────────────────────────────────────────────────
+# TEST 10 — FP-10: OH lead opening_bid stays fake; no fl rule applied
+# ──────────────────────────────────────────────────────────────────────
+def test_10_oh_opening_bid_stays_fake():
+    from core.loader import _parse_lead
+    oh_lead = _parse_lead({
+        "opening_bid": 30000,   # statutory 2/3-appraised, NOT real debt
+        "final_sale_price": 72000,
+        "case_number": "CV-OH-TEST-10",
+        "is_third_party": True,
+    }, "summit-oh", "test.jsonl")
+    assign_status_fields(oh_lead)
+    check("T10: OH lead → true_surplus stays None (opening_bid is fake)",
+          oh_lead.true_surplus is None,
+          f"true_surplus={oh_lead.true_surplus}")
+    check("T10: OH lead → debt_source empty (no docket prayer yet)",
+          oh_lead.debt_source == "",
+          f"debt_source={oh_lead.debt_source!r}")
+    check("T10: OH lead with no docket → money_status apparent_surplus",
+          oh_lead.money_status == "apparent_surplus")
+
+
+# ──────────────────────────────────────────────────────────────────────
 # Runner
 # ──────────────────────────────────────────────────────────────────────
 def main():
@@ -221,6 +297,9 @@ def main():
         test_5_green_with_full_proof_is_confirmed,
         test_6_green_missing_proof_is_downgraded,
         test_7_red_not_ready_not_counted,
+        test_8_pr_match_zero_tlb_drops_to_apparent,
+        test_9_fl_opening_bid_debt_source,
+        test_10_oh_opening_bid_stays_fake,
     ]:
         print(f"\n{fn.__name__}")
         fn()

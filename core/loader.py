@@ -110,19 +110,21 @@ def _apply_docket_to_lead(lead, docket: dict, county_id: str) -> None:
     """
     Merge a docket result onto a Lead in place.
 
-    HARDENING (FP-1/FP-2/FP-3): true_surplus is now a DOCKET-ONLY field.
-    It is set ONLY when the docket supplies a real debt figure (prayer/writ/
-    judgment amount). It is NEVER defaulted to gross_surplus.
+    State-aware surplus rule (FP-10, Eric's May 12 call):
 
-      • Ohio   — opening_bid is fake (2/3 appraised value, statutory). The only
-                 valid debt is the docket prayer amount. No prayer amount =>
-                 true_surplus stays None (lead is apparent-only).
-      • Florida — opening_bid equals the judgment, but auction math alone is
-                 still not a confirmed surplus. true_surplus is only set here
-                 if the docket itself supplies a debt figure. Otherwise None.
+      • Ohio   — opening_bid is the statutory 2/3-appraised value, NOT real
+                 debt. The only valid OH debt is the docket prayer amount.
+                 No prayer ⇒ true_surplus stays None.
 
-    A None true_surplus is the explicit signal that this lead has NOT been
-    docket-verified and must not be treated as confirmed surplus downstream.
+      • Florida — opening_bid IS the judgment amount (from the FL auction
+                 calendar). _parse_lead already pre-populates true_surplus
+                 = sale - opening_bid with debt_source = "fl_opening_bid"
+                 for FL leads. A docket prayer (from a future Miami-Dade-
+                 style scraper) OVERRIDES the opening-bid figure here.
+
+    Confirmation rule is uniform across states: true_surplus alone never
+    promotes a lead to confirmed_surplus. It needs to clear kill signals,
+    have proof fields, and survive assign_status_fields downstream.
     """
     lead.classification       = docket.get("classification", "") or ""
     lead.classification_reason = docket.get("classification_reason", "") or ""
@@ -133,12 +135,18 @@ def _apply_docket_to_lead(lead, docket: dict, county_id: str) -> None:
     lead.additional_parties   = list(docket.get("additional_parties", []) or [])
     lead.docket_url           = docket.get("case_url", "") or ""
 
-    # true_surplus = final_sale_price - real_debt, where real_debt comes ONLY
-    # from the docket. No docket debt figure => true_surplus stays None.
+    # Docket prayer takes precedence over any state-specific default (FL
+    # opening-bid math). No docket prayer ⇒ keep whatever _parse_lead set:
+    # OH leads stay at None, FL leads keep their fl_opening_bid surplus.
     if lead.prayer_amount > 0:
         lead.true_surplus = round(lead.final_sale_price - lead.prayer_amount, 2)
-    else:
-        lead.true_surplus = None
+        # Preserve county-specific debt_source if the docket result carried one
+        # (e.g. "pdf_extract:docket_NN:judgment" from Montgomery/Summit);
+        # otherwise default to "docket_prayer".
+        docket_debt_source = docket.get("debt_source", "") or ""
+        lead.debt_source = docket_debt_source or "docket_prayer"
+    # else: leave true_surplus + debt_source as _parse_lead set them
+    #       (FL: fl_opening_bid math; OH: None / "")
 
 
 
@@ -197,7 +205,12 @@ class Lead:
     classification:   str = ""
     classification_reason: str = ""
     prayer_amount:    float = 0.0
-    true_surplus:     Optional[float] = None   # None = NOT docket-verified
+    true_surplus:     Optional[float] = None   # None = NOT debt-backed
+    debt_source:      str = ""                 # provenance of the debt figure:
+                                                #   ""                — no debt known
+                                                #   "docket_prayer"   — OH docket prayer/judgment
+                                                #   "fl_opening_bid"  — FL opening bid (Eric: FL opening = judgment)
+                                                #   "pdf_extract:…"   — county-specific PDF extraction
     kill_signals:     list = field(default_factory=list)
     proof_of_surplus: str = ""
     competing_filers: list = field(default_factory=list)
@@ -300,10 +313,30 @@ def _parse_lead(record: dict, county_id: str, source_file: str) -> Optional[Lead
     parsed_date = _extract_sale_date(record)
     sale_date_iso = parsed_date.isoformat() if parsed_date else (record.get("sale_date") or "").strip()
 
+    state = info.get("state", "")
+
+    # ── STATE-AWARE SURPLUS (Eric's May 12 rule) ────────────────────────
+    # FL: opening_bid IS the judgment amount (set from the FL auction
+    #     calendar). Real-debt surplus = sale - opening_bid. Records this
+    #     provenance via debt_source so downstream consumers can audit it.
+    # OH: opening_bid is the statutory 2/3-appraised value, NOT real debt.
+    #     true_surplus stays None until a docket scraper supplies a real
+    #     prayer amount in _merge_docket_data.
+    # IMPORTANT: FL true_surplus from opening-bid math is real-debt-backed
+    # but is NOT "verified" — confirmation still requires a docket kill-
+    # signal check + proof fields per assign_status_fields. A FL lead with
+    # debt_source="fl_opening_bid" and no docket data sits in apparent_surplus.
+    if state == "FL" and final > 0 and opening > 0:
+        initial_true_surplus = round(final - opening, 2)
+        initial_debt_source = "fl_opening_bid"
+    else:
+        initial_true_surplus = None
+        initial_debt_source = ""
+
     return Lead(
         county_id     = county_id,
         county_name   = info.get("name", county_id),
-        state         = info.get("state", ""),
+        state         = state,
         case_number   = (record.get("case_number") or "").strip(),
         address       = _normalize_address(record.get("address") or ""),
         parcel_id     = (record.get("parcel_id") or "").strip(),
@@ -320,6 +353,8 @@ def _parse_lead(record: dict, county_id: str, source_file: str) -> Optional[Lead
         auction_status = (record.get("auction_status") or "").strip(),
         scraped_at    = datetime.now().isoformat(timespec="seconds"),
         source_file   = source_file,
+        true_surplus  = initial_true_surplus,
+        debt_source   = initial_debt_source,
     )
 
 

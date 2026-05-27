@@ -238,6 +238,7 @@ def export_dashboard_data():
             "classification_reason":  getattr(l, "classification_reason", ""),
             "prayer_amount":          getattr(l, "prayer_amount", 0.0),
             "true_surplus":           getattr(l, "true_surplus", None),
+            "debt_source":            getattr(l, "debt_source", ""),
             "kill_signals":           getattr(l, "kill_signals", []),
             "proof_of_surplus":       getattr(l, "proof_of_surplus", ""),
             "competing_filers":       getattr(l, "competing_filers", []),
