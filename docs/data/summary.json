@@ -1,31 +1,31 @@
 {
-  "generated_at": "2026-06-07T12:37:03",
-  "total_leads": 36,
-  "total_leads_pre_filter": 42,
+  "generated_at": "2026-06-08T15:04:04",
+  "total_leads": 40,
+  "total_leads_pre_filter": 46,
   "killed_filtered_count": 6,
   "below_floor_filtered_count": 0,
   "min_display_surplus": 5000.0,
   "confirmed_surplus_total": 0,
   "estimated_surplus_total": 0,
-  "apparent_surplus_total": 2350886.06,
-  "docket_verified_positive_count": 9,
-  "docket_verified_positive_total": 536013.39,
+  "apparent_surplus_total": 2535445.44,
+  "docket_verified_positive_count": 12,
+  "docket_verified_positive_total": 653246.39,
   "confirmed_surplus_count": 0,
   "estimated_surplus_count": 0,
-  "apparent_surplus_count": 35,
+  "apparent_surplus_count": 39,
   "killed_count": 0,
   "red_count": 1,
   "pipeline_ready_count": 0,
-  "pr_matched_count": 20,
-  "docket_matched_count": 19,
+  "pr_matched_count": 22,
+  "docket_matched_count": 22,
   "by_state": {
     "FL": {
-      "leads": 21,
-      "surplus": 1637923.1499999994
+      "leads": 22,
+      "surplus": 1708508.4499999995
     },
     "OH": {
-      "leads": 21,
-      "surplus": 777980.4199999999
+      "leads": 24,
+      "surplus": 878595.13
     }
   },
   "by_county": [
@@ -41,9 +41,17 @@
       "county_id": "miami-dade-fl",
       "county_name": "Miami-Dade",
       "state": "FL",
-      "leads": 6,
-      "surplus": 401160.79,
+      "leads": 7,
+      "surplus": 471746.0899999999,
       "top_lead": 125365.56
+    },
+    {
+      "county_id": "cuyahoga-oh",
+      "county_name": "Cuyahoga",
+      "state": "OH",
+      "leads": 9,
+      "surplus": 321777.83,
+      "top_lead": 70433.0
     },
     {
       "county_id": "summit-oh",
@@ -65,17 +73,9 @@
       "county_id": "montgomery-oh",
       "county_name": "Montgomery",
       "state": "OH",
-      "leads": 6,
-      "surplus": 201600.0,
-      "top_lead": 47100.0
-    },
-    {
-      "county_id": "cuyahoga-oh",
-      "county_name": "Cuyahoga",
-      "state": "OH",
       "leads": 4,
-      "surplus": 149363.12,
-      "top_lead": 47500.0
+      "surplus": 129800.0,
+      "top_lead": 40100.0
     },
     {
       "county_id": "hamilton-oh",
@@ -112,9 +112,9 @@
   ],
   "by_score": {
     "A+": 7,
-    "A": 4,
+    "A": 6,
     "B": 20,
-    "C": 9
+    "C": 11
   },
   "top_5_confirmed_leads": [],
   "top_5_estimated_leads": [],
