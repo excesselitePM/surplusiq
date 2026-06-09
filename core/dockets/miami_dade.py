@@ -72,39 +72,58 @@ FORECLOSURE_TAX_DEED = "tax_deed"
 
 
 # ── Eric's detection terms (Miami-Dade mortgage foreclosure) ──────────────
+# Patterns are regex, applied case-insensitively to docket-entry TITLES (the
+# aria-label filing list). Keying on titles, not full page text, avoids
+# false positives from page chrome / party names. Variant-tolerant by design
+# (apostrophes optional, "owner/homeowner/defendant", word-distance windows).
+#
+# Robustness rationale lives in data/samples/miami_dade/ROBUSTNESS.md.
+
 # CLAIM-FILING: someone is already pursuing the surplus → lead not pursuable.
-CLAIM_FILED_TERMS = [
-    "motion for surplus funds",
-    "motion for disbursement of surplus",
-    "claim for mortgage foreclosure surplus",
-    "owner's claim for surplus",
-    "owners claim for surplus",
-    "owner's claim for mortgage foreclosure surplus",
-    "owners claim for mortgage foreclosure surplus",
-    "claim for surplus",
-    "claim to surplus",
-    "order disbursing surplus",          # already disbursed = definitively dead
-    "order of disbursement of surplus",
+# Every pattern REQUIRES the word "surplus" near "claim"/"disburs", so generic
+# rows like "Civil Cover Sheet - Claim Amount" never false-match.
+CLAIM_FILED_PATTERNS = [
+    r"motion for surplus funds?",
+    r"motion for disbursement of surplus",
+    r"order disbursing surplus",                 # disbursed = definitively dead
+    r"order (?:of )?disbursement of surplus",
+    r"claim\b.{0,40}surplus",                    # owner's/homeowner's/defendant's claim ... surplus
+    r"surplus\b.{0,40}claim",                    # "surplus funds claim", reversed order
 ]
 
-# KILL: sale invalid / delayed → filter out (per existing kill-signal spec).
-SALE_ISSUE_TERMS = [
-    "motion to vacate sale",
-    "motion to vacate the sale",
-    "vacate the sale",
-    "set aside sale",
-    "sale set aside",
-    "order vacating sale",
-    "sale cancelled",
-    "sale canceled",
-    "cancellation of sale",
-    "order canceling sale",
-    "order cancelling sale",
+# SALE ISSUE (kill): sale invalid / delayed. Per-title match; a title that ALSO
+# contains a denial/withdrawal/moot word is NOT counted (an Order DENYING a
+# motion to vacate means the sale stands → killing it would drop a good lead).
+SALE_ISSUE_PATTERNS = [
+    r"motion to vacate",                         # incl. "Verified/Defendant's Motion to Vacate (Sale)"
+    r"vacat(?:e|ing) (?:the )?sale",
+    r"set aside (?:the )?sale",
+    r"sale (?:set aside|vacated|cancell?ed)",
+    r"cancel(?:lation|ing|ling)?\b.{0,15}sale",  # "Motion to Cancel Sale", "Order Granting ... Cancel Sale Date"
 ]
-BANKRUPTCY_TERMS = [
-    "suggestion of bankruptcy",
-    "notice of bankruptcy",
-    "bankruptcy",
+SALE_ISSUE_DENIAL_GUARD = r"(?:deny|denying|denied|withdraw|withdrawn|moot|strike|stricken)"
+
+# BANKRUPTCY — split ACTIVE vs RESOLVED. A bare "bankruptcy" substring is NOT a
+# kill: a "Motion for Relief from Stay", a lifted stay, or a dismissed/closed
+# bankruptcy means the sale can proceed. Kill only on an ACTIVE bankruptcy with
+# no sign of resolution; active+resolved → pursuable_with_caution (human verifies).
+BANKRUPTCY_ACTIVE_PATTERNS = [
+    r"suggestion of bankruptcy",
+    r"notice of (?:filing (?:of )?)?bankruptcy",
+    r"bankruptcy stay",                          # "Order Case Pending Bankruptcy Stay"
+    r"pending bankruptcy",
+    r"automatic stay",
+    r"chapter (?:7|11|13)",
+]
+BANKRUPTCY_RESOLVED_PATTERNS = [
+    r"relief from (?:the )?(?:automatic )?stay",
+    r"(?:lifting|terminating|modifying|annulling) (?:the )?(?:automatic )?stay",
+    r"stay (?:lifted|terminated|modified|annulled|dissolved)",
+    # bidirectional: "bankruptcy dismissed/closed/..." AND "dismissing/closing ... bankruptcy"
+    r"bankruptcy\b.{0,20}(?:dismiss|discharg|clos|terminat)",
+    r"(?:dismiss|discharg|clos|terminat)\w*\b.{0,20}bankruptcy",
+    r"granting relief from",
+    r"re-?open(?:ed|ing)?",
 ]
 
 
@@ -419,109 +438,152 @@ class MiamiDadeDocketScraper(DocketScraper):
         return re.sub(r"\s+", " ", _h.unescape(txt))
 
     @staticmethod
-    def _first_match(haystack: str, terms: list[str]) -> str:
-        """Return the first term in `terms` found in lowercased haystack."""
-        for t in terms:
-            if t in haystack:
-                return t
+    def _match_titles(titles: list[str], patterns: list[str],
+                      exclude: Optional[str] = None) -> str:
+        """Return the first docket-entry TITLE matching any pattern.
+
+        Per-title matching (not a flattened blob) so an optional `exclude`
+        guard can drop a title that also contains a denial/withdrawal word —
+        e.g. "Order Denying Motion to Vacate Sale" matches the vacate pattern
+        but is excluded, so it never kills a still-valid sale.
+        """
+        exc = re.compile(exclude, re.I) if exclude else None
+        for t in titles:
+            if exc and exc.search(t):
+                continue
+            for p in patterns:
+                if re.search(p, t, re.I):
+                    return t
+        return ""
+
+    @staticmethod
+    def _any_match(haystack: str, patterns: list[str]) -> str:
+        for p in patterns:
+            m = re.search(p, haystack, re.I)
+            if m:
+                return m.group(0)
         return ""
 
     def parse_docket(self, html: str, result: DocketResult) -> None:
-        """Populate result fields + Eric's taxonomy from docket HTML.
+        """Populate result fields + Eric's detections from docket HTML.
 
-        Detection runs over BOTH the precise docket-card titles and the full
-        stripped page text (recall), but classification reasons cite the
-        matched phrase so every decision is auditable. No fabrication: amounts
-        are not invented; only docket-present phrases drive the classification.
+        Detection keys on the docket-entry TITLES (the aria-label filing list,
+        proven complete — no lazy-load truncation). The one exception is the
+        bankruptcy RESOLUTION check, which also scans full page text so any sign
+        the stay was lifted / case closed is caught (bias against false-kill).
+        Every decision cites the matched title so it is auditable; nothing is
+        fabricated.
         """
         titles = self._docket_titles(html)
-        title_blob = " \n ".join(titles).lower()
-        full_text = self._strip_text(html).lower()
-        # Card titles are the authoritative filing list; full_text is a backstop.
-        scan = title_blob + " \n " + full_text
+        full_text = self._strip_text(html)
+        stripped = full_text  # alias for caption/header regexes
 
         # Case caption (e.g. "WILMINGTON TRUST COMPANY, vs MANUEL ANGEL DURAN")
-        cap = re.search(r"([A-Z][A-Za-z .,&'-]{4,90}\bvs\.?\s+[A-Z][A-Za-z .,&'-]{3,90})",
-                        self._strip_text(html))
+        cap = re.search(r"([A-Z][A-Za-z .,&'-]{4,90}\bvs\.?\s+[A-Z][A-Za-z .,&'-]{3,90})", stripped)
         if cap:
             result.case_title = cap.group(1).strip()[:200]
 
-        # Filing date
-        fd = re.search(r"Filing Date\s*:?\s*(\d{1,2}/\d{1,2}/\d{4})", self._strip_text(html))
+        fd = re.search(r"Filing Date\s*:?\s*(\d{1,2}/\d{1,2}/\d{4})", stripped)
         if fd:
             try:
                 result.filing_date = datetime.strptime(fd.group(1), "%m/%d/%Y").strftime("%Y-%m-%d")
             except ValueError:
                 pass
-
-        # Case status / type
-        st = re.search(r"Case Status\s*:?\s*([A-Za-z ]{3,30})", self._strip_text(html))
+        st = re.search(r"Case Status\s*:?\s*([A-Za-z ]{3,30})", stripped)
         if st:
             result.last_status = st.group(1).strip()[:60]
-        ct = re.search(r"Case Type\s*:?\s*([A-Za-z0-9 .,&'\-]{3,60})", self._strip_text(html))
+        ct = re.search(r"Case Type\s*:?\s*([A-Za-z0-9 .,&'\-]{3,60})", stripped)
         if ct:
             result.case_designation = ct.group(1).strip()[:80]
 
         # Store docket events (titles) for audit
         result.events = [DocketEvent(description=t[:200]).__dict__ for t in titles[:80]]
-        result.last_activity_date = result.last_activity_date or ""
 
-        # ── Eric's detections ──
-        claim = self._first_match(scan, CLAIM_FILED_TERMS)
-        sale_issue = self._first_match(scan, SALE_ISSUE_TERMS)
-        bankruptcy = self._first_match(scan, BANKRUPTCY_TERMS)
+        # ── Eric's detections (title-keyed) ──
+        claim_title = self._match_titles(titles, CLAIM_FILED_PATTERNS)
+        sale_title = self._match_titles(titles, SALE_ISSUE_PATTERNS,
+                                        exclude=SALE_ISSUE_DENIAL_GUARD)
+        bk_active_title = self._match_titles(titles, BANKRUPTCY_ACTIVE_PATTERNS)
+        # Resolution: scan titles AND full text (generous → avoid false-kill).
+        bk_resolved = bool(
+            self._match_titles(titles, BANKRUPTCY_RESOLVED_PATTERNS)
+            or self._any_match(full_text, BANKRUPTCY_RESOLVED_PATTERNS)
+        )
 
-        # Standard base detectors (kept for downstream fields / parity)
-        result.kill_signals = self.detect_kill_signals(scan)
-        result.proof_of_surplus = self.detect_proof_of_surplus(scan)
-        result.competing_filers = self.detect_competing_filers(scan)
+        # Base detectors (informational parity fields only — NOT used to kill;
+        # bankruptcy/vacate handled by the nuanced logic above).
+        result.proof_of_surplus = self.detect_proof_of_surplus(" \n ".join(titles))
+        result.competing_filers = self.detect_competing_filers(" \n ".join(titles))
 
-        if claim:
+        # Build the authoritative kill-signal token list (audit + classifier).
+        ks: list[str] = []
+        if claim_title:
             result.claim_filed = True
-            result.claim_type = claim
-            if re.search(r"owner'?s? claim", scan):
+            result.claim_type = claim_title
+            if re.search(r"(?:home)?owner'?s?\s+claim", claim_title, re.I):
                 result.owner_filed_claim = True
+            ks.append("claim_filed")
+        if bk_active_title and not bk_resolved:
+            ks.append("bankruptcy_active")
+        elif bk_active_title and bk_resolved:
+            ks.append("bankruptcy_resolved")   # caution token, not a kill
+        if sale_title:
+            ks.append("sale_issue")
+        result.kill_signals = ks
+
+        # Stash evidence titles for the classifier's reason strings.
+        result._evidence = {            # type: ignore[attr-defined]
+            "claim": claim_title, "sale": sale_title,
+            "bk_active": bk_active_title, "bk_resolved": bk_resolved,
+        }
 
     def _apply_evidence_level(self, result: DocketResult) -> None:
         """Set foreclosure_type / evidence_level / lead_status / classification.
 
         Precedence (most-disqualifying first):
-          claim filed     → claim_filed     / not_pursuable / killed
-          bankruptcy      → bankruptcy_found / not_pursuable / killed
-          sale issue      → sale_issue_found / not_pursuable / killed
-          competing filer → pursuable_with_caution (someone circling, no firm claim)
-          clean docket    → no_claim_found  / pursuable     / (base.classify)
+          claim filed              → claim_filed            / not_pursuable / killed
+          active bankruptcy (no    → bankruptcy_found       / not_pursuable / killed
+            sign of resolution)
+          live sale issue          → sale_issue_found       / not_pursuable / killed
+          bankruptcy + resolution  → pursuable_with_caution / yellow   (stay may be lifted; verify)
+          competing filer circling → pursuable_with_caution / yellow
+          clean docket             → no_claim_found         / pursuable / (green if proof)
         """
         result.foreclosure_type = FORECLOSURE_MORTGAGE
+        ks = set(result.kill_signals)
+        ev = getattr(result, "_evidence", {})
 
-        if result.claim_filed:
+        if "claim_filed" in ks:
             result.evidence_level = "claim_filed"
             result.lead_status = "not_pursuable"
             result.classification = "killed"
-            result.classification_reason = f"claim already filed: '{result.claim_type}'"
+            result.classification_reason = f"claim already filed: '{ev.get('claim', result.claim_type)}'"
             return
 
-        if "bankruptcy" in result.kill_signals:
+        if "bankruptcy_active" in ks:
             result.evidence_level = "bankruptcy_found"
             result.lead_status = "not_pursuable"
             result.classification = "killed"
-            result.classification_reason = "bankruptcy signal present in docket"
+            result.classification_reason = (
+                f"active bankruptcy, no resolution in docket: '{ev.get('bk_active')}'"
+            )
             return
 
-        sale_issue_signals = {"motion_to_vacate", "sale_vacated"} & set(result.kill_signals)
-        if sale_issue_signals:
+        if "sale_issue" in ks:
             result.evidence_level = "sale_issue_found"
             result.lead_status = "not_pursuable"
             result.classification = "killed"
-            result.classification_reason = f"sale issue: {sorted(sale_issue_signals)[0]}"
+            result.classification_reason = f"sale issue: '{ev.get('sale')}'"
             return
 
-        # Any other kill signal still kills (already_disbursed, escheated, ...)
-        if result.kill_signals:
-            result.evidence_level = "not_pursuable"
-            result.lead_status = "not_pursuable"
-            result.classification = "killed"
-            result.classification_reason = f"kill signal: {result.kill_signals[0]}"
+        if "bankruptcy_resolved" in ks:
+            result.evidence_level = "pursuable_with_caution"
+            result.lead_status = "pursuable_with_caution"
+            result.classification = "yellow"
+            result.classification_reason = (
+                f"bankruptcy present but a resolution/relief-from-stay signal exists "
+                f"('{ev.get('bk_active')}') — verify stay status before pursuing"
+            )
             return
 
         if result.competing_filers:
@@ -529,7 +591,7 @@ class MiamiDadeDocketScraper(DocketScraper):
             result.lead_status = "pursuable_with_caution"
             result.classification = "yellow"
             result.classification_reason = (
-                f"competing filer circling (no firm claim yet): {result.competing_filers[0]}"
+                f"competing filer circling (no firm surplus claim yet): {result.competing_filers[0]}"
             )
             return
 
@@ -538,7 +600,7 @@ class MiamiDadeDocketScraper(DocketScraper):
         result.lead_status = "pursuable"
         result.classification = "green" if result.proof_of_surplus else "yellow"
         result.classification_reason = (
-            "docket checked — no claim, no kill signals"
+            "docket checked — no claim, no active bankruptcy, no sale issue"
             + (", proof of surplus filed" if result.proof_of_surplus else "")
         )
 

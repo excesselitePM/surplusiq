@@ -41,3 +41,5 @@ data/diagnostics/
 # Investigation raw captures (regenerable, bulky)
 data/samples/miami_dade/*.png
 data/samples/miami_dade/*.html
+data/samples/miami_dade/*.titles.txt
+data/samples/miami_dade/titles_*.txt
