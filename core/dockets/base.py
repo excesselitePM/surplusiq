@@ -107,6 +107,18 @@ class DocketResult:
     classification:      str = "unknown"   # green | yellow | red | killed | unknown
     classification_reason: str = ""
 
+    # ── Eric's review taxonomy (added 2026-06-09) ──
+    # Populated by county parsers that implement the docket-review model.
+    # Defaults are inert so counties that don't set them are unaffected.
+    foreclosure_type: str = ""   # "mortgage_foreclosure" | "tax_deed" | ""
+    evidence_level:   str = ""   # auction_only | docket_checked | no_claim_found |
+                                 # claim_filed | title_report_reviewed | lien_identified |
+                                 # bankruptcy_found | sale_issue_found | not_pursuable |
+                                 # pursuable_with_caution | pursuable
+    lead_status:      str = ""   # "pursuable" | "pursuable_with_caution" | "not_pursuable"
+    claim_filed:      bool = False   # any surplus claim already filed (owner OR third party)
+    claim_type:       str = ""       # the matched claim phrase, e.g. "owner's claim for surplus"
+
     def to_dict(self) -> dict:
         return asdict(self)
 

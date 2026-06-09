@@ -71,6 +71,43 @@ FORECLOSURE_MORTGAGE = "mortgage_foreclosure"
 FORECLOSURE_TAX_DEED = "tax_deed"
 
 
+# ── Eric's detection terms (Miami-Dade mortgage foreclosure) ──────────────
+# CLAIM-FILING: someone is already pursuing the surplus → lead not pursuable.
+CLAIM_FILED_TERMS = [
+    "motion for surplus funds",
+    "motion for disbursement of surplus",
+    "claim for mortgage foreclosure surplus",
+    "owner's claim for surplus",
+    "owners claim for surplus",
+    "owner's claim for mortgage foreclosure surplus",
+    "owners claim for mortgage foreclosure surplus",
+    "claim for surplus",
+    "claim to surplus",
+    "order disbursing surplus",          # already disbursed = definitively dead
+    "order of disbursement of surplus",
+]
+
+# KILL: sale invalid / delayed → filter out (per existing kill-signal spec).
+SALE_ISSUE_TERMS = [
+    "motion to vacate sale",
+    "motion to vacate the sale",
+    "vacate the sale",
+    "set aside sale",
+    "sale set aside",
+    "order vacating sale",
+    "sale cancelled",
+    "sale canceled",
+    "cancellation of sale",
+    "order canceling sale",
+    "order cancelling sale",
+]
+BANKRUPTCY_TERMS = [
+    "suggestion of bankruptcy",
+    "notice of bankruptcy",
+    "bankruptcy",
+]
+
+
 def parse_miami_dade_case_number(raw: str) -> Optional[dict]:
     """
     Parse a Miami-Dade case number into search components and detect type.
@@ -129,7 +166,7 @@ class MiamiDadeDocketScraper(DocketScraper):
 
     # ── Phase 1 core: navigate the SPA and return the raw docket HTML ──────
 
-    async def fetch_docket_html(self, case_number: str) -> dict:
+    async def fetch_docket_html(self, case_number: str, attempts: int = 2) -> dict:
         """
         Drive the React SPA for one mortgage-foreclosure case and return:
 
@@ -147,22 +184,33 @@ class MiamiDadeDocketScraper(DocketScraper):
 
         Reusable building block; the parser/classifier (Phase 2) consumes the
         returned html. Does not fabricate anything: on any failure html="".
+
+        Retries up to `attempts` times on *retrieval* errors only (the SPA /
+        v3 occasionally doesn't land on first try). Parse failures and tax-deed
+        short-circuits never retry.
         """
+        parsed = parse_miami_dade_case_number(case_number)
+        if not parsed:
+            return {"ok": False, "url": "", "html": "",
+                    "foreclosure_type": "", "parsed": None,
+                    "error": f"case number not parseable: {case_number}"}
+        if parsed["foreclosure_type"] == FORECLOSURE_TAX_DEED:
+            return {"ok": False, "url": "", "html": "",
+                    "foreclosure_type": FORECLOSURE_TAX_DEED, "parsed": parsed,
+                    "error": "tax_deed (RealTDM routing not implemented — separate task)"}
+
+        last = None
+        for i in range(max(1, attempts)):
+            last = await self._fetch_once(case_number, parsed)
+            if last["ok"]:
+                return last
+        return last
+
+    async def _fetch_once(self, case_number: str, parsed: dict) -> dict:
         out = {
             "ok": False, "url": "", "html": "",
-            "foreclosure_type": "", "parsed": None, "error": "",
+            "foreclosure_type": parsed["foreclosure_type"], "parsed": parsed, "error": "",
         }
-
-        parsed = parse_miami_dade_case_number(case_number)
-        out["parsed"] = parsed
-        if not parsed:
-            out["error"] = f"case number not parseable: {case_number}"
-            return out
-
-        out["foreclosure_type"] = parsed["foreclosure_type"]
-        if parsed["foreclosure_type"] == FORECLOSURE_TAX_DEED:
-            out["error"] = "tax_deed (RealTDM routing not implemented — separate task)"
-            return out
 
         diag_dir = Path("data/diagnostics/miami-dade-fl")
         diag_dir.mkdir(parents=True, exist_ok=True)
@@ -342,13 +390,166 @@ class MiamiDadeDocketScraper(DocketScraper):
 
         return True, ""
 
-    # ── scrape_case: Phase-1 wrapper (parser/classifier arrives in Phase 2) ──
+    # ── Phase 2: parse docket HTML → Eric's review fields ─────────────────
+
+    @staticmethod
+    def _docket_titles(html: str) -> list[str]:
+        """Extract docket-entry titles from the Case Information page.
+
+        Each docket/filing card carries aria-label="View details for <TITLE>"
+        and the same TITLE in a <p class="fs-5 fw-bold">. Using the aria-label
+        is precise — it targets actual filing cards, not page chrome.
+        """
+        titles = re.findall(r'aria-label="View details for ([^"]+)"', html)
+        # De-dupe but preserve order
+        seen, out = set(), []
+        for t in titles:
+            tn = re.sub(r"\s+", " ", t).strip()
+            key = tn.lower()
+            if tn and key not in seen:
+                seen.add(key)
+                out.append(tn)
+        return out
+
+    @staticmethod
+    def _strip_text(html: str) -> str:
+        import html as _h
+        txt = re.sub(r"<(script|style)[^>]*>.*?</\1>", " ", html, flags=re.S | re.I)
+        txt = re.sub(r"<[^>]+>", " ", txt)
+        return re.sub(r"\s+", " ", _h.unescape(txt))
+
+    @staticmethod
+    def _first_match(haystack: str, terms: list[str]) -> str:
+        """Return the first term in `terms` found in lowercased haystack."""
+        for t in terms:
+            if t in haystack:
+                return t
+        return ""
+
+    def parse_docket(self, html: str, result: DocketResult) -> None:
+        """Populate result fields + Eric's taxonomy from docket HTML.
+
+        Detection runs over BOTH the precise docket-card titles and the full
+        stripped page text (recall), but classification reasons cite the
+        matched phrase so every decision is auditable. No fabrication: amounts
+        are not invented; only docket-present phrases drive the classification.
+        """
+        titles = self._docket_titles(html)
+        title_blob = " \n ".join(titles).lower()
+        full_text = self._strip_text(html).lower()
+        # Card titles are the authoritative filing list; full_text is a backstop.
+        scan = title_blob + " \n " + full_text
+
+        # Case caption (e.g. "WILMINGTON TRUST COMPANY, vs MANUEL ANGEL DURAN")
+        cap = re.search(r"([A-Z][A-Za-z .,&'-]{4,90}\bvs\.?\s+[A-Z][A-Za-z .,&'-]{3,90})",
+                        self._strip_text(html))
+        if cap:
+            result.case_title = cap.group(1).strip()[:200]
+
+        # Filing date
+        fd = re.search(r"Filing Date\s*:?\s*(\d{1,2}/\d{1,2}/\d{4})", self._strip_text(html))
+        if fd:
+            try:
+                result.filing_date = datetime.strptime(fd.group(1), "%m/%d/%Y").strftime("%Y-%m-%d")
+            except ValueError:
+                pass
+
+        # Case status / type
+        st = re.search(r"Case Status\s*:?\s*([A-Za-z ]{3,30})", self._strip_text(html))
+        if st:
+            result.last_status = st.group(1).strip()[:60]
+        ct = re.search(r"Case Type\s*:?\s*([A-Za-z0-9 .,&'\-]{3,60})", self._strip_text(html))
+        if ct:
+            result.case_designation = ct.group(1).strip()[:80]
+
+        # Store docket events (titles) for audit
+        result.events = [DocketEvent(description=t[:200]).__dict__ for t in titles[:80]]
+        result.last_activity_date = result.last_activity_date or ""
+
+        # ── Eric's detections ──
+        claim = self._first_match(scan, CLAIM_FILED_TERMS)
+        sale_issue = self._first_match(scan, SALE_ISSUE_TERMS)
+        bankruptcy = self._first_match(scan, BANKRUPTCY_TERMS)
+
+        # Standard base detectors (kept for downstream fields / parity)
+        result.kill_signals = self.detect_kill_signals(scan)
+        result.proof_of_surplus = self.detect_proof_of_surplus(scan)
+        result.competing_filers = self.detect_competing_filers(scan)
+
+        if claim:
+            result.claim_filed = True
+            result.claim_type = claim
+            if re.search(r"owner'?s? claim", scan):
+                result.owner_filed_claim = True
+
+    def _apply_evidence_level(self, result: DocketResult) -> None:
+        """Set foreclosure_type / evidence_level / lead_status / classification.
+
+        Precedence (most-disqualifying first):
+          claim filed     → claim_filed     / not_pursuable / killed
+          bankruptcy      → bankruptcy_found / not_pursuable / killed
+          sale issue      → sale_issue_found / not_pursuable / killed
+          competing filer → pursuable_with_caution (someone circling, no firm claim)
+          clean docket    → no_claim_found  / pursuable     / (base.classify)
+        """
+        result.foreclosure_type = FORECLOSURE_MORTGAGE
+
+        if result.claim_filed:
+            result.evidence_level = "claim_filed"
+            result.lead_status = "not_pursuable"
+            result.classification = "killed"
+            result.classification_reason = f"claim already filed: '{result.claim_type}'"
+            return
+
+        if "bankruptcy" in result.kill_signals:
+            result.evidence_level = "bankruptcy_found"
+            result.lead_status = "not_pursuable"
+            result.classification = "killed"
+            result.classification_reason = "bankruptcy signal present in docket"
+            return
+
+        sale_issue_signals = {"motion_to_vacate", "sale_vacated"} & set(result.kill_signals)
+        if sale_issue_signals:
+            result.evidence_level = "sale_issue_found"
+            result.lead_status = "not_pursuable"
+            result.classification = "killed"
+            result.classification_reason = f"sale issue: {sorted(sale_issue_signals)[0]}"
+            return
+
+        # Any other kill signal still kills (already_disbursed, escheated, ...)
+        if result.kill_signals:
+            result.evidence_level = "not_pursuable"
+            result.lead_status = "not_pursuable"
+            result.classification = "killed"
+            result.classification_reason = f"kill signal: {result.kill_signals[0]}"
+            return
+
+        if result.competing_filers:
+            result.evidence_level = "pursuable_with_caution"
+            result.lead_status = "pursuable_with_caution"
+            result.classification = "yellow"
+            result.classification_reason = (
+                f"competing filer circling (no firm claim yet): {result.competing_filers[0]}"
+            )
+            return
+
+        # Clean docket
+        result.evidence_level = "no_claim_found"
+        result.lead_status = "pursuable"
+        result.classification = "green" if result.proof_of_surplus else "yellow"
+        result.classification_reason = (
+            "docket checked — no claim, no kill signals"
+            + (", proof of surplus filed" if result.proof_of_surplus else "")
+        )
+
+    # ── scrape_case: full Phase-2 pipeline ────────────────────────────────
 
     async def scrape_case(self, case_number: str) -> DocketResult:
         """
-        Phase 1: retrieve the docket. Populates case_url and a fetch note;
-        full parsing/classification is added in Phase 2. Never fabricates —
-        on any retrieval failure the result stays classification="unknown".
+        Retrieve the docket (Phase 1) then parse + classify it (Phase 2):
+        docket HTML → claim/kill detection → evidence_level + lead_status +
+        foreclosure_type + classification. Never fabricates — on retrieval
+        failure the result stays classification="unknown"/evidence auction_only.
         """
         result = DocketResult(
             county_id=self.county_id,
@@ -357,19 +558,15 @@ class MiamiDadeDocketScraper(DocketScraper):
         )
 
         fetched = await self.fetch_docket_html(case_number)
+        result.foreclosure_type = fetched.get("foreclosure_type") or ""
 
         if not fetched["ok"]:
             result.classification = "unknown"
-            result.classification_reason = (
-                f"docket retrieval failed: {fetched['error']}"
-            )
+            result.evidence_level = "auction_only"
+            result.classification_reason = f"docket retrieval failed: {fetched['error']}"
             return result
 
         result.case_url = fetched["url"]
-        # Phase 1 marker: HTML retrieved, parsing pending (Phase 2).
-        result.classification = "unknown"
-        result.classification_reason = (
-            f"docket HTML retrieved ({len(fetched['html'])} bytes) — "
-            f"parser not yet wired (Phase 2)"
-        )
+        self.parse_docket(fetched["html"], result)
+        self._apply_evidence_level(result)
         return result
