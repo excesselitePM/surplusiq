@@ -20,10 +20,12 @@ S = MiamiDadeDocketScraper(headless=True)
 EXPECT = {
     "2025-010668-CA-01": ("no_claim_found", "pursuable"),
     "2024-020538-CA-01": ("claim_filed", "not_pursuable"),
-    "2025-000672-CA-01": ("bankruptcy_found", "not_pursuable"),
-    "2019-001371-CA-01": ("bankruptcy_found", "not_pursuable"),
-    # baseline: active bankruptcy BUT relief-from-stay present -> caution, not kill
-    "2017-021344-CA-01": ("pursuable_with_caution", "pursuable_with_caution"),
+    # NEW RULES: these two have a sale-cancellation -> killed for SALE (Rule 2),
+    # NOT for bankruptcy (Rule 1 = bankruptcy never kills).
+    "2025-000672-CA-01": ("sale_issue_found", "not_pursuable"),
+    "2019-001371-CA-01": ("sale_issue_found", "not_pursuable"),
+    # baseline: bankruptcy (resolved) and NO sale issue -> caution, visible.
+    "2017-021344-CA-01": ("bankruptcy_found", "pursuable_with_caution"),
 }
 
 print("==== classification on saved dockets ====")
@@ -54,9 +56,12 @@ CASES = [
     ("Civil Cover Sheet - Claim Amount", "claim", False),   # must NOT match
     ("Order of Dismissal", "claim", False),
 
-    ("Motion to Vacate", "sale", True),
+    ("Motion to Vacate Sale", "sale", True),
     ("Verified Motion to Vacate Sale", "sale", True),
-    ("Defendant's Motion to Vacate", "sale", True),
+    ("Defendant's Motion to Vacate Sale", "sale", True),
+    ("Motion to Vacate Final Judgment and Sale", "sale", True),
+    ("Motion to Vacate", "sale", False),            # bare vacate, no sale object -> NOT a sale kill
+    ("Motion to Vacate Default", "sale", False),    # procedural, not the sale
     ("Motion to Cancel Sale", "sale", True),
     ("Order Granting Motion to Cancel Sale Date", "sale", True),
     ("Order Denying Motion to Vacate Sale", "sale", False),  # denied -> must NOT kill
@@ -93,25 +98,29 @@ def pipeline(titles):
     return r
 
 synth = [
-    # (titles, expected lead_status, note)
-    (["Notice of Lis Pendens", "Final Judgment of Foreclosure",
-      "Motion for Relief from Automatic Stay"],
-     "pursuable_with_caution", "relief-from-stay only -> caution, NOT killed"),
+    # (titles, expected lead_status, expected evidence_level, note)
+    (["Notice of Lis Pendens", "Final Judgment of Foreclosure", "Suggestion of Bankruptcy"],
+     "pursuable_with_caution", "bankruptcy_found", "Rule 1: bankruptcy ALONE -> caution, NOT killed"),
     (["Suggestion of Bankruptcy", "Order Lifting Automatic Stay"],
-     "pursuable_with_caution", "active bk + stay lifted -> caution"),
-    (["Suggestion of Bankruptcy"],
-     "not_pursuable", "active bk, no resolution -> killed"),
+     "pursuable_with_caution", "bankruptcy_found", "bk resolved -> caution"),
+    (["Motion for Relief from Automatic Stay", "Final Judgment of Foreclosure"],
+     "pursuable_with_caution", "bankruptcy_found", "relief-from-stay only -> caution"),
+    (["Suggestion of Bankruptcy", "Motion to Vacate Sale"],
+     "not_pursuable", "sale_issue_found", "Rule 2 EDGE: bk + vacate -> hard kill on SALE"),
+    (["Notice of Bankruptcy", "Order Granting Motion to Cancel Sale Date"],
+     "not_pursuable", "sale_issue_found", "bk + cancel-sale order -> hard kill on SALE"),
     (["Order Denying Motion to Vacate Sale", "Final Judgment of Foreclosure"],
-     "pursuable", "denied vacate -> sale stands -> pursuable"),
+     "pursuable", "no_claim_found", "denied vacate -> sale stands -> pursuable"),
     (["Notice of Appearance", "Final Judgment of Foreclosure", "Certificate of Sale"],
-     "pursuable", "clean -> pursuable"),
+     "pursuable", "no_claim_found", "clean -> pursuable"),
 ]
 sallok = True
-for titles, exp, note in synth:
+for titles, exp_ls, exp_ev, note in synth:
     r = pipeline(titles)
-    ok = r.lead_status == exp
+    ok = (r.lead_status == exp_ls and r.evidence_level == exp_ev)
     sallok &= ok
-    print(f"  {'OK ' if ok else 'XX '} lead={r.lead_status:22} expect={exp:22} | {note}")
+    print(f"  {'OK ' if ok else 'XX '} lead={r.lead_status:22} ev={r.evidence_level:16} "
+          f"expect={exp_ls}/{exp_ev} | {note}")
     if not ok:
         print(f"       reason={r.classification_reason} ks={r.kill_signals}")
 

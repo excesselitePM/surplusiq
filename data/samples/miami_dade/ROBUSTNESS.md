@@ -1,5 +1,18 @@
 # Miami-Dade Detector — Robustness Review
 
+> **UPDATE 2026-06-09 (Eric's clarified rules) — supersedes the bankruptcy
+> handling below.** Bankruptcy is now FLAG-ONLY, never a kill: any bankruptcy
+> (active OR resolved) → `pursuable_with_caution`, stays visible, with the
+> active-vs-resolved distinction preserved in the reason text. Motion/Order to
+> Vacate the SALE (and "Cancel Sale" / "Set Aside Sale" / granted cancellation)
+> is a HARD KILL, and ranks ABOVE bankruptcy — a lead with both is killed for
+> the SALE reason. The two leads below that this doc calls "bankruptcy kills"
+> (2025-000672, 2019-001371) are in fact killed by their sale-cancellation
+> entries; under the new rules they are `sale_issue_found / not_pursuable`, and
+> a bankruptcy-ONLY lead now stays visible as caution. The active/resolved
+> machinery documented below is retained only to word the caution reason.
+
+
 **Date:** 2026-06-09
 **Concern:** the one failure mode that ships a dead lead as good — a FALSE
 `no_claim_found / pursuable` on a lead that actually has a claim or kill signal

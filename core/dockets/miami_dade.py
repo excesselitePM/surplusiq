@@ -91,22 +91,28 @@ CLAIM_FILED_PATTERNS = [
     r"surplus\b.{0,40}claim",                    # "surplus funds claim", reversed order
 ]
 
-# SALE ISSUE (kill): sale invalid / delayed. Per-title match; a title that ALSO
-# contains a denial/withdrawal/moot word is NOT counted (an Order DENYING a
+# SALE ISSUE (HARD KILL — Eric Rule 2): a motion/order to vacate the SALE (or
+# the final judgment that the sale rests on), a granted cancellation, or a sale
+# set aside. The vacate patterns REQUIRE a sale / final-judgment object so a
+# bare "Motion to Vacate Default" (an early-case procedural motion, not about
+# the sale) does NOT kill. Per-title match with a denial guard: a title that
+# also contains a denial/withdrawal/moot word is NOT counted (an Order DENYING a
 # motion to vacate means the sale stands → killing it would drop a good lead).
 SALE_ISSUE_PATTERNS = [
-    r"motion to vacate",                         # incl. "Verified/Defendant's Motion to Vacate (Sale)"
-    r"vacat(?:e|ing) (?:the )?sale",
-    r"set aside (?:the )?sale",
-    r"sale (?:set aside|vacated|cancell?ed)",
-    r"cancel(?:lation|ing|ling)?\b.{0,15}sale",  # "Motion to Cancel Sale", "Order Granting ... Cancel Sale Date"
+    r"vacat\w*\b[^.]{0,40}\bsale",               # "Motion/Order to Vacate (the) Sale", "...Vacate Final Judgment and Sale"
+    r"motion to vacate final judgment",          # vacating the FJ voids the basis for the sale
+    r"set aside\b[^.]{0,40}\bsale",              # "Set Aside Sale" / "Set Aside the Foreclosure Sale"
+    r"sale (?:set aside|vacated|cancell?ed)",     # "Sale Set Aside", "Sale Cancelled"
+    r"cancel\w*\b[^.]{0,15}\bsale",              # "Motion to Cancel Sale", "Order Granting Motion to Cancel Sale Date"
 ]
 SALE_ISSUE_DENIAL_GUARD = r"(?:deny|denying|denied|withdraw|withdrawn|moot|strike|stricken)"
 
-# BANKRUPTCY — split ACTIVE vs RESOLVED. A bare "bankruptcy" substring is NOT a
-# kill: a "Motion for Relief from Stay", a lifted stay, or a dismissed/closed
-# bankruptcy means the sale can proceed. Kill only on an ACTIVE bankruptcy with
-# no sign of resolution; active+resolved → pursuable_with_caution (human verifies).
+# BANKRUPTCY — FLAG, NEVER KILL (Eric Rule 1). Any bankruptcy filing → the lead
+# STAYS VISIBLE, flagged pursuable_with_caution for human review ("bankruptcy
+# that stops the sale is what we want to be aware of — alert but don't negate
+# it"). The active-vs-resolved split is preserved ONLY to word the reason text
+# (it no longer changes whether the lead is killed — it never is on bankruptcy
+# alone). A sale issue or claim filing still hard-kills regardless of bankruptcy.
 BANKRUPTCY_ACTIVE_PATTERNS = [
     r"suggestion of bankruptcy",
     r"notice of (?:filing (?:of )?)?bankruptcy",
@@ -529,7 +535,9 @@ class MiamiDadeDocketScraper(DocketScraper):
         result.proof_of_surplus = self.detect_proof_of_surplus(" \n ".join(titles))
         result.competing_filers = self.detect_competing_filers(" \n ".join(titles))
 
-        # Build the authoritative kill-signal token list (audit + classifier).
+        # Build the docket-signal token list (audit + classifier input).
+        # NOTE: bankruptcy tokens are FLAGS (caution), not kills (Eric Rule 1);
+        # only claim_filed and sale_issue are kills.
         ks: list[str] = []
         if claim_title:
             result.claim_filed = True
@@ -537,31 +545,40 @@ class MiamiDadeDocketScraper(DocketScraper):
             if re.search(r"(?:home)?owner'?s?\s+claim", claim_title, re.I):
                 result.owner_filed_claim = True
             ks.append("claim_filed")
-        if bk_active_title and not bk_resolved:
-            ks.append("bankruptcy_active")
-        elif bk_active_title and bk_resolved:
-            ks.append("bankruptcy_resolved")   # caution token, not a kill
         if sale_title:
             ks.append("sale_issue")
+        # Bankruptcy: flag only. Token distinguishes active vs resolved so the
+        # reason text tells the human which they're looking at — it does NOT
+        # change whether the lead is killed (it never is on bankruptcy alone).
+        bk_resolved_title = self._match_titles(titles, BANKRUPTCY_RESOLVED_PATTERNS)
+        bk_title = bk_active_title or bk_resolved_title
+        if bk_active_title or bk_resolved:
+            ks.append("bankruptcy_resolved" if bk_resolved else "bankruptcy_active")
         result.kill_signals = ks
 
         # Stash evidence titles for the classifier's reason strings.
         result._evidence = {            # type: ignore[attr-defined]
             "claim": claim_title, "sale": sale_title,
             "bk_active": bk_active_title, "bk_resolved": bk_resolved,
+            "bk_title": bk_title,
         }
 
     def _apply_evidence_level(self, result: DocketResult) -> None:
         """Set foreclosure_type / evidence_level / lead_status / classification.
 
-        Precedence (most-disqualifying first):
-          claim filed              → claim_filed            / not_pursuable / killed
-          active bankruptcy (no    → bankruptcy_found       / not_pursuable / killed
-            sign of resolution)
-          live sale issue          → sale_issue_found       / not_pursuable / killed
-          bankruptcy + resolution  → pursuable_with_caution / yellow   (stay may be lifted; verify)
+        Precedence (Eric's clarified rules — most-disqualifying first):
+          claim filed              → claim_filed      / not_pursuable / killed
+          sale issue (vacate/cancel→ sale_issue_found / not_pursuable / killed  (Rule 2 hard kill)
+            /set aside, granted or filed; denial-guarded)
+          bankruptcy (active OR    → bankruptcy_found / pursuable_with_caution / yellow  (Rule 1 — FLAG, never kill)
+            resolved)                reason preserves active-vs-resolved distinction
           competing filer circling → pursuable_with_caution / yellow
-          clean docket             → no_claim_found         / pursuable / (green if proof)
+          clean docket             → no_claim_found   / pursuable / (green if proof)
+
+        EDGE CASE (Eric): a lead with BOTH a bankruptcy AND a sale issue is a
+        HARD KILL on the sale issue — sale_issue is checked before bankruptcy,
+        and bankruptcy never kills. So such a lead is killed for the SALE
+        reason, not the bankruptcy.
         """
         result.foreclosure_type = FORECLOSURE_MORTGAGE
         ks = set(result.kill_signals)
@@ -574,30 +591,29 @@ class MiamiDadeDocketScraper(DocketScraper):
             result.classification_reason = f"claim already filed: '{ev.get('claim', result.claim_type)}'"
             return
 
-        if "bankruptcy_active" in ks:
-            result.evidence_level = "bankruptcy_found"
-            result.lead_status = "not_pursuable"
-            result.classification = "killed"
-            result.classification_reason = (
-                f"active bankruptcy, no resolution in docket: '{ev.get('bk_active')}'"
-            )
-            return
-
+        # Rule 2 — sale issue is a hard kill, and ranks ABOVE bankruptcy so a
+        # bankruptcy+vacate lead dies for the sale reason.
         if "sale_issue" in ks:
             result.evidence_level = "sale_issue_found"
             result.lead_status = "not_pursuable"
             result.classification = "killed"
-            result.classification_reason = f"sale issue: '{ev.get('sale')}'"
+            result.classification_reason = f"sale vacated/cancelled (hard kill): '{ev.get('sale')}'"
             return
 
-        if "bankruptcy_resolved" in ks:
-            result.evidence_level = "pursuable_with_caution"
+        # Rule 1 — bankruptcy FLAGS but never kills. Visible, caution.
+        if "bankruptcy_active" in ks or "bankruptcy_resolved" in ks:
+            result.evidence_level = "bankruptcy_found"
             result.lead_status = "pursuable_with_caution"
             result.classification = "yellow"
-            result.classification_reason = (
-                f"bankruptcy present but a resolution/relief-from-stay signal exists "
-                f"('{ev.get('bk_active')}') — verify stay status before pursuing"
-            )
+            bk_cite = f" (docket: '{ev.get('bk_title')}')" if ev.get("bk_title") else ""
+            if "bankruptcy_resolved" in ks:
+                result.classification_reason = (
+                    "Bankruptcy filed, later resolved (stay lifted/dismissed) — human review" + bk_cite
+                )
+            else:
+                result.classification_reason = (
+                    "Bankruptcy filed, no resolution in docket — human review" + bk_cite
+                )
             return
 
         if result.competing_filers:
