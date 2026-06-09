@@ -760,6 +760,42 @@
     return dvPrefix + '<span class="status-badge status-' + cls + '" title="' + tooltip + '">' + label + '</span>';
   }
 
+  // ── Eric's review taxonomy (Miami-Dade docket validation) ──
+  // foreclosure_type badge + lead_status badge. Both render only when the
+  // county docket scraper populated them (Miami-Dade); empty for everyone
+  // else, so no other county's row changes.
+  function renderForeclosureBadge(l) {
+    const ft = (l.foreclosure_type || '').toLowerCase();
+    if (ft === 'mortgage_foreclosure')
+      return '<span class="status-badge" style="background:#15324f;color:#cfe3ff" title="Mortgage foreclosure — validated via Miami-Dade Local Case Search docket">📄 Mortgage FC</span>';
+    if (ft === 'tax_deed')
+      return '<span class="status-badge" style="background:#4a3b1e;color:#ffe9c2" title="Tax deed sale — routes to RealTDM (separate task); not docket-checked yet">🏛 Tax Deed</span>';
+    return '';
+  }
+  function renderLeadStatusBadge(l) {
+    const ls = (l.lead_status || '').toLowerCase();
+    if (!ls) return '';
+    const ev = (l.docket_evidence_level || '').replace(/_/g, ' ');
+    const reason = (l.classification_reason || '').replace(/"/g, '&quot;');
+    const map = {
+      pursuable:              { txt: '✅ Pursuable',     cls: 'status-green' },
+      pursuable_with_caution: { txt: '⚠️ Caution',       cls: 'status-yellow' },
+      not_pursuable:          { txt: '⛔ Not Pursuable', cls: 'status-killed' },
+    };
+    const info = map[ls] || { txt: ls, cls: 'status-unknown' };
+    const tip = (ev ? 'evidence: ' + ev + ' — ' : '') + reason;
+    return '<span class="status-badge ' + info.cls + '" title="' + tip + '">' + info.txt + '</span>';
+  }
+  // Docket cell = base docket badge + (if present) foreclosure-type + lead-status.
+  function renderDocketCell(l) {
+    let out = renderStatusBadge(l);
+    const fc = renderForeclosureBadge(l);
+    const ls = renderLeadStatusBadge(l);
+    if (fc) out += ' ' + fc;
+    if (ls) out += ' ' + ls;
+    return out;
+  }
+
   function renderMoneyStatusBadge(l) {
     const ms = (l.money_status || 'unknown').toLowerCase();
     const map = {
@@ -994,7 +1030,7 @@
       <tr${(l.lead_quality === 'killed') ? ' class="row-killed"' : ''}>
         <td class="numeric surplus-cell">${renderSurplusCell(l)}</td>
         <td>${renderMoneyStatusBadge(l)}</td>
-        <td>${renderStatusBadge(l)}</td>
+        <td>${renderDocketCell(l)}</td>
         <td><span class="badge ${scoreBadgeClass(l.score)}">${l.score}</span></td>
         <td>${l.county_name}</td>
         <td><span class="state-pill">${l.state}</span></td>
@@ -1081,6 +1117,10 @@
       ["Auction Source URL",   l => l.source_url || ""],
       ["Clerk Docket URL",     l => l.clerk_manual_search_url || ""],
       ["Sold To",              l => l.sold_to || ""],
+      // Eric's review taxonomy (Miami-Dade docket validation)
+      ["Foreclosure Type",     l => l.foreclosure_type || ""],
+      ["Lead Status",          l => l.lead_status || ""],
+      ["Docket Evidence Level",l => l.docket_evidence_level || ""],
       // Audit columns — provenance + raw numbers behind each tier
       ["debt_source",          l => l.debt_source || ""],
       ["prayer_amount",        l => Math.round(l.prayer_amount || 0)],

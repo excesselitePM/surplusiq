@@ -268,6 +268,14 @@ def export_dashboard_data():
             "additional_parties":     getattr(l, "additional_parties", []),
             "docket_url":             getattr(l, "docket_url", ""),
 
+            # Eric's review taxonomy (Miami-Dade docket validation). Empty for
+            # counties without the review model — frontend hides empty badges.
+            "foreclosure_type":       getattr(l, "foreclosure_type", ""),
+            "docket_evidence_level":  getattr(l, "docket_evidence_level", ""),
+            "lead_status":            getattr(l, "lead_status", ""),
+            "claim_filed":            getattr(l, "claim_filed", False),
+            "claim_type":             getattr(l, "claim_type", ""),
+
             # Verification status model (HARDENING — Parts 1-6)
             "research_status":  getattr(l, "research_status", "unknown"),
             "lead_quality":     getattr(l, "lead_quality", "unknown"),
@@ -348,11 +356,20 @@ def export_dashboard_data():
     # wastes Eric's screen real estate and erodes trust in the
     # deliverable. Killed-lead data stays in data/dockets/ for audit.
     pre_kill = len(leads_payload)
+    _killed_audit = [p for p in leads_payload
+                     if (p.get("lead_quality") or "").lower() == "killed"
+                     or (p.get("classification") or "").lower() == "killed"]
     leads_payload = [p for p in leads_payload
                      if (p.get("lead_quality") or "").lower() != "killed"
                      and (p.get("classification") or "").lower() != "killed"]
     killed_removed = pre_kill - len(leads_payload)
     print(f"   ✓ Filtered {killed_removed} KILLED leads out of dashboard (FP-14 spec)")
+    # Audit trail: log WHY each killed lead was dropped (the docket-cited
+    # reason), so a reviewer can confirm a kill without opening the docket.
+    for p in _killed_audit:
+        print(f"      🗑  KILLED {p.get('county_id'):<14} {p.get('case_number','?'):<22} "
+              f"[{p.get('docket_evidence_level') or p.get('evidence_level') or '?'}] "
+              f"— {p.get('classification_reason','(no reason)')}")
 
     # ── FP-18 Item 2: $5K min-surplus floor safety net ────────────────
     # After the display-bug fix lifts docket-checked leads to their real

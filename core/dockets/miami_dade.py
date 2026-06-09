@@ -183,6 +183,20 @@ class MiamiDadeDocketScraper(DocketScraper):
     county_id = "miami-dade-fl"
     county_name = "Miami-Dade"
 
+    def classify(self, result: DocketResult, final_sale_price: float) -> tuple:
+        """Preserve the docket-driven classification.
+
+        scrape_case() already runs the full Miami-Dade evidence model
+        (_apply_evidence_level) — claim / active-bankruptcy / sale-issue /
+        caution / clean. The enrichment CLI (core/dockets/enrich.run_one)
+        calls scraper.classify(result, sale) after scrape_case to let OH
+        scrapers re-run the prayer-vs-sale math; for Miami-Dade that base
+        logic is wrong (it would kill a pursuable_with_caution lead on the
+        'bankruptcy_resolved' token). So this override is a no-op that returns
+        the classification already computed from the docket.
+        """
+        return (result.classification, result.classification_reason)
+
     # ── Phase 1 core: navigate the SPA and return the raw docket HTML ──────
 
     async def fetch_docket_html(self, case_number: str, attempts: int = 2) -> dict:

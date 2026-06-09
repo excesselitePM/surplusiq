@@ -135,6 +135,17 @@ def _apply_docket_to_lead(lead, docket: dict, county_id: str) -> None:
     lead.additional_parties   = list(docket.get("additional_parties", []) or [])
     lead.docket_url           = docket.get("case_url", "") or ""
 
+    # Eric's review taxonomy (set by county scrapers that implement it, e.g.
+    # Miami-Dade). For OH counties these keys are absent/empty → no-op.
+    # NOTE: docket["evidence_level"] is Eric's taxonomy on the DocketResult;
+    # it maps to lead.docket_evidence_level, NOT lead.evidence_level (which is
+    # the verification-status-model field set later by assign_status_fields).
+    lead.foreclosure_type      = docket.get("foreclosure_type", "") or ""
+    lead.docket_evidence_level = docket.get("evidence_level", "") or ""
+    lead.lead_status           = docket.get("lead_status", "") or ""
+    lead.claim_filed           = bool(docket.get("claim_filed", False))
+    lead.claim_type            = docket.get("claim_type", "") or ""
+
     # Docket prayer takes precedence over any state-specific default (FL
     # opening-bid math). No docket prayer ⇒ keep whatever _parse_lead set:
     # OH leads stay at None, FL leads keep their fl_opening_bid surplus.
@@ -216,6 +227,17 @@ class Lead:
     competing_filers: list = field(default_factory=list)
     additional_parties: list = field(default_factory=list)
     docket_url:       str = ""
+
+    # ── Eric's review taxonomy (Miami-Dade docket validation) ──
+    # Distinct from `evidence_level` below (that is the verification-status
+    # model field). docket_evidence_level carries Eric's taxonomy
+    # (no_claim_found / claim_filed / bankruptcy_found / sale_issue_found /
+    # pursuable_with_caution / ...). Populated only by county docket scrapers
+    # that implement the review model (currently Miami-Dade); empty otherwise.
+    foreclosure_type:       str = ""   # "mortgage_foreclosure" | "tax_deed" | ""
+    docket_evidence_level:  str = ""   # Eric's taxonomy (see above)
+    lead_status:            str = ""   # pursuable | pursuable_with_caution | not_pursuable
+    claim_type:             str = ""   # matched claim phrase, when claim_filed
 
     # Verification status model (HARDENING — assigned by assign_status_fields)
     research_status:  str = "unknown"
