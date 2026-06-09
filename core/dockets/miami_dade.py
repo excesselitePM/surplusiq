@@ -1,63 +1,55 @@
 """
 SurplusIQ — Miami-Dade County Docket Scraper
 
-Miami-Dade is the easiest Florida county because the clerk OCS portal
-exposes a structured Local Case Search and a "Print Case Info" view
-that contains all docket events in a single rendered page.
+PHASE 1 (navigation + docket retrieval) — rewritten 2026-06-09 for the
+rebuilt React/Vite OCS portal. The old ASP.NET `LocalCaseSearch.aspx`
+assumption is gone; the prior "reCAPTCHA-blocked / out of scope" note was a
+misdiagnosis. See data/samples/miami_dade/FINDINGS.md for the evidence.
 
-Navigation flow (from reconnaissance May 11, 2026):
+Confirmed behaviour (headed AND headless, plain chromium.launch()):
 
-  1. https://www2.miamidadeclerk.gov/ocs/
-     → Landing page is a SPA
+  1. https://www2.miamidadeclerk.gov/ocs/  → React SPA (id="root").
+     Page hydrates fully in headless. No captcha on the landing view.
 
-  2. Navigate to Local Case Search
-     (state-level search triggers reCAPTCHA, so we MUST use local search)
+  2. Navigation menu items are <span role="button">…</span>, NOT <a>.
+     "Local Case" (text is literally "Local Case") opens the search view.
 
-  3. Form fields:
-     - Year input/dropdown:    enter YYYY (e.g. "2017")
-     - Case Number text input: enter 6-digit sequence (e.g. "021344")
-     - Case Type dropdown:     select "CA" (Circuit Civil)
-     → Portal auto-appends "-01" sequence suffix
-     → Click search
+  3. Search-form fields (real names):
+       #caseYear      <select>  e.g. 2017
+       #caseSeq       <input>   6-digit sequence, e.g. 021344
+       #caseCode      <select>  value "CA" = "CA - Circuit Civil", "CC" = County Civil
+       #caseLocation  <select>  the trailing location/seq suffix, e.g. "01"/"25"
+       button[type=submit] text "SEARCH"
 
-  4. /ocs/searchResults?qs=<token>
-     → Page shows: Case Title, Filing Date, Case Status, Case Type,
-       Judicial Section, plus nav links to Dockets | Parties | Hearings
+  4. reCAPTCHA v3 INVISIBLE (score) loads on the search-form view
+     (api.js?render=6Le7np8q…, size=invisible). A plain default browser with
+     a realistic desktop UA scores high enough to pass — NO stealth, NO
+     --disable-web-security/--no-sandbox, no typing/mouse choreography.
 
-  5. Visit the Dockets sub-page for kill-signal scanning + event list
+  5. Submit → URL becomes /ocs/searchResults?qs=<token> and the page renders
+     the full "Case Information / Print Case Info" view with the docket inline
+     (docket events, parties, hearings, motions) — one fetch = whole docket.
 
-Case number format from auction scraper:
-  Raw:     2017-021344-CA-01
-  Parsed:  year=2017, number=021344, type=CA
-  Note: the "-01" suffix is the sequence and is auto-appended by the portal
+Case-number formats actually present in the Miami-Dade auction data
+(docs/data/leads.json):
 
-FL "real debt" field:
-  Unlike Cuyahoga's structured Prayer Amount, Miami-Dade's Final Judgment
-  Amount lives inside the "Final Judgment of Foreclosure" docket entry.
-  Strategy: scan event descriptions for $ amounts adjacent to "Final Judgment".
-  Fallback: leave prayer_amount=0 and let downstream PropertyRadar
-  enrichment supply the debt figure.
+  Mortgage / civil foreclosure (Local Case Search applies):
+    2017-021344-CA-01   year=2017 seq=021344 code=CA location=01
+    2025-095651-CC-25   year=2025 seq=095651 code=CC location=25
+    2019-009163-CC-05   year=2019 seq=009163 code=CC location=05
 
-Kill signals specific to FL:
-  - Motion to Vacate Final Judgment
-  - Suggestion of Bankruptcy / Notice of Bankruptcy
-  - Voluntary Dismissal
-  - Order of Dismissal
-  - Lis Pendens Discharged
-  - Order Granting Motion to Vacate Sale
-
-NOTE on dismissal-then-reinstatement:
-  A case can be dismissed and later reinstated (test case 2017-021344-CA-01
-  was dismissed in 2022, reinstated 2025, sold 2026). Kill signals are only
-  definitive if they appear AFTER the most recent Certificate of Sale or
-  Final Judgment. This module records all kill signals but the classifier
-  in base.py decides terminality.
+  Tax deed (NOT in Local Case Search — lives in the RealTDM portal):
+    2026A00137          year=2026 tax_deed_seq=00137
+    2025A00929          year=2025 tax_deed_seq=00929
+  Tax-deed RealTDM routing is a SEPARATE later task. Here we only DETECT the
+  type and tag it; we do not attempt Local Case Search for tax-deed numbers.
 """
 
 from __future__ import annotations
 import re
 import asyncio
 from datetime import datetime
+from pathlib import Path
 from typing import Optional
 
 from playwright.async_api import async_playwright, Page, TimeoutError as PWTimeout
@@ -67,44 +59,66 @@ from .base import DocketScraper, DocketResult, DocketEvent
 
 BASE_URL = "https://www2.miamidadeclerk.gov/ocs"
 LANDING_URL = f"{BASE_URL}/"
-LOCAL_SEARCH_URL = f"{BASE_URL}/LocalCaseSearch.aspx"  # adjust after first scrape if SPA routes differ
+
+# Realistic desktop UA — required for the reCAPTCHA v3 score to pass headless.
+REAL_UA = (
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+    "AppleWebKit/537.36 (KHTML, like Gecko) "
+    "Chrome/126.0.0.0 Safari/537.36"
+)
+
+FORECLOSURE_MORTGAGE = "mortgage_foreclosure"
+FORECLOSURE_TAX_DEED = "tax_deed"
 
 
 def parse_miami_dade_case_number(raw: str) -> Optional[dict]:
     """
-    Parse a Miami-Dade case number into search components.
+    Parse a Miami-Dade case number into search components and detect type.
 
-    Accepts variations:
-      '2017-021344-CA-01'   -> {year: 2017, number: 021344, type: CA, seq: 01}
-      '2017021344CA01'      -> same
-      '2024-004620-CA-01'   -> {year: 2024, number: 004620, type: CA, seq: 01}
+    Returns a dict with a "foreclosure_type" key:
 
-    Returns None if not parseable.
+      Mortgage / civil  →  {foreclosure_type: "mortgage_foreclosure",
+                            year, number, case_code, location}
+        '2017-021344-CA-01'  -> year=2017 number=021344 case_code=CA location=01
+        '2017021344CA01'     -> same
+        '2025-095651-CC-25'  -> year=2025 number=095651 case_code=CC location=25
+
+      Tax deed          →  {foreclosure_type: "tax_deed",
+                            year, tax_deed_number, raw}
+        '2026A00137'         -> year=2026 tax_deed_number=00137
+        '2025A00929'         -> year=2025 tax_deed_number=00929
+
+    Returns None if not parseable in either shape.
     """
     if not raw:
         return None
 
     # Strip auction suffix like " (12345)" if present
     cleaned = re.sub(r"\s*\([^)]*\)\s*$", "", raw.strip())
-    # Strip dashes and spaces, uppercase
-    cleaned = re.sub(r"[-\s]", "", cleaned).upper()
 
-    # Miami-Dade format: YYYY + 6-digit-number + 2-letter-type + 2-digit-seq
-    # e.g. 2017021344CA01
-    m = re.match(r"^(\d{4})(\d{6})([A-Z]{2})(\d{2})$", cleaned)
+    # ── Tax-deed shape: YYYY 'A' NNNNN  (the 'A' marks a tax-deed certificate)
+    # Check this BEFORE the civil shape so "2026A00137" isn't mis-stripped.
+    td = re.match(r"^\s*(\d{4})\s*A\s*(\d{4,6})\s*$", cleaned, re.IGNORECASE)
+    if td:
+        return {
+            "foreclosure_type": FORECLOSURE_TAX_DEED,
+            "year": int(td.group(1)),
+            "tax_deed_number": td.group(2),
+            "raw": cleaned.upper().replace(" ", ""),
+        }
+
+    # ── Mortgage / civil shape: YYYY + 6-digit number + 2-letter code + 2-digit location
+    compact = re.sub(r"[-\s]", "", cleaned).upper()
+    m = re.match(r"^(\d{4})(\d{6})([A-Z]{2})(\d{2})$", compact)
     if not m:
         return None
 
-    year = int(m.group(1))
-    number = m.group(2)
-    case_type = m.group(3)
-    seq = m.group(4)
-
     return {
-        "year":      year,
-        "number":    number,    # 6-digit string, preserve leading zeros
-        "case_type": case_type, # "CA" for Circuit Civil
-        "sequence":  seq,       # "01" - auto-appended by portal but kept for reconstruction
+        "foreclosure_type": FORECLOSURE_MORTGAGE,
+        "year":      int(m.group(1)),
+        "number":    m.group(2),    # 6-digit string, preserve leading zeros
+        "case_code": m.group(3),    # "CA" Circuit Civil, "CC" County Civil
+        "location":  m.group(4),    # "01" / "25" / "05" — the trailing location
     }
 
 
@@ -113,340 +127,249 @@ class MiamiDadeDocketScraper(DocketScraper):
     county_id = "miami-dade-fl"
     county_name = "Miami-Dade"
 
+    # ── Phase 1 core: navigate the SPA and return the raw docket HTML ──────
+
+    async def fetch_docket_html(self, case_number: str) -> dict:
+        """
+        Drive the React SPA for one mortgage-foreclosure case and return:
+
+          {
+            "ok": bool,
+            "url": str,            # final searchResults URL on success
+            "html": str,           # full Case Information page HTML on success
+            "foreclosure_type": str,
+            "parsed": dict|None,
+            "error": str,          # populated when ok is False
+          }
+
+        Tax-deed case numbers are detected and short-circuited (ok=False,
+        error="tax_deed") — RealTDM routing is a separate later task.
+
+        Reusable building block; the parser/classifier (Phase 2) consumes the
+        returned html. Does not fabricate anything: on any failure html="".
+        """
+        out = {
+            "ok": False, "url": "", "html": "",
+            "foreclosure_type": "", "parsed": None, "error": "",
+        }
+
+        parsed = parse_miami_dade_case_number(case_number)
+        out["parsed"] = parsed
+        if not parsed:
+            out["error"] = f"case number not parseable: {case_number}"
+            return out
+
+        out["foreclosure_type"] = parsed["foreclosure_type"]
+        if parsed["foreclosure_type"] == FORECLOSURE_TAX_DEED:
+            out["error"] = "tax_deed (RealTDM routing not implemented — separate task)"
+            return out
+
+        diag_dir = Path("data/diagnostics/miami-dade-fl")
+        diag_dir.mkdir(parents=True, exist_ok=True)
+
+        async with async_playwright() as pw:
+            # Plain default launch — investigation proved this passes v3.
+            browser = await pw.chromium.launch(headless=self.headless)
+            context = await browser.new_context(
+                viewport={"width": 1400, "height": 900},
+                ignore_https_errors=True,
+                user_agent=REAL_UA,
+            )
+            page = await context.new_page()
+
+            async def snap(label):
+                try:
+                    ts = datetime.now().strftime("%H%M%S")
+                    await page.screenshot(
+                        path=str(diag_dir / f"{ts}-{label}.png"), full_page=True
+                    )
+                except Exception:
+                    pass
+
+            try:
+                # ── Step 1: landing (SPA) ──
+                await page.goto(LANDING_URL, wait_until="load", timeout=45000)
+                # Wait for the SPA nav to hydrate (the "Local Case" button).
+                await page.wait_for_selector(
+                    "span[role='button']:has-text('Local Case')", timeout=20000
+                )
+                await snap("01-landing")
+
+                # ── Step 2: open Local Case Search view ──
+                clicked = False
+                for sel in (
+                    "span[role='button']:has-text('Local Case')",
+                    "span.subitem-color:has-text('Local Case')",
+                    "[role='button']:has-text('Local Case')",
+                ):
+                    loc = page.locator(sel).first
+                    if await loc.count() > 0:
+                        await loc.click(timeout=8000)
+                        clicked = True
+                        break
+                if not clicked:
+                    out["error"] = "could not find 'Local Case' nav button"
+                    await snap("ERROR-no-nav")
+                    return out
+
+                # The search form renders the year select once the view mounts.
+                await page.wait_for_selector("#caseYear", timeout=20000)
+                await snap("02-search-form")
+
+                # ── Step 3: fill the form ──
+                filled, fill_err = await self._fill_search_form(page, parsed)
+                if not filled:
+                    out["error"] = f"form fill failed: {fill_err}"
+                    await snap("ERROR-form-fill")
+                    return out
+                await snap("03-form-filled")
+
+                # ── Step 4: submit and wait for the results route ──
+                submitted = False
+                for sel in (
+                    "button[type='submit']:has-text('SEARCH')",
+                    "button:has-text('SEARCH')",
+                    "button[type='submit']",
+                ):
+                    btn = page.locator(sel).first
+                    if await btn.count() > 0:
+                        await btn.click(timeout=5000)
+                        submitted = True
+                        break
+                if not submitted:
+                    out["error"] = "could not click SEARCH button"
+                    await snap("ERROR-no-submit")
+                    return out
+
+                try:
+                    await page.wait_for_url("**/searchResults*", timeout=25000)
+                except PWTimeout:
+                    out["error"] = (
+                        f"no navigation to searchResults (url={page.url}) — "
+                        f"possible no-match or v3 score reject"
+                    )
+                    await snap("ERROR-no-results-route")
+                    return out
+
+                # Let the Case Information view render its content in place.
+                try:
+                    await page.wait_for_selector(
+                        "text=/Case (Information|Details)/i", timeout=15000
+                    )
+                except PWTimeout:
+                    pass
+                await page.wait_for_load_state("networkidle", timeout=15000)
+                await snap("04-results")
+
+                html = await page.content()
+
+                # Sanity: the searched case number must appear in the result —
+                # anti-fabrication / wrong-case guard (CLAUDE.md core rule).
+                if parsed["number"] not in html:
+                    out["error"] = (
+                        f"result page does not contain searched seq "
+                        f"{parsed['number']} — possible empty/wrong result"
+                    )
+                    out["url"] = page.url
+                    return out
+
+                out["ok"] = True
+                out["url"] = page.url
+                out["html"] = html
+                return out
+
+            except PWTimeout as e:
+                out["error"] = f"timeout: {str(e)[:160]}"
+                await snap("ERROR-timeout")
+                return out
+            except Exception as e:
+                out["error"] = f"{type(e).__name__}: {str(e)[:160]}"
+                await snap("ERROR-exception")
+                return out
+            finally:
+                await browser.close()
+
+    async def _fill_search_form(self, page: Page, parsed: dict) -> tuple[bool, str]:
+        """Fill #caseYear / #caseSeq / #caseCode / #caseLocation."""
+        # Year (select)
+        try:
+            await page.locator("#caseYear").first.select_option(
+                value=str(parsed["year"]), timeout=5000
+            )
+        except Exception as e:
+            return False, f"year select: {str(e)[:80]}"
+
+        # Sequence number (text input)
+        try:
+            seq = page.locator("#caseSeq").first
+            await seq.click(timeout=3000)
+            await seq.fill("", timeout=3000)
+            await seq.type(parsed["number"], delay=40)
+        except Exception as e:
+            return False, f"seq input: {str(e)[:80]}"
+
+        # Case code (select) — value is the 2-letter code, e.g. "CA"/"CC"
+        try:
+            await page.locator("#caseCode").first.select_option(
+                value=parsed["case_code"], timeout=5000
+            )
+        except Exception as e:
+            return False, f"code select: {str(e)[:80]}"
+
+        # Location (select) — populates after the code is chosen on some views.
+        try:
+            await page.wait_for_timeout(600)
+            loc = page.locator("#caseLocation").first
+            if await loc.count() > 0:
+                opts = await loc.evaluate(
+                    "el => Array.from(el.options).map(o => o.value).filter(v => v)"
+                )
+                want = parsed["location"]
+                if want in opts:
+                    await loc.select_option(value=want, timeout=5000)
+                elif len(opts) == 1:
+                    # single valid location — use it
+                    await loc.select_option(value=opts[0], timeout=5000)
+                elif opts:
+                    # best effort: try the parsed value anyway
+                    try:
+                        await loc.select_option(value=want, timeout=3000)
+                    except Exception:
+                        await loc.select_option(value=opts[0], timeout=3000)
+        except Exception as e:
+            # Location is not always strictly required; log but don't hard-fail.
+            return True, f"location best-effort warning: {str(e)[:80]}"
+
+        return True, ""
+
+    # ── scrape_case: Phase-1 wrapper (parser/classifier arrives in Phase 2) ──
+
     async def scrape_case(self, case_number: str) -> DocketResult:
-        """Run the full scrape against one case. Returns a DocketResult."""
+        """
+        Phase 1: retrieve the docket. Populates case_url and a fetch note;
+        full parsing/classification is added in Phase 2. Never fabricates —
+        on any retrieval failure the result stays classification="unknown".
+        """
         result = DocketResult(
             county_id=self.county_id,
             case_number=case_number,
             scraped_at=datetime.now().isoformat(),
         )
 
-        parsed = parse_miami_dade_case_number(case_number)
-        if not parsed:
+        fetched = await self.fetch_docket_html(case_number)
+
+        if not fetched["ok"]:
             result.classification = "unknown"
-            result.classification_reason = f"case number not parseable: {case_number}"
+            result.classification_reason = (
+                f"docket retrieval failed: {fetched['error']}"
+            )
             return result
 
-        async with async_playwright() as pw:
-            browser = await pw.chromium.launch(headless=self.headless)
-            context = await browser.new_context(
-                viewport={"width": 1400, "height": 900},
-                ignore_https_errors=True,
-            )
-            page = await context.new_page()
-
-            try:
-                # ─── Step 1: Land on the portal and navigate to Local Case Search ───
-                # Retry navigation up to 3 times — the SPA sometimes hits a
-                # transient chrome-error on first connection before the
-                # NetScaler session cookie is established.
-                nav_success = False
-                last_nav_err = None
-                for attempt in range(3):
-                    try:
-                        await page.goto(
-                            LANDING_URL,
-                            wait_until="load",
-                            timeout=45000,
-                        )
-                        await page.wait_for_timeout(2500)  # SPA hydration
-                        # Verify we actually loaded the portal (not chrome-error)
-                        if "miamidadeclerk" in page.url:
-                            nav_success = True
-                            break
-                    except Exception as e:
-                        last_nav_err = e
-                        await page.wait_for_timeout(2000)
-                        continue
-
-                if not nav_success:
-                    result.classification = "unknown"
-                    result.classification_reason = (
-                        f"could not load portal after 3 attempts: "
-                        f"{str(last_nav_err)[:120] if last_nav_err else 'unknown'}"
-                    )
-                    await self._screenshot(page, "ERROR-nav-fail")
-                    await browser.close()
-                    return result
-
-                await self._screenshot(page, "01-landing")
-
-                # Click through "Local Case Search" link from landing page
-                # (the SPA does not honor direct deep links)
-                try:
-                    await page.click("text=/local case search/i", timeout=10000)
-                    await page.wait_for_load_state("load", timeout=15000)
-                    await page.wait_for_timeout(2000)
-                except Exception as e:
-                    result.classification = "unknown"
-                    result.classification_reason = f"could not click Local Case Search: {str(e)[:120]}"
-                    await self._screenshot(page, "ERROR-no-search-nav")
-                    await browser.close()
-                    return result
-
-                await self._screenshot(page, "02-search-form")
-
-                # ─── Step 2: Fill the search form ───
-                # Year, Case Number, Case Type
-                try:
-                    # Year - try input first, then select
-                    year_filled = await self._fill_or_select(
-                        page,
-                        selectors=["input[name*='year' i]", "input[id*='year' i]",
-                                   "select[name*='year' i]", "select[id*='year' i]"],
-                        value=str(parsed["year"]),
-                    )
-
-                    num_filled = await self._fill_or_select(
-                        page,
-                        selectors=["input[name*='caseNum' i]", "input[id*='caseNum' i]",
-                                   "input[name*='number' i]", "input[id*='number' i]"],
-                        value=parsed["number"],
-                    )
-
-                    type_filled = await self._fill_or_select(
-                        page,
-                        selectors=["select[name*='caseType' i]", "select[id*='caseType' i]",
-                                   "select[name*='type' i]", "select[id*='type' i]"],
-                        value=parsed["case_type"],
-                    )
-
-                    if not (year_filled and num_filled and type_filled):
-                        result.classification = "unknown"
-                        result.classification_reason = (
-                            f"could not fill form: year={year_filled} "
-                            f"num={num_filled} type={type_filled}"
-                        )
-                        await self._screenshot(page, "ERROR-form-fill")
-                        await browser.close()
-                        return result
-
-                    await self._screenshot(page, "03-form-filled")
-
-                    # Submit
-                    submitted = False
-                    for sel in ["button:has-text('Search')", "input[type='submit']",
-                                "button[type='submit']", "button:has-text('Submit')"]:
-                        try:
-                            await page.click(sel, timeout=3000)
-                            submitted = True
-                            break
-                        except Exception:
-                            continue
-
-                    if not submitted:
-                        result.classification = "unknown"
-                        result.classification_reason = "could not click submit button"
-                        await self._screenshot(page, "ERROR-no-submit")
-                        await browser.close()
-                        return result
-
-                    await page.wait_for_load_state("networkidle", timeout=20000)
-                    await page.wait_for_timeout(1500)
-                    await self._screenshot(page, "04-search-results")
-
-                except Exception as e:
-                    result.classification = "unknown"
-                    result.classification_reason = f"search form error: {str(e)[:120]}"
-                    await self._screenshot(page, "ERROR-search-form")
-                    await browser.close()
-                    return result
-
-                # ─── Step 3: Click into the case from results ───
-                # Results page should show one row matching our case
-                try:
-                    # Try clicking the case number link
-                    case_link_text = f"{parsed['year']}-{parsed['number']}-{parsed['case_type']}-{parsed['sequence']}"
-                    try:
-                        await page.click(f"text={case_link_text}", timeout=5000)
-                    except Exception:
-                        # Fall back: click first result row
-                        await page.click("table tbody tr a, table tbody tr:first-child", timeout=5000)
-                    await page.wait_for_load_state("networkidle", timeout=15000)
-                    await page.wait_for_timeout(1500)
-                except Exception as e:
-                    result.classification = "unknown"
-                    result.classification_reason = f"could not open case: {str(e)[:120]}"
-                    await self._screenshot(page, "ERROR-case-link")
-                    await browser.close()
-                    return result
-
-                result.case_url = page.url
-                await self._screenshot(page, "05-case-summary")
-
-                # ─── Step 4: Parse case summary page ───
-                await self._scrape_summary_page(page, result)
-
-                # ─── Step 5: Navigate to Dockets sub-page ───
-                try:
-                    await page.click("a:has-text('Dockets'), a:has-text('Docket')", timeout=5000)
-                    await page.wait_for_load_state("networkidle", timeout=15000)
-                    await page.wait_for_timeout(1500)
-                    await self._screenshot(page, "06-dockets")
-                    await self._scrape_dockets_page(page, result)
-                except Exception:
-                    # If we can't reach dockets, we still have summary data
-                    pass
-
-                # ─── Step 6: Parties sub-page ───
-                try:
-                    await page.click("a:has-text('Parties')", timeout=5000)
-                    await page.wait_for_load_state("networkidle", timeout=15000)
-                    await page.wait_for_timeout(1000)
-                    await self._screenshot(page, "07-parties")
-                    await self._scrape_parties_page(page, result)
-                except Exception:
-                    pass
-
-            finally:
-                await browser.close()
-
-        # ─── Step 7: Run classification ───
-        # Use opening bid as proxy sale price for FL — actual sale price comes
-        # from auction scraper and is merged later in the loader.
-        classification, reason = self.classify(result, final_sale_price=0.0)
-        result.classification = classification
-        result.classification_reason = reason
-
+        result.case_url = fetched["url"]
+        # Phase 1 marker: HTML retrieved, parsing pending (Phase 2).
+        result.classification = "unknown"
+        result.classification_reason = (
+            f"docket HTML retrieved ({len(fetched['html'])} bytes) — "
+            f"parser not yet wired (Phase 2)"
+        )
         return result
-
-    # ─── Helpers ──────────────────────────────────────────────────────────
-
-    async def _fill_or_select(self, page: Page, selectors: list, value: str) -> bool:
-        """Try multiple selectors to fill an input or select a dropdown option."""
-        for sel in selectors:
-            try:
-                element = page.locator(sel).first
-                if await element.count() == 0:
-                    continue
-                tag = await element.evaluate("el => el.tagName.toLowerCase()")
-                if tag == "select":
-                    await element.select_option(value=value, timeout=3000)
-                else:
-                    await element.fill(value, timeout=3000)
-                return True
-            except Exception:
-                continue
-        return False
-
-    async def _scrape_summary_page(self, page: Page, result: DocketResult) -> None:
-        """Parse case title, filing date, status from the case summary page."""
-        text = await page.inner_text("body")
-
-        # Case title (e.g. "WILMINGTON TRUST COMPANY vs MANUEL ANGEL DURAN et al")
-        title_m = re.search(r"([A-Z][^\n]{5,150}vs\.?\s+[A-Z][^\n]{3,150})", text)
-        if title_m:
-            result.case_title = title_m.group(1).strip()
-
-        # Filing date
-        fd_m = re.search(r"Filing Date\s*:?\s*(\d{1,2}/\d{1,2}/\d{4})", text, re.IGNORECASE)
-        if fd_m:
-            try:
-                dt = datetime.strptime(fd_m.group(1), "%m/%d/%Y")
-                result.filing_date = dt.strftime("%Y-%m-%d")
-            except ValueError:
-                pass
-
-        # Case status
-        status_m = re.search(r"Case Status\s*:?\s*([A-Z][A-Z ]+)", text, re.IGNORECASE)
-        if status_m:
-            result.last_status = status_m.group(1).strip()
-
-        # Case type / designation (e.g. "RPMF -Homestead")
-        type_m = re.search(r"Case Type\s*:?\s*([A-Z][A-Za-z0-9 \-]+)", text)
-        if type_m:
-            result.case_designation = type_m.group(1).strip()
-
-    async def _scrape_dockets_page(self, page: Page, result: DocketResult) -> None:
-        """Extract docket events, kill signals, and Final Judgment Amount."""
-        text = await page.inner_text("body")
-        text_lower = text.lower()
-
-        # Kill signal detection (uses base.py KILL_SIGNAL_PATTERNS)
-        result.kill_signals = self.detect_kill_signals(text)
-
-        # Proof of surplus detection
-        result.proof_of_surplus = self.detect_proof_of_surplus(text)
-
-        # Competing filer detection
-        result.competing_filers = self.detect_competing_filers(text)
-
-        # Extract docket events
-        # Miami-Dade format typically: MM/DD/YYYY  DIN  Description
-        events = []
-        event_pattern = re.compile(
-            r"(\d{1,2})/(\d{1,2})/(\d{4})\s+\d+\s+([A-Z][^\n]{5,300})",
-            re.MULTILINE
-        )
-        for m in event_pattern.finditer(text):
-            mm, dd, yyyy = m.group(1), m.group(2), m.group(3)
-            desc = m.group(4).strip()[:200]
-            events.append(DocketEvent(
-                filing_date=f"{yyyy}-{int(mm):02d}-{int(dd):02d}",
-                description=desc,
-            ))
-        result.events = [e.__dict__ for e in events[:50]]
-
-        # Most-recent activity
-        if events:
-            sorted_events = sorted(events, key=lambda e: e.filing_date, reverse=True)
-            result.last_activity_date = sorted_events[0].filing_date
-
-        # Extract Final Judgment Amount — look for $ amounts near "Final Judgment"
-        # FL strategy: find "Final Judgment" + dollar amount within 200 chars
-        fj_matches = re.finditer(
-            r"final judgment[^\$]{0,200}\$\s*([\d,]+(?:\.\d{2})?)",
-            text_lower,
-        )
-        amounts = []
-        for fm in fj_matches:
-            try:
-                amt = float(fm.group(1).replace(",", ""))
-                if amt > 1000:  # filter tiny fees
-                    amounts.append(amt)
-            except ValueError:
-                continue
-        if amounts:
-            # Take the largest — likely the principal judgment, not interest line items
-            result.prayer_amount = max(amounts)
-            result.debt_source = "docket_extract"
-
-    async def _scrape_parties_page(self, page: Page, result: DocketResult) -> None:
-        """Extract plaintiff/defendants from the Parties sub-page."""
-        text = await page.inner_text("body")
-
-        # Plaintiff
-        p_m = re.search(r"Plaintiff\s*:?\s*\n?\s*([^\n]+)", text, re.IGNORECASE)
-        if p_m:
-            result.plaintiff = p_m.group(1).strip()[:200]
-
-        # Defendants
-        defendants = []
-        for m in re.finditer(r"Defendant\s*:?\s*\n?\s*([^\n]+)", text, re.IGNORECASE):
-            name = m.group(1).strip()[:200]
-            if name and name not in defendants:
-                defendants.append(name)
-        result.defendants = defendants
-
-        # Creditor heuristic — same as Cuyahoga
-        creditor_keywords = [
-            "LLC", "BANK", "TRUSTEE", "IRS", "STATE OF", "COUNTY", "CITY OF",
-            "REVENUE", "DEPARTMENT", "ASSOCIATION", "TRUST", "FINANCIAL",
-            "MORTGAGE", "CAPITAL", "FUND", "SERVICES", "INC"
-        ]
-        for name in defendants:
-            name_upper = name.upper()
-            if any(kw in name_upper for kw in creditor_keywords):
-                result.additional_parties.append(name)
-
-    async def _screenshot(self, page: Page, label: str) -> None:
-        """Save diagnostic screenshot for debugging."""
-        import os
-        try:
-            diag_dir = "data/diagnostics/miami-dade-fl"
-            os.makedirs(diag_dir, exist_ok=True)
-            timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-            path = f"{diag_dir}/{timestamp}-{label}.png"
-            await page.screenshot(path=path, full_page=True)
-        except Exception:
-            pass

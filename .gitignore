@@ -37,3 +37,7 @@ data/diagnostics/
 # Local environment file with secrets
 .env
 .env.local
+
+# Investigation raw captures (regenerable, bulky)
+data/samples/miami_dade/*.png
+data/samples/miami_dade/*.html
