@@ -273,7 +273,11 @@ def _extract_sale_datetime(record: dict) -> str:
         time_str = m.group(4)
         ampm = (m.group(5) or "").upper()
         d = date(yyyy, mm, dd)
-        return f"{d.strftime('%b %-d, %Y')} {time_str} {ampm} ET".strip()
+        # NOTE: use d.day (portable) not strftime('%-d') — the %-d directive is
+        # glibc-only and raises ValueError on Windows, which the except below
+        # would swallow into "" (silently blanking sale_datetime on non-Linux
+        # regen). Output is identical to '%b %-d, %Y' on Linux.
+        return f"{d.strftime('%b')} {d.day}, {d.year} {time_str} {ampm} ET".strip()
     except (ValueError, AttributeError):
         return ""
 
