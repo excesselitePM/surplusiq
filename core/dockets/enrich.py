@@ -236,12 +236,17 @@ async def run_county(county_id: str, headless: bool, only_case: str | None = Non
     return {"county_id": county_id, "results": results}
 
 
-# Working docket scrapers — verified to produce real prayer amounts. Used as
-# the expansion target for the `all_working` shorthand below. Hamilton +
-# Franklin are Cloudflare-blocked and Miami-Dade is reCAPTCHA-blocked, so
-# they are excluded from the default group. Add to this set ONLY after a
-# scraper proves itself on real run data.
-WORKING_DOCKET_COUNTIES = ["cuyahoga-oh", "montgomery-oh", "summit-oh"]
+# Working docket scrapers — verified on real Actions runs to reach the docket
+# and classify from real docket content. Used as the expansion target for the
+# `all_working` shorthand below. The three OH counties extract a real prayer
+# amount; Miami-Dade (FL) is flag-based (pursuable/caution/killed from docket
+# events — FL debt is the opening bid, not a prayer field). Miami-Dade joined
+# 2026-06-10 after run 27283288299 proved reCAPTCHA v3 passes clean from the
+# GitHub Actions datacenter IP (9/9 mortgage-FC cases reached searchResults,
+# zero v3 blocks). Hamilton + Franklin remain Cloudflare-blocked and excluded
+# (PR-fallback). Add to this set ONLY after a scraper proves itself on real
+# run data.
+WORKING_DOCKET_COUNTIES = ["cuyahoga-oh", "montgomery-oh", "summit-oh", "miami-dade-fl"]
 
 
 DEFAULT_PARALLEL_DOCKETS = 3

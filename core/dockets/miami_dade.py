@@ -672,7 +672,16 @@ class MiamiDadeDocketScraper(DocketScraper):
             result.classification_reason = f"docket retrieval failed: {fetched['error']}"
             return result
 
-        result.case_url = fetched["url"]
+        # docket_url provenance: the retrieved searchResults URL carries an
+        # ephemeral `?qs=<token>` that is session-bound and does NOT resolve
+        # later — a broken deep-link is worse than none. Miami-Dade has no
+        # stable per-case URL (same clerk-portal limitation as the other
+        # counties), so we store the stable Local Case Search BASE url instead.
+        # The dashboard's clipboard-copy verify flow (copy case# → open this
+        # page → paste) then works, consistent with clerk_search_url for the
+        # other counties. fetched["url"] (the live qs= URL) is not persisted;
+        # the diagnostic HTML/screenshot artifacts already prove retrieval.
+        result.case_url = LANDING_URL
         self.parse_docket(fetched["html"], result)
         self._apply_evidence_level(result)
         return result
