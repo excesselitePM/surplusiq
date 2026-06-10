@@ -16,7 +16,7 @@ prints a structured summary to stdout (read it from the Actions log).
 
 Usage: python scripts/broward_investigate.py "CACE-13-021361,CACE-24-010415"
 """
-import sys, re, json, asyncio
+import os, sys, re, json, asyncio
 from pathlib import Path
 from playwright.async_api import async_playwright
 
@@ -25,6 +25,21 @@ LANDING = f"{BASE}/Index/?AccessLevel=ANONYMOUS"
 REAL_UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
            "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
 OUT = Path("data/samples/broward/ci")
+
+# Full-page screenshots of 200+-row docket pages are multi-MB and slow; only take
+# them when SHOTS=1. For the surplus-vocabulary hunt the HTML + extracted docket
+# JSON is the evidence — screenshots are noise.
+SHOTS = os.environ.get("SHOTS", "0") == "1"
+
+# Surplus-vocabulary trigger substrings (case-insensitive, matched against the
+# Description + Additional Text columns). Deliberately BROAD — investigation wants
+# to SEE every candidate row and lift the verbatim string, not pre-judge it. False
+# positives ('claim of lien', 'counterclaim') get sorted out by eye in the report.
+SURPLUS_TRIGGERS = [
+    "surplus", "disburs", "disbursement", "excess fund", "remaining fund",
+    "unclaimed", "claim", "petition", "assignment", "stipulation",
+    "notice of appearance", "appear",
+]
 
 
 def nodash(cn: str) -> str:
@@ -47,11 +62,69 @@ async def dump(page, label, case_tag):
     OUT.mkdir(parents=True, exist_ok=True)
     html = await page.content()
     (OUT / f"{case_tag}_{label}.html").write_text(html, encoding="utf-8")
-    try:
-        await page.screenshot(path=str(OUT / f"{case_tag}_{label}.png"), full_page=True)
-    except Exception as e:
-        print(f"      (screenshot failed: {e})")
+    if SHOTS:
+        try:
+            await page.screenshot(path=str(OUT / f"{case_tag}_{label}.png"), full_page=True)
+        except Exception as e:
+            print(f"      (screenshot failed: {e})")
     return html
+
+
+async def extract_docket(page) -> dict:
+    """Parse the docket events table off the detail page.
+
+    The detail page renders plain static HTML tables (no Kendo grid). The docket
+    table is the one whose header row carries 'Description' + 'Additional Text'.
+    Returns {found, header, count, rows:[{date,description,additional}]}.
+    """
+    return await page.evaluate(
+        r"""() => {
+            const norm = s => (s||'').replace(/ /g,' ').replace(/\s+/g,' ').trim();
+            const tables = Array.from(document.querySelectorAll('table'));
+            const merged = [];
+            let header = null;
+            for (const t of tables) {
+                // header = explicit thead row, else first row
+                const headRow = t.querySelector('thead tr') || t.rows[0];
+                if (!headRow) continue;
+                const cells = Array.from(headRow.cells).map(c => norm(c.innerText).toLowerCase());
+                const de = cells.findIndex(h => h.includes('description'));
+                if (de === -1) continue;
+                const di = cells.findIndex(h => h.includes('date'));
+                const ad = cells.findIndex(h => h.includes('additional'));
+                if (ad === -1) continue;            // require the Additional Text column
+                if (!header) header = cells;
+                // body rows: prefer tbody, exclude the header row itself
+                const body = t.querySelector('tbody')
+                    ? Array.from(t.querySelector('tbody').querySelectorAll('tr'))
+                    : Array.from(t.rows).slice(1);
+                for (const r of body) {
+                    const c = Array.from(r.cells).map(x => norm(x.innerText));
+                    if (!c.length) continue;
+                    const desc = de >= 0 ? (c[de]||'') : '';
+                    const addl = ad >= 0 ? (c[ad]||'') : '';
+                    if (!desc && !addl) continue;
+                    merged.push({
+                        date: di >= 0 ? (c[di]||'') : '',
+                        description: desc,
+                        additional: addl,
+                    });
+                }
+            }
+            return { found: merged.length > 0, header, count: merged.length, rows: merged };
+        }"""
+    )
+
+
+def scan_surplus(rows):
+    """Return docket rows whose Description or Additional Text hits a trigger."""
+    hits = []
+    for r in rows:
+        blob = f"{r.get('description','')} {r.get('additional','')}".lower()
+        matched = [t for t in SURPLUS_TRIGGERS if t in blob]
+        if matched:
+            hits.append({**r, "_triggers": sorted(set(matched))})
+    return hits
 
 
 async def probe_case(context, cn: str) -> dict:
@@ -171,6 +244,29 @@ async def probe_case(context, cn: str) -> dict:
         )
         rec["stages"]["detail"]["docket_discovery"] = info
 
+        # ── 5. docket extraction + surplus-vocabulary scan ──
+        try:
+            docket = await extract_docket(page)
+        except Exception as e:
+            docket = {"found": False, "error": str(e)[:160], "rows": []}
+        rows = docket.get("rows", [])
+        hits = scan_surplus(rows)
+        rec["stages"]["detail"]["docket_rows"] = docket.get("count", 0)
+        rec["stages"]["detail"]["docket_header"] = docket.get("header")
+        rec["surplus_hits"] = hits
+        # persist the FULL docket so verbatim strings survive the run
+        (OUT / f"{tag}_docket.json").write_text(
+            json.dumps({"case": cn, "header": docket.get("header"),
+                        "count": docket.get("count", 0), "rows": rows},
+                       indent=2, ensure_ascii=False), encoding="utf-8")
+        if hits:
+            print(f"      *** {len(hits)} SURPLUS-VOCAB ROW(S) in {cn}:")
+            for h in hits:
+                print(f"        [{h.get('date','')}] DESC={h.get('description','')!r}")
+                if h.get("additional"):
+                    print(f"                 ADDL={h.get('additional','')!r}")
+                print(f"                 triggers={h.get('_triggers')}")
+
         if cap["aspx_error"]:
             rec["result"] = "DETAIL_ERROR — landed on ASP.NET error page"
         elif cap["url_has_CAPTCHA"] or cap["recaptcha_iframe"] or cap["challenge_text"]:
@@ -211,15 +307,26 @@ async def main():
     (OUT / "probe_summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
     print("\n===== SUMMARY =====")
     for r in summary["results"]:
-        print(f"  {r['case']:<18} -> {r.get('result')}")
         st = r.get("stages", {})
-        if "results" in st:
-            print(f"      PUBLIC search: url={st['results']['final_url'][:70]} "
-                  f"captcha={st['results']['captcha']} case_present={st['results'].get('case_present')}")
-        if "detail" in st:
-            d = st["detail"]
-            print(f"      DETAIL:        url={d['final_url'][:70]} captcha={d['captcha']}")
-            print(f"      docket_discovery={d.get('docket_discovery')}")
+        nrows = st.get("detail", {}).get("docket_rows", 0)
+        nhits = len(r.get("surplus_hits", []))
+        print(f"  {r['case']:<18} -> {r.get('result')}  [docket_rows={nrows}, surplus_hits={nhits}]")
+
+    print("\n===== SURPLUS-VOCAB HITS (verbatim) =====")
+    any_hit = False
+    for r in summary["results"]:
+        hits = r.get("surplus_hits", [])
+        if not hits:
+            continue
+        any_hit = True
+        print(f"\n  ## {r['case']} — {len(hits)} row(s)")
+        for h in hits:
+            print(f"    [{h.get('date','')}] DESC={h.get('description','')!r}")
+            if h.get("additional"):
+                print(f"               ADDL={h.get('additional','')!r}")
+            print(f"               triggers={h.get('_triggers')}")
+    if not any_hit:
+        print("  (no surplus-vocabulary rows found in any probed case)")
 
 
 if __name__ == "__main__":
