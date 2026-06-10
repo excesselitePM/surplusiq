@@ -83,7 +83,7 @@ async def probe_case(context, cn: str) -> dict:
         #    (The first probe passed CaseID and got an ASP.NET error.) ──
         trig = await page.evaluate(
             r"""() => {
-                const links = Array.from(document.querySelectorAll('a[onclick*="ViewDetails"]'));
+                const links = Array.from(document.querySelectorAll('[onclick*="ViewDetails"]'));
                 for (const a of links) {
                     const oc = a.getAttribute('onclick') || '';
                     const m = oc.match(/ViewDetails\(`([^`]+)`\)/);
@@ -103,7 +103,7 @@ async def probe_case(context, cn: str) -> dict:
 
         # ── 3. detail hop: CLICK the real rendered link (faithful user action,
         #    correct Viewer token). The click submits #dynamicViewCaseDetail. ──
-        link = page.locator('a[onclick*="ViewDetails"]').first
+        link = page.locator('button.bc-casedetail-viewer, [onclick*="ViewDetails"]').first
         try:
             async with page.expect_navigation(wait_until="domcontentloaded", timeout=30000):
                 await link.click(timeout=10000)
