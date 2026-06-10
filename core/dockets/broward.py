@@ -114,7 +114,14 @@ RECOVERY_KEYWORDS = [
     "surplus",            # PRIORITY SURPLUS LLC (COCE-25-085528)
     "funding",            # GET LIQUID FUNDING, LLC (CACE-24-012541, CACE-25-005168, COWE-25-085495, COWE-26-005819)
     "recovery",           # The Recovery Agents, LLC (CACE-24-007420); EVO RECOVERY CONSULTATION (CONO-25-048381)
-    "assignee",           # "as Assignee for ..." / "Assignee Capital Crafter" (assignment-of-rights signal)
+    # NOTE: bare "assignee" is intentionally NOT a keyword. It is ambiguous — a
+    # PLAINTIFF can be a loan assignee, so "Attorneys for the Plaintiffs Assignee"
+    # (GHIDOTTI/BERGER LLP, CACE-13-021361) is benign plaintiff counsel, not a
+    # surplus firm. The live CI run false-killed that $327K lead on it. The real
+    # owner-assignment recovery cases are caught by KNOWN_RECOVERY_FIRMS (New
+    # Beginnings Trustee, Capital Crafter) and the surplus-claim motion path
+    # ("Assignee's Motion to Disburse Surplus" → surplus+disburse). An unknown
+    # "X as Assignee for <owner>" NOA falls to residual CAUTION, which is correct.
     "processing services",  # PRESTIGE PROCESSING SERVICES, LLC (CACE-23-015282)
     "consultation",       # EVO RECOVERY CONSULTATION CORP
     "consulting",
@@ -233,9 +240,12 @@ def classify_appearance(additional: str, party_names: set, purchaser_names: set)
     if re.match(r"(?:defendant|plaintiff)\s+[A-Z]", ad, re.I) and not is_recovery:
         return (NOA_BENIGN, ad)
 
-    # Stage 2 — benign counsel (unless recovery firm).
+    # Stage 2 — benign counsel (unless recovery firm). "Attorneys for the
+    # Plaintiff(s)/Defendant(s)" is case counsel, benign — what the GHIDOTTI/BERGER
+    # live false kill needed.
     if not is_recovery and re.search(
-            r"\besq\b|as counsel for|co-?counsel|designation of (?:electronic )?(?:e-?)?mail", low):
+            r"\besq\b|as counsel for|co-?counsel|attorneys? for|"
+            r"designation of (?:electronic )?(?:e-?)?mail", low):
         return (NOA_BENIGN, ad)
 
     # Stage 3 — residual bucket. Apply exclusions BEFORE flagging.

@@ -50,6 +50,9 @@ BENIGN_APPEARANCES = [
     "Party: Defendant Karagic, Muhamed",
     "ANTHONY J. ALONEFTIS, ESQ.",
     "JUAN C MARTINEZ AS COUNSEL FOR CANBY BUSINESS PARK, LLC (PURCHASER)",
+    # Regression: live CI false-killed CACE-13-021361 ($327K) on the "assignee"
+    # keyword — this is the PLAINTIFF's law firm, not a surplus firm. Must be benign.
+    "GHIDOTTI /BERGER LLP Attorneys for the Plaintiffs Assignee AND REQUEST FOR SERVICE",
 ]
 
 _PASS, _FAIL = 0, 0
