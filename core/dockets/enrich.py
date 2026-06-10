@@ -243,10 +243,14 @@ async def run_county(county_id: str, headless: bool, only_case: str | None = Non
 # events — FL debt is the opening bid, not a prayer field). Miami-Dade joined
 # 2026-06-10 after run 27283288299 proved reCAPTCHA v3 passes clean from the
 # GitHub Actions datacenter IP (9/9 mortgage-FC cases reached searchResults,
-# zero v3 blocks). Hamilton + Franklin remain Cloudflare-blocked and excluded
-# (PR-fallback). Add to this set ONLY after a scraper proves itself on real
-# run data.
-WORKING_DOCKET_COUNTIES = ["cuyahoga-oh", "montgomery-oh", "summit-oh", "miami-dade-fl"]
+# zero v3 blocks). Broward (FL) joined 2026-06-10 after runs 27313584624 +
+# 27313823862 proved the public path + detail-click reach GetCaseDetail headless
+# (zero CAPTCHA) and the flag-based classifier ran live on real leads (Capital
+# Crafter recovery-firm NOA → KILLED; GHIDOTTI/BERGER plaintiff counsel → GREEN
+# after the false-kill fix). Hamilton + Franklin remain Cloudflare-blocked and
+# excluded (PR-fallback). Add to this set ONLY after a scraper proves itself on
+# real run data.
+WORKING_DOCKET_COUNTIES = ["cuyahoga-oh", "montgomery-oh", "summit-oh", "miami-dade-fl", "broward-fl"]
 
 
 DEFAULT_PARALLEL_DOCKETS = 3
