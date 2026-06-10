@@ -40,7 +40,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-06-10T14:39:49.100285"
+    "enriched_at": "2026-06-10T14:54:52.892478"
   },
   {
     "county_id": "orange-fl",
@@ -83,7 +83,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-06-10T14:39:51.701766"
+    "enriched_at": "2026-06-10T14:54:55.402249"
   },
   {
     "county_id": "miami-dade-fl",
@@ -126,7 +126,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-06-10T14:39:51.701847"
+    "enriched_at": "2026-06-10T14:54:55.402336"
   },
   {
     "county_id": "broward-fl",
@@ -169,7 +169,50 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-06-10T14:39:52.345915"
+    "enriched_at": "2026-06-10T14:54:56.003839"
+  },
+  {
+    "county_id": "summit-oh",
+    "county_name": "Summit",
+    "state": "OH",
+    "case_number": "CV2025105047 (10675)",
+    "address": "734 CANTON ROAD",
+    "parcel_id": "6726837",
+    "final_sale_price": 188700.0,
+    "opening_bid": 41137.24,
+    "gross_surplus": 147562.76,
+    "sale_date": "2026-06-02",
+    "sold_to": "3rd Party Bidder",
+    "score": "A+",
+    "pr_match": true,
+    "pr_match_count": 1,
+    "pr_radar_id": "PBD42E98",
+    "pr_owner_name": "FREELAND,KLET M",
+    "pr_mailing_address": null,
+    "pr_mailing_city": null,
+    "pr_mailing_state": null,
+    "pr_mailing_zip": null,
+    "pr_estimated_value": 78922.0,
+    "pr_total_loan_balance": 0.0,
+    "pr_available_equity": 0.0,
+    "pr_first_loan_amount": 0.0,
+    "pr_first_loan_type": null,
+    "pr_second_loan_amount": 0.0,
+    "pr_years_owned": null,
+    "pr_owner_occupied": false,
+    "pr_in_tax_delinquency": true,
+    "pr_involuntary_lien": false,
+    "pr_property_type": "COM",
+    "pr_year_built": 1950,
+    "pr_sqft": 6594,
+    "pr_bedrooms": null,
+    "pr_bathrooms": null,
+    "real_surplus_estimate": 147562.76,
+    "debt_coverage_ratio": 0.0,
+    "is_clean_surplus": false,
+    "enrichment_status": "matched",
+    "enrichment_notes": "",
+    "enriched_at": "2026-06-10T14:54:58.545793"
   },
   {
     "county_id": "miami-dade-fl",
@@ -212,7 +255,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-06-10T14:39:52.345997"
+    "enriched_at": "2026-06-10T14:54:58.545892"
   },
   {
     "county_id": "hamilton-oh",
@@ -255,7 +298,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-06-10T14:39:52.990177"
+    "enriched_at": "2026-06-10T14:54:59.150489"
   },
   {
     "county_id": "cuyahoga-oh",
@@ -298,7 +341,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-06-10T14:39:55.661766"
+    "enriched_at": "2026-06-10T14:55:01.726086"
   },
   {
     "county_id": "broward-fl",
@@ -341,7 +384,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-06-10T14:39:58.453090"
+    "enriched_at": "2026-06-10T14:55:04.293059"
   },
   {
     "county_id": "miami-dade-fl",
@@ -384,7 +427,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-06-10T14:39:59.096095"
+    "enriched_at": "2026-06-10T14:55:04.899979"
   },
   {
     "county_id": "cuyahoga-oh",
@@ -427,7 +470,7 @@
     "is_clean_surplus": true,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-06-10T14:40:01.837423"
+    "enriched_at": "2026-06-10T14:55:07.450281"
   },
   {
     "county_id": "broward-fl",
@@ -470,7 +513,7 @@
     "is_clean_surplus": true,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-06-10T14:40:04.486869"
+    "enriched_at": "2026-06-10T14:55:10.036255"
   },
   {
     "county_id": "miami-dade-fl",
@@ -513,7 +556,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-06-10T14:40:05.125775"
+    "enriched_at": "2026-06-10T14:55:10.642715"
   },
   {
     "county_id": "broward-fl",
@@ -556,7 +599,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-06-10T14:40:05.758808"
+    "enriched_at": "2026-06-10T14:55:11.238158"
   },
   {
     "county_id": "miami-dade-fl",
@@ -599,7 +642,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-06-10T14:40:05.758885"
+    "enriched_at": "2026-06-10T14:55:11.238264"
   },
   {
     "county_id": "lee-fl",
@@ -642,7 +685,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-06-10T14:40:06.407087"
+    "enriched_at": "2026-06-10T14:55:11.848809"
   },
   {
     "county_id": "cuyahoga-oh",
@@ -685,7 +728,7 @@
     "is_clean_surplus": true,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-06-10T14:40:09.183896"
+    "enriched_at": "2026-06-10T14:55:14.420717"
   },
   {
     "county_id": "montgomery-oh",
@@ -728,7 +771,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-06-10T14:40:11.863983"
+    "enriched_at": "2026-06-10T14:55:17.070352"
   },
   {
     "county_id": "duval-fl",
@@ -771,7 +814,7 @@
     "is_clean_surplus": true,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-06-10T14:40:14.574938"
+    "enriched_at": "2026-06-10T14:55:19.632541"
   },
   {
     "county_id": "duval-fl",
@@ -814,7 +857,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-06-10T14:40:15.230787"
+    "enriched_at": "2026-06-10T14:55:20.249571"
   },
   {
     "county_id": "broward-fl",
@@ -857,7 +900,7 @@
     "is_clean_surplus": true,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-06-10T14:40:18.037804"
+    "enriched_at": "2026-06-10T14:55:22.818425"
   },
   {
     "county_id": "montgomery-oh",
@@ -900,7 +943,50 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-06-10T14:40:18.666366"
+    "enriched_at": "2026-06-10T14:55:23.414708"
+  },
+  {
+    "county_id": "summit-oh",
+    "county_name": "Summit",
+    "state": "OH",
+    "case_number": "CV2025084055 (10674)",
+    "address": "1210 SWARTZ ROAD",
+    "parcel_id": "5101851",
+    "final_sale_price": 54600.0,
+    "opening_bid": 17172.89,
+    "gross_surplus": 37427.11,
+    "sale_date": "2026-06-02",
+    "sold_to": "3rd Party Bidder",
+    "score": "B",
+    "pr_match": true,
+    "pr_match_count": 1,
+    "pr_radar_id": "PBD31FF7",
+    "pr_owner_name": "BRANNAN,PAUL A",
+    "pr_mailing_address": null,
+    "pr_mailing_city": null,
+    "pr_mailing_state": null,
+    "pr_mailing_zip": null,
+    "pr_estimated_value": 35529.0,
+    "pr_total_loan_balance": 0.0,
+    "pr_available_equity": 0.0,
+    "pr_first_loan_amount": 0.0,
+    "pr_first_loan_type": null,
+    "pr_second_loan_amount": 0.0,
+    "pr_years_owned": null,
+    "pr_owner_occupied": true,
+    "pr_in_tax_delinquency": true,
+    "pr_involuntary_lien": false,
+    "pr_property_type": "SFR",
+    "pr_year_built": 1947,
+    "pr_sqft": 800,
+    "pr_bedrooms": 2,
+    "pr_bathrooms": null,
+    "real_surplus_estimate": 37427.11,
+    "debt_coverage_ratio": 0.0,
+    "is_clean_surplus": false,
+    "enrichment_status": "matched",
+    "enrichment_notes": "",
+    "enriched_at": "2026-06-10T14:55:25.997417"
   },
   {
     "county_id": "cuyahoga-oh",
@@ -943,7 +1029,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-06-10T14:40:19.307567"
+    "enriched_at": "2026-06-10T14:55:26.597123"
   },
   {
     "county_id": "montgomery-oh",
@@ -986,7 +1072,7 @@
     "is_clean_surplus": true,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-06-10T14:40:21.993668"
+    "enriched_at": "2026-06-10T14:55:29.199360"
   },
   {
     "county_id": "lee-fl",
@@ -1029,7 +1115,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-06-10T14:40:22.646691"
+    "enriched_at": "2026-06-10T14:55:29.882589"
   },
   {
     "county_id": "cuyahoga-oh",
@@ -1072,7 +1158,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-06-10T14:40:25.314024"
+    "enriched_at": "2026-06-10T14:55:32.467945"
   },
   {
     "county_id": "cuyahoga-oh",
@@ -1115,7 +1201,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-06-10T14:40:25.944973"
+    "enriched_at": "2026-06-10T14:55:33.081928"
   },
   {
     "county_id": "orange-fl",
@@ -1158,7 +1244,50 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-06-10T14:40:26.576442"
+    "enriched_at": "2026-06-10T14:55:33.695657"
+  },
+  {
+    "county_id": "summit-oh",
+    "county_name": "Summit",
+    "state": "OH",
+    "case_number": "CV2025125870 (10677)",
+    "address": "1498 3RD STREET",
+    "parcel_id": "5400577",
+    "final_sale_price": 39000.0,
+    "opening_bid": 7041.32,
+    "gross_surplus": 31958.68,
+    "sale_date": "2026-06-02",
+    "sold_to": "3rd Party Bidder",
+    "score": "B",
+    "pr_match": true,
+    "pr_match_count": 1,
+    "pr_radar_id": "PBD33B51",
+    "pr_owner_name": "GRAYLAIN LLC",
+    "pr_mailing_address": null,
+    "pr_mailing_city": null,
+    "pr_mailing_state": null,
+    "pr_mailing_zip": null,
+    "pr_estimated_value": 6118.0,
+    "pr_total_loan_balance": 1498.0,
+    "pr_available_equity": 0.0,
+    "pr_first_loan_amount": 0.0,
+    "pr_first_loan_type": null,
+    "pr_second_loan_amount": 0.0,
+    "pr_years_owned": null,
+    "pr_owner_occupied": false,
+    "pr_in_tax_delinquency": false,
+    "pr_involuntary_lien": true,
+    "pr_property_type": "LND",
+    "pr_year_built": null,
+    "pr_sqft": null,
+    "pr_bedrooms": null,
+    "pr_bathrooms": null,
+    "real_surplus_estimate": 37502.0,
+    "debt_coverage_ratio": 0.03841025641025641,
+    "is_clean_surplus": false,
+    "enrichment_status": "matched",
+    "enrichment_notes": "",
+    "enriched_at": "2026-06-10T14:55:36.490291"
   },
   {
     "county_id": "cuyahoga-oh",
@@ -1201,7 +1330,50 @@
     "is_clean_surplus": true,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-06-10T14:40:29.220776"
+    "enriched_at": "2026-06-10T14:55:39.148410"
+  },
+  {
+    "county_id": "summit-oh",
+    "county_name": "Summit",
+    "state": "OH",
+    "case_number": "CV2025073002 (10672)",
+    "address": "2858 ROANOKE AVENUE",
+    "parcel_id": "MULTIPLE",
+    "final_sale_price": 41100.0,
+    "opening_bid": 10689.19,
+    "gross_surplus": 30410.809999999998,
+    "sale_date": "2026-06-02",
+    "sold_to": "3rd Party Bidder",
+    "score": "B",
+    "pr_match": false,
+    "pr_match_count": 0,
+    "pr_radar_id": null,
+    "pr_owner_name": null,
+    "pr_mailing_address": null,
+    "pr_mailing_city": null,
+    "pr_mailing_state": null,
+    "pr_mailing_zip": null,
+    "pr_estimated_value": 0.0,
+    "pr_total_loan_balance": 0.0,
+    "pr_available_equity": 0.0,
+    "pr_first_loan_amount": 0.0,
+    "pr_first_loan_type": null,
+    "pr_second_loan_amount": 0.0,
+    "pr_years_owned": null,
+    "pr_owner_occupied": null,
+    "pr_in_tax_delinquency": null,
+    "pr_involuntary_lien": null,
+    "pr_property_type": null,
+    "pr_year_built": null,
+    "pr_sqft": null,
+    "pr_bedrooms": null,
+    "pr_bathrooms": null,
+    "real_surplus_estimate": 30410.809999999998,
+    "debt_coverage_ratio": 0.0,
+    "is_clean_surplus": false,
+    "enrichment_status": "no_match",
+    "enrichment_notes": "No properties returned for this address",
+    "enriched_at": "2026-06-10T14:55:39.759829"
   },
   {
     "county_id": "montgomery-oh",
@@ -1244,7 +1416,7 @@
     "is_clean_surplus": true,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-06-10T14:40:31.891727"
+    "enriched_at": "2026-06-10T14:55:42.385753"
   },
   {
     "county_id": "duval-fl",
@@ -1287,7 +1459,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-06-10T14:40:32.532121"
+    "enriched_at": "2026-06-10T14:55:42.993704"
   },
   {
     "county_id": "miami-dade-fl",
@@ -1304,33 +1476,33 @@
     "score": "B",
     "pr_match": true,
     "pr_match_count": 1,
-    "pr_radar_id": "P7968F96",
-    "pr_owner_name": "PRENDES,JORGE L & MAYTE",
+    "pr_radar_id": "P7969003",
+    "pr_owner_name": "PAVILION FARMS INC",
     "pr_mailing_address": null,
     "pr_mailing_city": null,
     "pr_mailing_state": null,
     "pr_mailing_zip": null,
-    "pr_estimated_value": 713569.0,
+    "pr_estimated_value": 737217.0,
     "pr_total_loan_balance": 0.0,
-    "pr_available_equity": 340859.0,
+    "pr_available_equity": 737217.0,
     "pr_first_loan_amount": 0.0,
     "pr_first_loan_type": null,
     "pr_second_loan_amount": 0.0,
     "pr_years_owned": null,
-    "pr_owner_occupied": true,
+    "pr_owner_occupied": false,
     "pr_in_tax_delinquency": false,
-    "pr_involuntary_lien": false,
+    "pr_involuntary_lien": true,
     "pr_property_type": "CND",
     "pr_year_built": 1968,
-    "pr_sqft": 1290,
+    "pr_sqft": 1460,
     "pr_bedrooms": 2,
     "pr_bathrooms": 2.0,
     "real_surplus_estimate": 28701.1,
     "debt_coverage_ratio": 0.0,
-    "is_clean_surplus": true,
+    "is_clean_surplus": false,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-06-10T14:40:35.250741"
+    "enriched_at": "2026-06-10T14:55:45.590929"
   },
   {
     "county_id": "cuyahoga-oh",
@@ -1373,7 +1545,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-06-10T14:40:35.886611"
+    "enriched_at": "2026-06-10T14:55:46.186913"
   },
   {
     "county_id": "montgomery-oh",
@@ -1416,7 +1588,50 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-06-10T14:40:36.519368"
+    "enriched_at": "2026-06-10T14:55:46.780702"
+  },
+  {
+    "county_id": "summit-oh",
+    "county_name": "Summit",
+    "state": "OH",
+    "case_number": "CV2023103834 (10673)",
+    "address": "570 OXFORD AVENUE",
+    "parcel_id": "6825123",
+    "final_sale_price": 64700.0,
+    "opening_bid": 40042.06,
+    "gross_surplus": 24657.940000000002,
+    "sale_date": "2026-06-02",
+    "sold_to": "3rd Party Bidder",
+    "score": "C",
+    "pr_match": false,
+    "pr_match_count": 0,
+    "pr_radar_id": null,
+    "pr_owner_name": null,
+    "pr_mailing_address": null,
+    "pr_mailing_city": null,
+    "pr_mailing_state": null,
+    "pr_mailing_zip": null,
+    "pr_estimated_value": 0.0,
+    "pr_total_loan_balance": 0.0,
+    "pr_available_equity": 0.0,
+    "pr_first_loan_amount": 0.0,
+    "pr_first_loan_type": null,
+    "pr_second_loan_amount": 0.0,
+    "pr_years_owned": null,
+    "pr_owner_occupied": null,
+    "pr_in_tax_delinquency": null,
+    "pr_involuntary_lien": null,
+    "pr_property_type": null,
+    "pr_year_built": null,
+    "pr_sqft": null,
+    "pr_bedrooms": null,
+    "pr_bathrooms": null,
+    "real_surplus_estimate": 24657.940000000002,
+    "debt_coverage_ratio": 0.0,
+    "is_clean_surplus": false,
+    "enrichment_status": "no_match",
+    "enrichment_notes": "No properties returned for this address",
+    "enriched_at": "2026-06-10T14:55:47.390371"
   },
   {
     "county_id": "montgomery-oh",
@@ -1459,7 +1674,7 @@
     "is_clean_surplus": true,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-06-10T14:40:39.148919"
+    "enriched_at": "2026-06-10T14:55:50.141172"
   },
   {
     "county_id": "cuyahoga-oh",
@@ -1502,7 +1717,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-06-10T14:40:39.774932"
+    "enriched_at": "2026-06-10T14:55:50.772752"
   },
   {
     "county_id": "summit-oh",
@@ -1545,7 +1760,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-06-10T14:40:40.400150"
+    "enriched_at": "2026-06-10T14:55:51.363410"
   },
   {
     "county_id": "cuyahoga-oh",
@@ -1588,7 +1803,7 @@
     "is_clean_surplus": true,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-06-10T14:40:43.026693"
+    "enriched_at": "2026-06-10T14:55:53.933033"
   },
   {
     "county_id": "cuyahoga-oh",
@@ -1631,7 +1846,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-06-10T14:40:43.692671"
+    "enriched_at": "2026-06-10T14:55:54.526932"
   },
   {
     "county_id": "miami-dade-fl",
@@ -1674,7 +1889,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-06-10T14:40:46.292312"
+    "enriched_at": "2026-06-10T14:55:57.059686"
   },
   {
     "county_id": "orange-fl",
@@ -1717,7 +1932,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-06-10T14:40:46.931184"
+    "enriched_at": "2026-06-10T14:55:57.667171"
   },
   {
     "county_id": "broward-fl",
@@ -1760,7 +1975,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-06-10T14:40:47.562537"
+    "enriched_at": "2026-06-10T14:55:58.267346"
   },
   {
     "county_id": "miami-dade-fl",
@@ -1803,7 +2018,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-06-10T14:40:47.562614"
+    "enriched_at": "2026-06-10T14:55:58.267424"
   },
   {
     "county_id": "orange-fl",
@@ -1846,7 +2061,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-06-10T14:40:50.196650"
+    "enriched_at": "2026-06-10T14:56:00.839417"
   },
   {
     "county_id": "summit-oh",
@@ -1889,7 +2104,7 @@
     "is_clean_surplus": false,
     "enrichment_status": "matched",
     "enrichment_notes": "",
-    "enriched_at": "2026-06-10T14:40:52.811902"
+    "enriched_at": "2026-06-10T14:56:03.383938"
   },
   {
     "county_id": "franklin-oh",
@@ -1932,49 +2147,6 @@
     "is_clean_surplus": false,
     "enrichment_status": "no_match",
     "enrichment_notes": "No properties returned for this address",
-    "enriched_at": "2026-06-10T14:40:53.434848"
-  },
-  {
-    "county_id": "summit-oh",
-    "county_name": "Summit",
-    "state": "OH",
-    "case_number": "CV2026010059 (10574)",
-    "address": "220 STEELS CORNERS ROAD",
-    "parcel_id": "MULTIPLE",
-    "final_sale_price": 304000.0,
-    "opening_bid": 304000.0,
-    "gross_surplus": 0.0,
-    "sale_date": "2026-05-29",
-    "sold_to": "3rd Party Bidder",
-    "score": "\u2014",
-    "pr_match": true,
-    "pr_match_count": 1,
-    "pr_radar_id": "PBD2C77E",
-    "pr_owner_name": "ARCHIBALD,RONALD",
-    "pr_mailing_address": null,
-    "pr_mailing_city": null,
-    "pr_mailing_state": null,
-    "pr_mailing_zip": null,
-    "pr_estimated_value": 522537.0,
-    "pr_total_loan_balance": 0.0,
-    "pr_available_equity": 275528.0,
-    "pr_first_loan_amount": 0.0,
-    "pr_first_loan_type": null,
-    "pr_second_loan_amount": 0.0,
-    "pr_years_owned": null,
-    "pr_owner_occupied": true,
-    "pr_in_tax_delinquency": false,
-    "pr_involuntary_lien": false,
-    "pr_property_type": "SFR",
-    "pr_year_built": 1880,
-    "pr_sqft": 3588,
-    "pr_bedrooms": 5,
-    "pr_bathrooms": 2.5,
-    "real_surplus_estimate": 0.0,
-    "debt_coverage_ratio": 0.0,
-    "is_clean_surplus": true,
-    "enrichment_status": "matched",
-    "enrichment_notes": "",
-    "enriched_at": "2026-06-10T14:40:56.093708"
+    "enriched_at": "2026-06-10T14:56:03.976135"
   }
 ]
