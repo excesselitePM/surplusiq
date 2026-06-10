@@ -77,40 +77,73 @@ async def probe_case(context, cn: str) -> dict:
             "case_present": tag in re.sub(r"[^A-Za-z0-9]", "", results_html).upper(),
         }
 
-        # ── extract CaseID token(s) from the Kendo grid dataSource ──
-        rows = await page.evaluate(
-            """() => {
-                try {
-                    var g = window.jQuery && jQuery('#SearchResultsGrid').data('kendoGrid');
-                    if (!g) return null;
-                    return g.dataSource.data().map(function(r){
-                        return {CaseID: r.CaseID, CaseNumber: r.CaseNumber, Style: r.Style};
-                    });
-                } catch(e){ return {err: String(e)}; }
+        # ── locate the rendered detail link. CRITICAL: the grid row binds
+        #    ViewDetails(`#=Viewer#`) where `Viewer` is a ~152-char encrypted
+        #    blob rendered into the row's onclick — NOT the short CaseID token.
+        #    (The first probe passed CaseID and got an ASP.NET error.) ──
+        trig = await page.evaluate(
+            r"""() => {
+                const links = Array.from(document.querySelectorAll('a[onclick*="ViewDetails"]'));
+                for (const a of links) {
+                    const oc = a.getAttribute('onclick') || '';
+                    const m = oc.match(/ViewDetails\(`([^`]+)`\)/);
+                    if (m && m[1].indexOf('#=') === -1) {
+                        return {token: m[1], text: (a.innerText||'').trim()};
+                    }
+                }
+                return null;
             }"""
         )
-        rec["stages"]["results"]["grid_rows"] = rows
-        token = None
-        if isinstance(rows, list) and rows:
-            want = tag
-            match = next((r for r in rows if nodash(r.get("CaseNumber", "")) == want), rows[0])
-            token = match.get("CaseID")
-        rec["stages"]["results"]["caseid_token"] = token
+        rec["stages"]["results"]["viewer_token_len"] = (len(trig["token"]) if trig else 0)
+        rec["stages"]["results"]["link_text"] = (trig.get("text") if trig else None)
 
-        if not token:
-            rec["result"] = "NO_TOKEN — could not read CaseID from grid (see results HTML)"
+        if not trig:
+            rec["result"] = "NO_VIEWER_LINK — no rendered ViewDetails link (see results HTML)"
             return rec
 
-        # ── 3. detail hop: call the page's own ViewDetails() (faithful browser POST) ──
+        # ── 3. detail hop: CLICK the real rendered link (faithful user action,
+        #    correct Viewer token). The click submits #dynamicViewCaseDetail. ──
+        link = page.locator('a[onclick*="ViewDetails"]').first
         try:
             async with page.expect_navigation(wait_until="domcontentloaded", timeout=30000):
-                await page.evaluate("(tok) => ViewDetails(tok)", token)
+                await link.click(timeout=10000)
         except Exception as e:
             rec["stages"]["detail_nav_error"] = str(e)[:200]
+            # Fallback: call ViewDetails with the extracted Viewer token directly.
+            try:
+                async with page.expect_navigation(wait_until="domcontentloaded", timeout=30000):
+                    await page.evaluate("(t) => ViewDetails(t)", trig["token"])
+            except Exception as e2:
+                rec["stages"]["detail_nav_error2"] = str(e2)[:200]
         try:
             await page.wait_for_load_state("networkidle", timeout=20000)
         except Exception:
             pass
+
+        # Force any Kendo docket grid to load ALL rows (Miami lazy-load lesson):
+        # bump pageSize and record the dataSource total so a paged/lazy docket
+        # fully renders before capture, and we can cross-check entry count.
+        try:
+            totals = await page.evaluate(
+                """() => {
+                    const out=[];
+                    if(!window.jQuery) return out;
+                    jQuery('.k-grid').each(function(){
+                        const g = jQuery(this).data('kendoGrid');
+                        if(g && g.dataSource){
+                            const total = g.dataSource.total();
+                            try{ g.dataSource.pageSize(100000); }catch(e){}
+                            out.push({id:this.id||'(noid)', total:total});
+                        }
+                    });
+                    return out;
+                }"""
+            )
+            rec["stages"]["detail_grid_totals"] = totals
+            await page.wait_for_load_state("networkidle", timeout=10000)
+        except Exception as e:
+            rec["stages"]["detail_expand_error"] = str(e)[:160]
+
         detail_html = await dump(page, "2_detail", tag)
         cap = captcha_markers(detail_html, page.url)
         rec["stages"]["detail"] = {
