@@ -265,10 +265,24 @@ class MiamiDadeDocketScraper(DocketScraper):
             page = await context.new_page()
 
             async def snap(label):
+                ts = datetime.now().strftime("%H%M%S")
                 try:
-                    ts = datetime.now().strftime("%H%M%S")
                     await page.screenshot(
                         path=str(diag_dir / f"{ts}-{label}.png"), full_page=True
+                    )
+                except Exception:
+                    pass
+                # Also persist the live DOM at each checkpoint. The result HTML
+                # (and the HTML at each ERROR-* checkpoint) is what distinguishes
+                # a v3 score reject (stuck on form / challenge overlay) from a
+                # genuine no-match (searchResults rendered "no records found")
+                # from a selector miss — full-page screenshots alone can be
+                # ambiguous on a JS-rendered SPA. Diagnostic only; never affects
+                # navigation or the v3 score (which depends on IP/UA/browser).
+                try:
+                    html = await page.content()
+                    (diag_dir / f"{ts}-{label}.html").write_text(
+                        html, encoding="utf-8"
                     )
                 except Exception:
                     pass
