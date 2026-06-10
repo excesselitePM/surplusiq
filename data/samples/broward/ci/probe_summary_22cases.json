@@ -1,0 +1,2106 @@
+{
+  "cases": [
+    "CACE-23-015282",
+    "CACE-19-010632",
+    "CACE-14-020395",
+    "COWE-26-005819",
+    "CACE-24-007420",
+    "COCE-25-085528",
+    "CACE-24-012541",
+    "CACE-25-001564",
+    "CACE-24-008631",
+    "CACE-26-001236",
+    "CACE-25-002358",
+    "CACE-21-019437",
+    "CACE-25-009885",
+    "CACE-24-007807",
+    "COWE-25-085495",
+    "CONO-25-048381",
+    "CACE-25-003189",
+    "CACE-25-005168",
+    "CACE-23-019364",
+    "CACE-25-004451",
+    "COCE-25-009070",
+    "COWE-24-061398"
+  ],
+  "results": [
+    {
+      "case": "CACE-23-015282",
+      "nodash": "CACE23015282",
+      "stages": {
+        "results": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/Results?TYPE=GetCaseSearchByCase_ECA&INPUT=dHSRi6ovZYJOYR03l1EJzLEjKto5J0CXziVxIPgfR38ISvMrfS2b0iINFeQiP7x%2BkHGKbQvjcRNaXd6yd2WXjdpRdixUuPiAkdplFclFjpkfSQUqUowCcLUiK%2Br3j6XMRjVEUcdHis9xg1buQFsSjRWoBrYTOrk6UiMUM%2FDLmQ0zWN3RH9hDkQQuv38CsbHSi6JQAYvGLXO%2F1%2BRNtugik71KEh1QL5OjJPyyqgAGym16%2Bo6mN8UERxTYldbxQ4dh3AHn159XcOd%2Fr8KfLk6X6TjwXLE7jHYcgi2121Ts9Ow%3D",
+          "size": 64461,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "viewer_token_len": 152,
+          "link_text": "CACE23015282"
+        },
+        "detail_grid_totals": [],
+        "detail": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/GetCaseDetail?Viewer=wZHLLoED7FtOgBMLqaf4U59%2BqWPaMv8ilXUCfL1cTo55XI9xgtmgB41alUG2RnDtKR%2BWoT44kc3e3G%2BAgZKTvAQvJdx76RkxKq9AX6hV6gkmDb4YRpLxlsShjhO2cWB9rJXEMIEFhPlaqeEvCOxvBQ%3D%3D",
+          "size": 337063,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "docket_discovery": {
+            "grids": [],
+            "tables": 16,
+            "pager_text": [],
+            "docket_words": 0
+          },
+          "docket_rows": 95,
+          "docket_header": [
+            "date",
+            "description",
+            "additional text",
+            "view / pages"
+          ]
+        }
+      },
+      "surplus_hits": [
+        {
+          "date": "01/06/2026",
+          "description": "Agreed Order",
+          "additional": "AGREED ORDER GRANTING MOTION TO INTERVENE AND ORDER DISBURSING THE REMAINING SURPLUS FUNDS",
+          "_triggers": [
+            "disburs",
+            "surplus"
+          ]
+        },
+        {
+          "date": "12/08/2025",
+          "description": "Notice of Appearance",
+          "additional": "Party: Plaintiff Nationstar Mortgage Llc",
+          "_triggers": [
+            "appear",
+            "notice of appearance"
+          ]
+        },
+        {
+          "date": "12/02/2025",
+          "description": "Certificate of Disbursements",
+          "additional": "",
+          "_triggers": [
+            "disburs",
+            "disbursement"
+          ]
+        },
+        {
+          "date": "11/05/2025",
+          "description": "Notice of Limited Appearance",
+          "additional": "",
+          "_triggers": [
+            "appear"
+          ]
+        },
+        {
+          "date": "07/09/2025",
+          "description": "Assignment of Bid",
+          "additional": "Party: Plaintiff Nationstar Mortgage Llc",
+          "_triggers": [
+            "assignment"
+          ]
+        },
+        {
+          "date": "01/06/2025",
+          "description": "Assignment of Bid",
+          "additional": "",
+          "_triggers": [
+            "assignment"
+          ]
+        },
+        {
+          "date": "06/30/2023",
+          "description": "Value Claim Form",
+          "additional": "",
+          "_triggers": [
+            "claim"
+          ]
+        }
+      ],
+      "result": "DETAIL_OK \u2014 reached case detail page headless"
+    },
+    {
+      "case": "CACE-19-010632",
+      "nodash": "CACE19010632",
+      "stages": {
+        "results": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/Results?TYPE=GetCaseSearchByCase_ECA&INPUT=dHSRi6ovZYJOYR03l1EJzLEjKto5J0CXziVxIPgfR38ISvMrfS2b0iINFeQiP7x%2BkHGKbQvjcRNaXd6yd2WXjdpRdixUuPiAkdplFclFjpkfSQUqUowCcLUiK%2Br3j6XMRjVEUcdHis9xg1buQFsSjRWoBrYTOrk6UiMUM%2FDLmQ0zWN3RH9hDkQQuv38CsbHSi6JQAYvGLXO%2F1%2BRNtugik71KEh1QL5OjeoMs4vgjgoWoCdO1LSiaaBTYldbxQ4dh3AHn159XcOd%2Fr8KfLk6X6TjwXLE7jHYcgi2121Ts9Ow%3D",
+          "size": 62550,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "viewer_token_len": 152,
+          "link_text": "CACE19010632"
+        },
+        "detail_grid_totals": [],
+        "detail": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/GetCaseDetail?Viewer=wZHLLoED7FtOgBMLqaf4U%2BE%2F9kbMzMgElXUCfL1cTo55XI9xgtmgB3KNF%2F5LfAP%2FH8CL2CqboELe3G%2BAgZKTvAQvJdx76RkxKq9AX6hV6gkmDb4YRpLxlsShjhO2cWB9rJXEMIEFhPlaqeEvCOxvBQ%3D%3D",
+          "size": 938019,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "docket_discovery": {
+            "grids": [],
+            "tables": 16,
+            "pager_text": [],
+            "docket_words": 0
+          },
+          "docket_rows": 425,
+          "docket_header": [
+            "date",
+            "description",
+            "additional text",
+            "view / pages"
+          ]
+        }
+      },
+      "surplus_hits": [
+        {
+          "date": "05/12/2026",
+          "description": "Notice of Appearance",
+          "additional": "JUAN C MARTINEZ AS COUNSEL FOR CANBY BUSINESS PARK, LLC (PURCHASER)",
+          "_triggers": [
+            "appear",
+            "notice of appearance"
+          ]
+        },
+        {
+          "date": "03/20/2026",
+          "description": "Notice of Limited Appearance",
+          "additional": "Party: Defendant Tabernacle Christian Center Ministries Inc",
+          "_triggers": [
+            "appear"
+          ]
+        },
+        {
+          "date": "01/06/2026",
+          "description": "Notice of Appearance",
+          "additional": "TABERNACLE CHRISTIAN CENTER MINISTRIES, INC.",
+          "_triggers": [
+            "appear",
+            "notice of appearance"
+          ]
+        },
+        {
+          "date": "08/16/2023",
+          "description": "Notice of Appearance",
+          "additional": "Party: Defendant Tabernacle Christian Center Ministries Inc",
+          "_triggers": [
+            "appear",
+            "notice of appearance"
+          ]
+        },
+        {
+          "date": "07/20/2023",
+          "description": "4th DCA Order",
+          "additional": "4D23-1109, 4D23-1692; KH/ ORDERED that Petitioner/Appellant's July 13, 2023 motion to consolidate s denied",
+          "_triggers": [
+            "petition"
+          ]
+        },
+        {
+          "date": "07/10/2023",
+          "description": "4th DCA Order",
+          "additional": "4D23-1109; KH/ ORDERED sua sponte that the clerk of the lower tribunal's July 6, 2023 notice of in bility to transmit the record is stricken as unauthorized, as this case is proceeding as a Petition for Writ of Certiorari for which no record is required",
+          "_triggers": [
+            "petition"
+          ]
+        },
+        {
+          "date": "06/30/2023",
+          "description": "4th DCA Order",
+          "additional": "4D23-1109; KH/ ORDERED that Petitioner's June 28,2023 motion for extension of time is granted",
+          "_triggers": [
+            "petition"
+          ]
+        },
+        {
+          "date": "06/15/2023",
+          "description": "4th DCA Order",
+          "additional": "4D23-1109; KH/ ORDERED that, upon consideration of appellant's May 22,2023 jurisdictional brief an appellee's May 26, 2023 response, the Notice of Appeal filed with the clerk of the lower tribunal is treated as a Petition for Writ of Certiorari.",
+          "_triggers": [
+            "petition"
+          ]
+        },
+        {
+          "date": "04/28/2023",
+          "description": "Joint Stipulation",
+          "additional": "AS TO DATE OF RENDITION OF ORDER OF DEFENDANT'S MOTION FOR ADJUDICATION OF CONTEMPT PURSUANT TO FLA R. CIV. P. RULE 1.510(g) FOR FILING A FALSE AFFIDAVIT TO OBTAIN SUMMARY JUDGMENT IN BAD FAITH Party: Plaintiff National Loan Acquisitions Company Defendant Tabernacle Christian Center Ministries Inc",
+          "_triggers": [
+            "stipulation"
+          ]
+        },
+        {
+          "date": "07/27/2021",
+          "description": "Notice of Appearance",
+          "additional": "and DESIGNATION OF EMAIL ADDRESSES Party: Plaintiff National Loan Acquisitions Company",
+          "_triggers": [
+            "appear",
+            "notice of appearance"
+          ]
+        },
+        {
+          "date": "12/02/2020",
+          "description": "Notice of Appearance",
+          "additional": "Julio Lopez",
+          "_triggers": [
+            "appear",
+            "notice of appearance"
+          ]
+        },
+        {
+          "date": "07/24/2020",
+          "description": "Stipulation for Substitution of Counsel",
+          "additional": "Party: Defendant Tabernacle Christian Center Ministries Inc",
+          "_triggers": [
+            "stipulation"
+          ]
+        },
+        {
+          "date": "07/16/2020",
+          "description": "Notice of Appearance",
+          "additional": "Party: Plaintiff National Loan Acquisitions Company",
+          "_triggers": [
+            "appear",
+            "notice of appearance"
+          ]
+        },
+        {
+          "date": "03/20/2020",
+          "description": "Appearance As Attorney of Record",
+          "additional": "DARYL L. JONES, ESQ. Party: Defendant Tabernacle Christian Center Ministries Inc",
+          "_triggers": [
+            "appear"
+          ]
+        },
+        {
+          "date": "09/09/2019",
+          "description": "eSummons Issuance- On Cross Claim",
+          "additional": "Unknown Tenants in Possession",
+          "_triggers": [
+            "claim"
+          ]
+        },
+        {
+          "date": "09/09/2019",
+          "description": "eSummons Issuance- On Cross Claim",
+          "additional": "Party: Defendant Tabernacle Christian Center Ministries Inc",
+          "_triggers": [
+            "claim"
+          ]
+        },
+        {
+          "date": "08/28/2019",
+          "description": "eSummons Issuance- On Cross Claim",
+          "additional": "Issued On: Jorge Lopez",
+          "_triggers": [
+            "claim"
+          ]
+        },
+        {
+          "date": "08/28/2019",
+          "description": "eSummons Issuance- On Cross Claim",
+          "additional": "Issued On: Chai Alarms, Inc",
+          "_triggers": [
+            "claim"
+          ]
+        },
+        {
+          "date": "08/28/2019",
+          "description": "Ctr Pet-Cross Claim-3rd pty-PT-> $250k",
+          "additional": "Payor: ROY R. LUSTIG ; Userid: CTS-fg/t ; Receipt: 20191FA1A163183; ; Amount: $1,900.00",
+          "_triggers": [
+            "claim"
+          ]
+        },
+        {
+          "date": "08/22/2019",
+          "description": "Crossclaim",
+          "additional": "Party: Defendant Congregacion Mesianica Jerusalen Inc",
+          "_triggers": [
+            "claim"
+          ]
+        },
+        {
+          "date": "07/26/2019",
+          "description": "Notice of Appearance",
+          "additional": "AND DESIGNATION OF ELECTRONIC MAIL ADDRESSES Party: Defendant Tabernacle Christian Center Ministries Inc",
+          "_triggers": [
+            "appear",
+            "notice of appearance"
+          ]
+        },
+        {
+          "date": "07/26/2019",
+          "description": "Notice of Appearance",
+          "additional": "Party: Defendant Congregacion Mesianica Jerusalen Inc",
+          "_triggers": [
+            "appear",
+            "notice of appearance"
+          ]
+        },
+        {
+          "date": "07/16/2019",
+          "description": "Notice of Limited Appearance",
+          "additional": "Faequa A. Khan, Esq./FBN.. 100278 Party: Defendant Tabernacle Christian Center Ministries Inc",
+          "_triggers": [
+            "appear"
+          ]
+        }
+      ],
+      "result": "DETAIL_OK \u2014 reached case detail page headless"
+    },
+    {
+      "case": "CACE-14-020395",
+      "nodash": "CACE14020395",
+      "stages": {
+        "results": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/Results?TYPE=GetCaseSearchByCase_ECA&INPUT=dHSRi6ovZYJOYR03l1EJzLEjKto5J0CXziVxIPgfR38ISvMrfS2b0iINFeQiP7x%2BkHGKbQvjcRNaXd6yd2WXjdpRdixUuPiAkdplFclFjpkfSQUqUowCcLUiK%2Br3j6XMRjVEUcdHis9xg1buQFsSjRWoBrYTOrk6UiMUM%2FDLmQ0zWN3RH9hDkQQuv38CsbHSi6JQAYvGLXO%2F1%2BRNtugik71KEh1QL5OjIIqZHXhkXGmjiPd%2BtYbVVhTYldbxQ4dh3AHn159XcOd%2Fr8KfLk6X6TjwXLE7jHYcgi2121Ts9Ow%3D",
+          "size": 64472,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "viewer_token_len": 152,
+          "link_text": "CACE14020395"
+        },
+        "detail_grid_totals": [],
+        "detail": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/GetCaseDetail?Viewer=wZHLLoED7Fst4E2DYTsFrC1sVTeqKtzdEtCrCptDkGc7b6fDojLKqS64lxa0PNhPpuFOYCCN%2FPVXIOUp0GsneHstIXiXfGQTQOYVsoDowcnaiKyJkvQKn2nlqfHXr1NGKRkh3qggR5c2H9R%2FPeV2bw%3D%3D",
+          "size": 452328,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "docket_discovery": {
+            "grids": [],
+            "tables": 16,
+            "pager_text": [],
+            "docket_words": 0
+          },
+          "docket_rows": 177,
+          "docket_header": [
+            "date",
+            "description",
+            "additional text",
+            "view / pages"
+          ]
+        }
+      },
+      "surplus_hits": [
+        {
+          "date": "06/10/2026",
+          "description": "Notice of Appearance",
+          "additional": "Capital Crafter Inc.",
+          "_triggers": [
+            "appear",
+            "notice of appearance"
+          ]
+        },
+        {
+          "date": "06/08/2026",
+          "description": "Notice of Limited Appearance",
+          "additional": "PRIORTY SURPLUS LLC/ ATTORNEY KIMBERLY H SCHULTZ P.A. FBN:39678",
+          "_triggers": [
+            "appear",
+            "surplus"
+          ]
+        },
+        {
+          "date": "06/04/2026",
+          "description": "Notice of Limited Appearance",
+          "additional": "PRIORTY SURPLUS LLC/ ATTORNEY KIMBERLY H SCHULTZ P.A. ATTORNEY FBN: 39678",
+          "_triggers": [
+            "appear",
+            "surplus"
+          ]
+        },
+        {
+          "date": "05/01/2026",
+          "description": "Notice of Appearance",
+          "additional": "MURTADHA PROPERTIES LLC",
+          "_triggers": [
+            "appear",
+            "notice of appearance"
+          ]
+        },
+        {
+          "date": "10/22/2014",
+          "description": "Value Claim Form",
+          "additional": "",
+          "_triggers": [
+            "claim"
+          ]
+        }
+      ],
+      "result": "DETAIL_OK \u2014 reached case detail page headless"
+    },
+    {
+      "case": "COWE-26-005819",
+      "nodash": "COWE26005819",
+      "stages": {
+        "results": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/Results?TYPE=GetCaseSearchByCase_ECA&INPUT=dHSRi6ovZYJOYR03l1EJzLEjKto5J0CXziVxIPgfR38ISvMrfS2b0iINFeQiP7x%2BkHGKbQvjcRNaXd6yd2WXjdpRdixUuPiAkdplFclFjpkfSQUqUowCcLUiK%2Br3j6XMRjVEUcdHis9xg1buQFsSjRWoBrYTOrk6UiMUM%2FDLmQ0zWN3RH9hDkQQuv38CsbHSi6JQAYvGLXO%2F1%2BRNtugik71KEh1QL5Oj3VKBYbALqM2jDKUq7t4aMxTYldbxQ4dh3AHn159XcOd%2Fr8KfLk6X6TjwXLE7jHYcgi2121Ts9Ow%3D",
+          "size": 64476,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "viewer_token_len": 152,
+          "link_text": "COWE26005819"
+        },
+        "detail_grid_totals": [],
+        "detail": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/GetCaseDetail?Viewer=wZHLLoED7FtOgBMLqaf4U3GrUwWFlfAwlXUCfL1cTo55XI9xgtmgB%2BMMT32sMRRwIqSraKLhwMbe3G%2BAgZKTvAQvJdx76RkxKq9AX6hV6gkmDb4YRpLxlsShjhO2cWB9rJXEMIEFhPlaqeEvCOxvBQ%3D%3D",
+          "size": 242606,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "docket_discovery": {
+            "grids": [],
+            "tables": 16,
+            "pager_text": [],
+            "docket_words": 0
+          },
+          "docket_rows": 39,
+          "docket_header": [
+            "date",
+            "description",
+            "additional text",
+            "view / pages"
+          ]
+        }
+      },
+      "surplus_hits": [
+        {
+          "date": "06/08/2026",
+          "description": "Motion to File",
+          "additional": "Motion to Provide Mailing Address and for Disbursement of Third-Party Purchaser Refund - Clara Gor",
+          "_triggers": [
+            "disburs",
+            "disbursement"
+          ]
+        },
+        {
+          "date": "05/05/2026",
+          "description": "Notice of Appearance",
+          "additional": "GET LIQUID FUNDING, LLC",
+          "_triggers": [
+            "appear",
+            "notice of appearance"
+          ]
+        },
+        {
+          "date": "04/29/2026",
+          "description": "Notice of Appearance",
+          "additional": "NASINNYA LLC",
+          "_triggers": [
+            "appear",
+            "notice of appearance"
+          ]
+        },
+        {
+          "date": "04/29/2026",
+          "description": "Notice of Appearance",
+          "additional": "Non-Party Nisinnya, LLC",
+          "_triggers": [
+            "appear",
+            "notice of appearance"
+          ]
+        }
+      ],
+      "result": "DETAIL_OK \u2014 reached case detail page headless"
+    },
+    {
+      "case": "CACE-24-007420",
+      "nodash": "CACE24007420",
+      "stages": {
+        "results": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/Results?TYPE=GetCaseSearchByCase_ECA&INPUT=dHSRi6ovZYJOYR03l1EJzLEjKto5J0CXziVxIPgfR38ISvMrfS2b0iINFeQiP7x%2BkHGKbQvjcRNaXd6yd2WXjdpRdixUuPiAkdplFclFjpkfSQUqUowCcLUiK%2Br3j6XMRjVEUcdHis9xg1buQFsSjRWoBrYTOrk6UiMUM%2FDLmQ0zWN3RH9hDkQQuv38CsbHSi6JQAYvGLXO%2F1%2BRNtugik71KEh1QL5OjoJFgWAeZ8sgdnUxFRNGJGxTYldbxQ4dh3AHn159XcOd%2Fr8KfLk6X6TjwXLE7jHYcgi2121Ts9Ow%3D",
+          "size": 64407,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "viewer_token_len": 152,
+          "link_text": "CACE24007420"
+        },
+        "detail_grid_totals": [],
+        "detail": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/GetCaseDetail?Viewer=wZHLLoED7FtOgBMLqaf4UzpKkJhS6I8ilXUCfL1cTo55XI9xgtmgB41alUG2RnDtHVFnHaV7g6ve3G%2BAgZKTvAQvJdx76RkxKq9AX6hV6gkmDb4YRpLxlsShjhO2cWB9rJXEMIEFhPlaqeEvCOxvBQ%3D%3D",
+          "size": 242296,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "docket_discovery": {
+            "grids": [],
+            "tables": 16,
+            "pager_text": [],
+            "docket_words": 0
+          },
+          "docket_rows": 44,
+          "docket_header": [
+            "date",
+            "description",
+            "additional text",
+            "view / pages"
+          ]
+        }
+      },
+      "surplus_hits": [
+        {
+          "date": "02/18/2026",
+          "description": "Notice of Appearance",
+          "additional": "The Recovery Agents, LLC",
+          "_triggers": [
+            "appear",
+            "notice of appearance"
+          ]
+        },
+        {
+          "date": "11/12/2025",
+          "description": "Certificate of Disbursements",
+          "additional": "",
+          "_triggers": [
+            "disburs",
+            "disbursement"
+          ]
+        },
+        {
+          "date": "04/16/2025",
+          "description": "Notice of Appearance",
+          "additional": "Tepps Treco",
+          "_triggers": [
+            "appear",
+            "notice of appearance"
+          ]
+        }
+      ],
+      "result": "DETAIL_OK \u2014 reached case detail page headless"
+    },
+    {
+      "case": "COCE-25-085528",
+      "nodash": "COCE25085528",
+      "stages": {
+        "results": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/Results?TYPE=GetCaseSearchByCase_ECA&INPUT=dHSRi6ovZYJOYR03l1EJzLEjKto5J0CXziVxIPgfR38ISvMrfS2b0iINFeQiP7x%2BkHGKbQvjcRNaXd6yd2WXjdpRdixUuPiAkdplFclFjpkfSQUqUowCcLUiK%2Br3j6XMRjVEUcdHis9xg1buQFsSjRWoBrYTOrk6UiMUM%2FDLmQ0zWN3RH9hDkQQuv38CsbHSi6JQAYvGLXO%2F1%2BRNtugik71KEh1QL5Oj5t6AfTfhgkfUY5znQLcvzBTYldbxQ4dh3AHn159XcOd%2Fr8KfLk6X6TjwXLE7jHYcgi2121Ts9Ow%3D",
+          "size": 64439,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "viewer_token_len": 152,
+          "link_text": "COCE25085528"
+        },
+        "detail_grid_totals": [],
+        "detail": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/GetCaseDetail?Viewer=wZHLLoED7FtOgBMLqaf4UzilfBOD9PGKlXUCfL1cTo55XI9xgtmgByF46P%2BDnpoIoOaLMO%2FgucLe3G%2BAgZKTvAQvJdx76RkxKq9AX6hV6gkmDb4YRpLxlsShjhO2cWB9rJXEMIEFhPlaqeEvCOxvBQ%3D%3D",
+          "size": 220276,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "docket_discovery": {
+            "grids": [],
+            "tables": 16,
+            "pager_text": [],
+            "docket_words": 0
+          },
+          "docket_rows": 37,
+          "docket_header": [
+            "date",
+            "description",
+            "additional text",
+            "view / pages"
+          ]
+        }
+      },
+      "surplus_hits": [
+        {
+          "date": "05/19/2026",
+          "description": "Certificate of Title & Certificate of Disbursement Emailed",
+          "additional": "",
+          "_triggers": [
+            "disburs",
+            "disbursement"
+          ]
+        },
+        {
+          "date": "05/15/2026",
+          "description": "Certificate of Disbursements",
+          "additional": "",
+          "_triggers": [
+            "disburs",
+            "disbursement"
+          ]
+        },
+        {
+          "date": "04/27/2026",
+          "description": "Notice of Appearance",
+          "additional": "PRIORITY SURPLUS LLC",
+          "_triggers": [
+            "appear",
+            "notice of appearance",
+            "surplus"
+          ]
+        }
+      ],
+      "result": "DETAIL_OK \u2014 reached case detail page headless"
+    },
+    {
+      "case": "CACE-24-012541",
+      "nodash": "CACE24012541",
+      "stages": {
+        "results": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/Results?TYPE=GetCaseSearchByCase_ECA&INPUT=dHSRi6ovZYJOYR03l1EJzLEjKto5J0CXziVxIPgfR38ISvMrfS2b0iINFeQiP7x%2BkHGKbQvjcRNaXd6yd2WXjdpRdixUuPiAkdplFclFjpkfSQUqUowCcLUiK%2Br3j6XMRjVEUcdHis9xg1buQFsSjRWoBrYTOrk6UiMUM%2FDLmQ0zWN3RH9hDkQQuv38CsbHSi6JQAYvGLXO%2F1%2BRNtugik71KEh1QL5OjoJFgWAeZ8sg1VyzozP%2BcVBTYldbxQ4dh3AHn159XcOd%2Fr8KfLk6X6TjwXLE7jHYcgi2121Ts9Ow%3D",
+          "size": 64422,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "viewer_token_len": 152,
+          "link_text": "CACE24012541"
+        },
+        "detail_grid_totals": [],
+        "detail": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/GetCaseDetail?Viewer=wZHLLoED7FtOgBMLqaf4UwwK%2Bi3Q3r2FlXUCfL1cTo55XI9xgtmgB41alUG2RnDtiYlRod6BGrLe3G%2BAgZKTvAQvJdx76RkxKq9AX6hV6gkmDb4YRpLxlsShjhO2cWB9rJXEMIEFhPlaqeEvCOxvBQ%3D%3D",
+          "size": 321753,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "docket_discovery": {
+            "grids": [],
+            "tables": 16,
+            "pager_text": [],
+            "docket_words": 0
+          },
+          "docket_rows": 84,
+          "docket_header": [
+            "date",
+            "description",
+            "additional text",
+            "view / pages"
+          ]
+        }
+      },
+      "surplus_hits": [
+        {
+          "date": "03/13/2026",
+          "description": "Order Disbursing Funds",
+          "additional": "Get Liquid Funding, LLC",
+          "_triggers": [
+            "disburs"
+          ]
+        },
+        {
+          "date": "02/26/2026",
+          "description": "Notice of Appearance",
+          "additional": "Party: Defendant Delgado, Kellie",
+          "_triggers": [
+            "appear",
+            "notice of appearance"
+          ]
+        },
+        {
+          "date": "11/12/2025",
+          "description": "Certificate of Disbursements",
+          "additional": "",
+          "_triggers": [
+            "disburs",
+            "disbursement"
+          ]
+        },
+        {
+          "date": "11/04/2025",
+          "description": "Motion for Disbursement",
+          "additional": "SURPLUS PROCEEDS Party: Plaintiff Plantation Club Association Inc",
+          "_triggers": [
+            "disburs",
+            "disbursement",
+            "surplus"
+          ]
+        },
+        {
+          "date": "11/03/2025",
+          "description": "Motion for Disbursement",
+          "additional": "DEFENDANT RANDOLPH MERRITT'S ASSIGNEE'S MOTION TO INTERVENE AND TO DISBURSE SURPLUS FUNDS",
+          "_triggers": [
+            "disburs",
+            "disbursement",
+            "surplus"
+          ]
+        },
+        {
+          "date": "10/23/2025",
+          "description": "Notice of Appearance",
+          "additional": "GET LIQUID FUNDING, LLC",
+          "_triggers": [
+            "appear",
+            "notice of appearance"
+          ]
+        },
+        {
+          "date": "07/31/2025",
+          "description": "Notice of Appearance",
+          "additional": "CO-COUNSEL FOR POLIAKOFF BACKER, LLP",
+          "_triggers": [
+            "appear",
+            "notice of appearance"
+          ]
+        },
+        {
+          "date": "07/25/2025",
+          "description": "Notice of Appearance",
+          "additional": "ANTHONY J. ALONEFTIS, ESQ.",
+          "_triggers": [
+            "appear",
+            "notice of appearance"
+          ]
+        },
+        {
+          "date": "06/16/2025",
+          "description": "Notice of Appearance",
+          "additional": "RANDOLPH MERRITT",
+          "_triggers": [
+            "appear",
+            "notice of appearance"
+          ]
+        },
+        {
+          "date": "09/27/2024",
+          "description": "Notice of Appearance",
+          "additional": "Party: Defendant Merritt, Randolph",
+          "_triggers": [
+            "appear",
+            "notice of appearance"
+          ]
+        },
+        {
+          "date": "08/30/2024",
+          "description": "Value Claim Form",
+          "additional": "",
+          "_triggers": [
+            "claim"
+          ]
+        }
+      ],
+      "result": "DETAIL_OK \u2014 reached case detail page headless"
+    },
+    {
+      "case": "CACE-25-001564",
+      "nodash": "CACE25001564",
+      "stages": {
+        "results": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/Results?TYPE=GetCaseSearchByCase_ECA&INPUT=dHSRi6ovZYJOYR03l1EJzLEjKto5J0CXziVxIPgfR38ISvMrfS2b0iINFeQiP7x%2BkHGKbQvjcRNaXd6yd2WXjdpRdixUuPiAkdplFclFjpkfSQUqUowCcLUiK%2Br3j6XMRjVEUcdHis9xg1buQFsSjRWoBrYTOrk6UiMUM%2FDLmQ0zWN3RH9hDkQQuv38CsbHSi6JQAYvGLXO%2F1%2BRNtugik71KEh1QL5OjZF8SAOVjdUk0zeC9506GexTYldbxQ4dh3AHn159XcOd%2Fr8KfLk6X6TjwXLE7jHYcgi2121Ts9Ow%3D",
+          "size": 64417,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "viewer_token_len": 152,
+          "link_text": "CACE25001564"
+        },
+        "detail_grid_totals": [],
+        "detail": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/GetCaseDetail?Viewer=wZHLLoED7FtOgBMLqaf4U%2FEW1vBxHrlWlXUCfL1cTo55XI9xgtmgB41alUG2RnDtlBQohGWyKR3e3G%2BAgZKTvAQvJdx76RkxKq9AX6hV6gkmDb4YRpLxlsShjhO2cWB9rJXEMIEFhPlaqeEvCOxvBQ%3D%3D",
+          "size": 257913,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "docket_discovery": {
+            "grids": [],
+            "tables": 16,
+            "pager_text": [],
+            "docket_words": 0
+          },
+          "docket_rows": 54,
+          "docket_header": [
+            "date",
+            "description",
+            "additional text",
+            "view / pages"
+          ]
+        }
+      },
+      "surplus_hits": [
+        {
+          "date": "06/01/2026",
+          "description": "Motion to Intervene",
+          "additional": "AND FOR DISBURSEMENT OF SURPLUS FUNDS",
+          "_triggers": [
+            "disburs",
+            "disbursement",
+            "surplus"
+          ]
+        },
+        {
+          "date": "05/28/2026",
+          "description": "Notice of Limited Appearance",
+          "additional": "on behalf of Third Party Purchaser, BRADLY BRACCIO",
+          "_triggers": [
+            "appear"
+          ]
+        },
+        {
+          "date": "05/19/2026",
+          "description": "Certificate of Disbursements",
+          "additional": "",
+          "_triggers": [
+            "disburs",
+            "disbursement"
+          ]
+        },
+        {
+          "date": "05/12/2026",
+          "description": "Notice of Limited Appearance",
+          "additional": "Party: Defendant Karagic, Muhamed",
+          "_triggers": [
+            "appear"
+          ]
+        },
+        {
+          "date": "02/14/2025",
+          "description": "Notice of Appearance",
+          "additional": "Party: Defendant Karagic, Muhamed",
+          "_triggers": [
+            "appear",
+            "notice of appearance"
+          ]
+        }
+      ],
+      "result": "DETAIL_OK \u2014 reached case detail page headless"
+    },
+    {
+      "case": "CACE-24-008631",
+      "nodash": "CACE24008631",
+      "stages": {
+        "results": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/Results?TYPE=GetCaseSearchByCase_ECA&INPUT=dHSRi6ovZYJOYR03l1EJzLEjKto5J0CXziVxIPgfR38ISvMrfS2b0iINFeQiP7x%2BkHGKbQvjcRNaXd6yd2WXjdpRdixUuPiAkdplFclFjpkfSQUqUowCcLUiK%2Br3j6XMRjVEUcdHis9xg1buQFsSjRWoBrYTOrk6UiMUM%2FDLmQ0zWN3RH9hDkQQuv38CsbHSi6JQAYvGLXO%2F1%2BRNtugik71KEh1QL5OjoJFgWAeZ8sg8LlxjdRfZXRTYldbxQ4dh3AHn159XcOd%2Fr8KfLk6X6TjwXLE7jHYcgi2121Ts9Ow%3D",
+          "size": 64451,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "viewer_token_len": 152,
+          "link_text": "CACE24008631"
+        },
+        "detail_grid_totals": [],
+        "detail": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/GetCaseDetail?Viewer=wZHLLoED7FtOgBMLqaf4U1O%2BqMIMlQcplXUCfL1cTo55XI9xgtmgB41alUG2RnDtbMh212nRZy7e3G%2BAgZKTvAQvJdx76RkxKq9AX6hV6gkmDb4YRpLxlsShjhO2cWB9rJXEMIEFhPlaqeEvCOxvBQ%3D%3D",
+          "size": 321445,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "docket_discovery": {
+            "grids": [],
+            "tables": 16,
+            "pager_text": [],
+            "docket_words": 0
+          },
+          "docket_rows": 88,
+          "docket_header": [
+            "date",
+            "description",
+            "additional text",
+            "view / pages"
+          ]
+        }
+      },
+      "surplus_hits": [
+        {
+          "date": "05/11/2026",
+          "description": "Order Granting",
+          "additional": "ORDER GRANTING MOTION TO INTERVENE, CLAIM TO SURPLUS FUNDS AND MOTION FOR ORDER DIRECTING CLERK TO D SBURSE SURPLUS",
+          "_triggers": [
+            "claim",
+            "surplus"
+          ]
+        },
+        {
+          "date": "05/05/2026",
+          "description": "Certificate of Title & Certificate of Disbursement Emailed",
+          "additional": "",
+          "_triggers": [
+            "disburs",
+            "disbursement"
+          ]
+        },
+        {
+          "date": "05/05/2026",
+          "description": "Certificate of Title & Certificate of Disbursement Mailed",
+          "additional": "",
+          "_triggers": [
+            "disburs",
+            "disbursement"
+          ]
+        },
+        {
+          "date": "04/28/2026",
+          "description": "Certificate of Disbursements",
+          "additional": "",
+          "_triggers": [
+            "disburs",
+            "disbursement"
+          ]
+        },
+        {
+          "date": "04/14/2026",
+          "description": "Notice of Appearance",
+          "additional": "AMERIFUND EQUITY GROUP",
+          "_triggers": [
+            "appear",
+            "notice of appearance"
+          ]
+        },
+        {
+          "date": "01/28/2026",
+          "description": "Notice of Limited Appearance",
+          "additional": "",
+          "_triggers": [
+            "appear"
+          ]
+        },
+        {
+          "date": "07/31/2025",
+          "description": "Notice of Appearance",
+          "additional": "New Beginnings Trustee, LLC as Assignee for James A. Le Roux",
+          "_triggers": [
+            "appear",
+            "notice of appearance"
+          ]
+        },
+        {
+          "date": "07/30/2025",
+          "description": "Notice of Appearance",
+          "additional": "",
+          "_triggers": [
+            "appear",
+            "notice of appearance"
+          ]
+        },
+        {
+          "date": "11/25/2024",
+          "description": "Oath & Notice of Acceptance of Guardian Ad Litem",
+          "additional": "DINNA M. TOTH, ESQUIRE, Guardian Ad Litem, Attorney Ad Litem and Administer Ad Litem for Defendants, ALL UNKNOWN HEIRS, SPOUSES, DEVISEES, GRANTEES, ASSIGNEES, LIENORS, CREDITORS, TRUSTEES OR CLAIMANT BY AND THROUGH UNDER OR AGAINST GERALDINE E. LE ROUX, DECEASED,",
+          "_triggers": [
+            "claim"
+          ]
+        }
+      ],
+      "result": "DETAIL_OK \u2014 reached case detail page headless"
+    },
+    {
+      "case": "CACE-26-001236",
+      "nodash": "CACE26001236",
+      "stages": {
+        "results": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/Results?TYPE=GetCaseSearchByCase_ECA&INPUT=dHSRi6ovZYJOYR03l1EJzLEjKto5J0CXziVxIPgfR38ISvMrfS2b0iINFeQiP7x%2BkHGKbQvjcRNaXd6yd2WXjdpRdixUuPiAkdplFclFjpkfSQUqUowCcLUiK%2Br3j6XMRjVEUcdHis9xg1buQFsSjRWoBrYTOrk6UiMUM%2FDLmQ0zWN3RH9hDkQQuv38CsbHSi6JQAYvGLXO%2F1%2BRNtugik71KEh1QL5OjNB6rI2z%2FPYxeIZi%2Bnq9svBTYldbxQ4dh3AHn159XcOd%2Fr8KfLk6X6TjwXLE7jHYcgi2121Ts9Ow%3D",
+          "size": 64389,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "viewer_token_len": 152,
+          "link_text": "CACE26001236"
+        },
+        "detail_grid_totals": [],
+        "detail": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/GetCaseDetail?Viewer=wZHLLoED7FtOgBMLqaf4U9UZx5RTtKIXlXUCfL1cTo55XI9xgtmgB41alUG2RnDt6UUa4vMZiOje3G%2BAgZKTvAQvJdx76RkxKq9AX6hV6gkmDb4YRpLxlsShjhO2cWB9rJXEMIEFhPlaqeEvCOxvBQ%3D%3D",
+          "size": 212738,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "docket_discovery": {
+            "grids": [],
+            "tables": 16,
+            "pager_text": [],
+            "docket_words": 0
+          },
+          "docket_rows": 26,
+          "docket_header": [
+            "date",
+            "description",
+            "additional text",
+            "view / pages"
+          ]
+        }
+      },
+      "surplus_hits": [
+        {
+          "date": "03/09/2026",
+          "description": "Notice of Appearance",
+          "additional": "Defendant Asmart Group, LLC",
+          "_triggers": [
+            "appear",
+            "notice of appearance"
+          ]
+        }
+      ],
+      "result": "DETAIL_OK \u2014 reached case detail page headless"
+    },
+    {
+      "case": "CACE-25-002358",
+      "nodash": "CACE25002358",
+      "stages": {
+        "results": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/Results?TYPE=GetCaseSearchByCase_ECA&INPUT=dHSRi6ovZYJOYR03l1EJzLEjKto5J0CXziVxIPgfR38ISvMrfS2b0iINFeQiP7x%2BkHGKbQvjcRNaXd6yd2WXjdpRdixUuPiAkdplFclFjpkfSQUqUowCcLUiK%2Br3j6XMRjVEUcdHis9xg1buQFsSjRWoBrYTOrk6UiMUM%2FDLmQ0zWN3RH9hDkQQuv38CsbHSi6JQAYvGLXO%2F1%2BRNtugik71KEh1QL5OjZF8SAOVjdUk4tyTXq4MijhTYldbxQ4dh3AHn159XcOd%2Fr8KfLk6X6TjwXLE7jHYcgi2121Ts9Ow%3D",
+          "size": 64447,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "viewer_token_len": 152,
+          "link_text": "CACE25002358"
+        },
+        "detail_grid_totals": [],
+        "detail": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/GetCaseDetail?Viewer=wZHLLoED7FtOgBMLqaf4U0Pf3qfJTnCclXUCfL1cTo55XI9xgtmgB41alUG2RnDtuVd5FN023Fre3G%2BAgZKTvAQvJdx76RkxKq9AX6hV6gkmDb4YRpLxlsShjhO2cWB9rJXEMIEFhPlaqeEvCOxvBQ%3D%3D",
+          "size": 249232,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "docket_discovery": {
+            "grids": [],
+            "tables": 16,
+            "pager_text": [],
+            "docket_words": 0
+          },
+          "docket_rows": 51,
+          "docket_header": [
+            "date",
+            "description",
+            "additional text",
+            "view / pages"
+          ]
+        }
+      },
+      "surplus_hits": [
+        {
+          "date": "04/11/2026",
+          "description": "Order Disbursing Funds",
+          "additional": "",
+          "_triggers": [
+            "disburs"
+          ]
+        },
+        {
+          "date": "03/19/2026",
+          "description": "Notice of Appearance",
+          "additional": "as counsel on behalf of Assignee Capital Crafter Inc",
+          "_triggers": [
+            "appear",
+            "notice of appearance"
+          ]
+        },
+        {
+          "date": "03/19/2026",
+          "description": "Motion for Disbursement",
+          "additional": "MOTION TO DISBURSE SURPLUS FUNDS",
+          "_triggers": [
+            "disburs",
+            "disbursement",
+            "surplus"
+          ]
+        },
+        {
+          "date": "01/20/2026",
+          "description": "Order Granting",
+          "additional": "ORDER SUSTAINING PLAINTIFF, TILFORD S CONDOMINIUM ASSOCIATION, INC.'S, AMENDED OBJECTION TO CERTIF CATE OF DISBURSEMENT AND FOR RECOVERABLE ADVANCES AND AMOUNTS OWED",
+          "_triggers": [
+            "disburs",
+            "disbursement"
+          ]
+        },
+        {
+          "date": "11/18/2025",
+          "description": "Certificate of Disbursements",
+          "additional": "",
+          "_triggers": [
+            "disburs",
+            "disbursement"
+          ]
+        }
+      ],
+      "result": "DETAIL_OK \u2014 reached case detail page headless"
+    },
+    {
+      "case": "CACE-21-019437",
+      "nodash": "CACE21019437",
+      "stages": {
+        "results": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/Results?TYPE=GetCaseSearchByCase_ECA&INPUT=dHSRi6ovZYJOYR03l1EJzLEjKto5J0CXziVxIPgfR38ISvMrfS2b0iINFeQiP7x%2BkHGKbQvjcRNaXd6yd2WXjdpRdixUuPiAkdplFclFjpkfSQUqUowCcLUiK%2Br3j6XMRjVEUcdHis9xg1buQFsSjRWoBrYTOrk6UiMUM%2FDLmQ0zWN3RH9hDkQQuv38CsbHSi6JQAYvGLXO%2F1%2BRNtugik71KEh1QL5OjjfcoWCoE6Rg9jD7c4%2B0wSxTYldbxQ4dh3AHn159XcOd%2Fr8KfLk6X6TjwXLE7jHYcgi2121Ts9Ow%3D",
+          "size": 64437,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "viewer_token_len": 152,
+          "link_text": "CACE21019437"
+        },
+        "detail_grid_totals": [],
+        "detail": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/GetCaseDetail?Viewer=wZHLLoED7FtOgBMLqaf4U8ZBIzdrTQVVlXUCfL1cTo55XI9xgtmgB41alUG2RnDtPvE0v%2F2hbOPe3G%2BAgZKTvAQvJdx76RkxKq9AX6hV6gkmDb4YRpLxlsShjhO2cWB9rJXEMIEFhPlaqeEvCOxvBQ%3D%3D",
+          "size": 345656,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "docket_discovery": {
+            "grids": [],
+            "tables": 16,
+            "pager_text": [],
+            "docket_words": 0
+          },
+          "docket_rows": 99,
+          "docket_header": [
+            "date",
+            "description",
+            "additional text",
+            "view / pages"
+          ]
+        }
+      },
+      "surplus_hits": [
+        {
+          "date": "11/12/2025",
+          "description": "Certificate of Disbursements",
+          "additional": "",
+          "_triggers": [
+            "disburs",
+            "disbursement"
+          ]
+        },
+        {
+          "date": "07/18/2025",
+          "description": "Notice of Appearance",
+          "additional": "",
+          "_triggers": [
+            "appear",
+            "notice of appearance"
+          ]
+        },
+        {
+          "date": "06/20/2025",
+          "description": "Certificate of Mailing",
+          "additional": "COPY OF ORDER ON PLAINTIFF'S MOTION TO RESCHEDULE FORECLOSURE SALE AND ORDER ON STIPULATION OF COUNS L Party: Plaintiff The Bank Of New York Mellon",
+          "_triggers": [
+            "stipulation"
+          ]
+        },
+        {
+          "date": "05/16/2025",
+          "description": "Notice of Appearance",
+          "additional": "Party: Plaintiff The Bank Of New York Mellon",
+          "_triggers": [
+            "appear",
+            "notice of appearance"
+          ]
+        },
+        {
+          "date": "05/16/2025",
+          "description": "Stipulation for Substitution of Counsel",
+          "additional": "William Nussbaum, III Florida Bar No. 06647 Party: Plaintiff The Bank Of New York Mellon",
+          "_triggers": [
+            "stipulation"
+          ]
+        },
+        {
+          "date": "02/09/2022",
+          "description": "Stipulation for Substitution of Counsel",
+          "additional": "GARY GASSEL, ESQUIRE Florida Bar No. 500690 Party: Plaintiff The Bank Of New York Mellon",
+          "_triggers": [
+            "stipulation"
+          ]
+        },
+        {
+          "date": "01/26/2022",
+          "description": "Notice of Appearance",
+          "additional": "Party: Plaintiff The Bank Of New York Mellon",
+          "_triggers": [
+            "appear",
+            "notice of appearance"
+          ]
+        },
+        {
+          "date": "11/17/2021",
+          "description": "Notice of Appearance",
+          "additional": "Party: Defendant Fedele, Michael Defendant Fedele, Rae A.",
+          "_triggers": [
+            "appear",
+            "notice of appearance"
+          ]
+        },
+        {
+          "date": "10/26/2021",
+          "description": "Value Claim Form",
+          "additional": "",
+          "_triggers": [
+            "claim"
+          ]
+        }
+      ],
+      "result": "DETAIL_OK \u2014 reached case detail page headless"
+    },
+    {
+      "case": "CACE-25-009885",
+      "nodash": "CACE25009885",
+      "stages": {
+        "results": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/Results?TYPE=GetCaseSearchByCase_ECA&INPUT=dHSRi6ovZYJOYR03l1EJzLEjKto5J0CXziVxIPgfR38ISvMrfS2b0iINFeQiP7x%2BkHGKbQvjcRNaXd6yd2WXjdpRdixUuPiAkdplFclFjpkfSQUqUowCcLUiK%2Br3j6XMRjVEUcdHis9xg1buQFsSjRWoBrYTOrk6UiMUM%2FDLmQ0zWN3RH9hDkQQuv38CsbHSi6JQAYvGLXO%2F1%2BRNtugik71KEh1QL5OjZF8SAOVjdUkI8Ol88zFIkBTYldbxQ4dh3AHn159XcOd%2Fr8KfLk6X6TjwXLE7jHYcgi2121Ts9Ow%3D",
+          "size": 64432,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "viewer_token_len": 152,
+          "link_text": "CACE25009885"
+        },
+        "detail_grid_totals": [],
+        "detail": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/GetCaseDetail?Viewer=wZHLLoED7FtOgBMLqaf4UywbW6Cz7sm5lXUCfL1cTo55XI9xgtmgB41alUG2RnDtHCpmVvMh9jHe3G%2BAgZKTvAQvJdx76RkxKq9AX6hV6gkmDb4YRpLxlsShjhO2cWB9rJXEMIEFhPlaqeEvCOxvBQ%3D%3D",
+          "size": 252724,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "docket_discovery": {
+            "grids": [],
+            "tables": 16,
+            "pager_text": [],
+            "docket_words": 0
+          },
+          "docket_rows": 49,
+          "docket_header": [
+            "date",
+            "description",
+            "additional text",
+            "view / pages"
+          ]
+        }
+      },
+      "surplus_hits": [
+        {
+          "date": "04/22/2026",
+          "description": "Notice of Limited Appearance",
+          "additional": "AND DESIGNATION OF EMAIL ADDRESS /KIMBERLY H. SCHULTZ, ESQ",
+          "_triggers": [
+            "appear"
+          ]
+        },
+        {
+          "date": "10/23/2025",
+          "description": "Notice of Appearance",
+          "additional": "MANOR GROVE VILLAGE ONE, INC.",
+          "_triggers": [
+            "appear",
+            "notice of appearance"
+          ]
+        }
+      ],
+      "result": "DETAIL_OK \u2014 reached case detail page headless"
+    },
+    {
+      "case": "CACE-24-007807",
+      "nodash": "CACE24007807",
+      "stages": {
+        "results": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/Results?TYPE=GetCaseSearchByCase_ECA&INPUT=dHSRi6ovZYJOYR03l1EJzLEjKto5J0CXziVxIPgfR38ISvMrfS2b0iINFeQiP7x%2BkHGKbQvjcRNaXd6yd2WXjdpRdixUuPiAkdplFclFjpkfSQUqUowCcLUiK%2Br3j6XMRjVEUcdHis9xg1buQFsSjRWoBrYTOrk6UiMUM%2FDLmQ0zWN3RH9hDkQQuv38CsbHSi6JQAYvGLXO%2F1%2BRNtugik71KEh1QL5OjoJFgWAeZ8shUZzc%2FA%2FMFNBTYldbxQ4dh3AHn159XcOd%2Fr8KfLk6X6TjwXLE7jHYcgi2121Ts9Ow%3D",
+          "size": 62578,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "viewer_token_len": 152,
+          "link_text": "CACE24007807"
+        },
+        "detail_grid_totals": [],
+        "detail": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/GetCaseDetail?Viewer=wZHLLoED7FtOgBMLqaf4U1Zt8yPxv6aWlXUCfL1cTo55XI9xgtmgB41alUG2RnDtSfLDz6mjueve3G%2BAgZKTvAQvJdx76RkxKq9AX6hV6gkmDb4YRpLxlsShjhO2cWB9rJXEMIEFhPlaqeEvCOxvBQ%3D%3D",
+          "size": 368955,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "docket_discovery": {
+            "grids": [],
+            "tables": 16,
+            "pager_text": [],
+            "docket_words": 0
+          },
+          "docket_rows": 117,
+          "docket_header": [
+            "date",
+            "description",
+            "additional text",
+            "view / pages"
+          ]
+        }
+      },
+      "surplus_hits": [
+        {
+          "date": "06/16/2025",
+          "description": "Appearance as Stand-In Counsel",
+          "additional": "Party: Defendant Reid, Sharone V",
+          "_triggers": [
+            "appear"
+          ]
+        },
+        {
+          "date": "06/11/2025",
+          "description": "Notice of Appearance",
+          "additional": "Party: Defendant Reid, Sharone V",
+          "_triggers": [
+            "appear",
+            "notice of appearance"
+          ]
+        },
+        {
+          "date": "07/05/2024",
+          "description": "Summons Returned Unserved",
+          "additional": "THE UNKNOWN HEIRS, BENEFICIARIES, DEVISEES, GRANTEES, ASSIGNEES, LIENORS, CREDITORS, TRUSTEES AND AL OTHERS WHO MAY CLAIM AN Party: Defendant The Unknown Heirs Beneficiaries Devisees Grantees",
+          "_triggers": [
+            "claim"
+          ]
+        },
+        {
+          "date": "06/07/2024",
+          "description": "eSummons Issuance",
+          "additional": "THE UNKNOWN HEIRS, BENEFICIARIES, DEVISEES, GRANTEES, ASSIGNEES, LIENORS, CREDITORS, TRUSTEES AND AL OTHERS WHO MAY CLAIM AN INTEREST IN THE ESTATE OF JERIMAINE A. REID A/K/A JERIMAINE REID, DECEASED",
+          "_triggers": [
+            "claim"
+          ]
+        },
+        {
+          "date": "06/03/2024",
+          "description": "Value Claim Form",
+          "additional": "",
+          "_triggers": [
+            "claim"
+          ]
+        }
+      ],
+      "result": "DETAIL_OK \u2014 reached case detail page headless"
+    },
+    {
+      "case": "COWE-25-085495",
+      "nodash": "COWE25085495",
+      "stages": {
+        "results": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/Results?TYPE=GetCaseSearchByCase_ECA&INPUT=dHSRi6ovZYJOYR03l1EJzLEjKto5J0CXziVxIPgfR38ISvMrfS2b0iINFeQiP7x%2BkHGKbQvjcRNaXd6yd2WXjdpRdixUuPiAkdplFclFjpkfSQUqUowCcLUiK%2Br3j6XMRjVEUcdHis9xg1buQFsSjRWoBrYTOrk6UiMUM%2FDLmQ0zWN3RH9hDkQQuv38CsbHSi6JQAYvGLXO%2F1%2BRNtugik71KEh1QL5Ojve1O4IoB8mUv6FIUTzwBvhTYldbxQ4dh3AHn159XcOd%2Fr8KfLk6X6TjwXLE7jHYcgi2121Ts9Ow%3D",
+          "size": 64462,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "viewer_token_len": 152,
+          "link_text": "COWE25085495"
+        },
+        "detail_grid_totals": [],
+        "detail": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/GetCaseDetail?Viewer=wZHLLoED7FtOgBMLqaf4U4dHb6atIDwKlXUCfL1cTo55XI9xgtmgB%2BMMT32sMRRwiXUBI90NPqne3G%2BAgZKTvAQvJdx76RkxKq9AX6hV6gkmDb4YRpLxlsShjhO2cWB9rJXEMIEFhPlaqeEvCOxvBQ%3D%3D",
+          "size": 248899,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "docket_discovery": {
+            "grids": [],
+            "tables": 16,
+            "pager_text": [],
+            "docket_words": 0
+          },
+          "docket_rows": 46,
+          "docket_header": [
+            "date",
+            "description",
+            "additional text",
+            "view / pages"
+          ]
+        }
+      },
+      "surplus_hits": [
+        {
+          "date": "05/01/2026",
+          "description": "Certificate of Title & Certificate of Disbursement Emailed",
+          "additional": "",
+          "_triggers": [
+            "disburs",
+            "disbursement"
+          ]
+        },
+        {
+          "date": "04/28/2026",
+          "description": "Certificate of Disbursements",
+          "additional": "",
+          "_triggers": [
+            "disburs",
+            "disbursement"
+          ]
+        },
+        {
+          "date": "04/01/2026",
+          "description": "Notice of Appearance",
+          "additional": "Get Liquid Funding, LLC",
+          "_triggers": [
+            "appear",
+            "notice of appearance"
+          ]
+        }
+      ],
+      "result": "DETAIL_OK \u2014 reached case detail page headless"
+    },
+    {
+      "case": "CONO-25-048381",
+      "nodash": "CONO25048381",
+      "stages": {
+        "results": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/Results?TYPE=GetCaseSearchByCase_ECA&INPUT=dHSRi6ovZYJOYR03l1EJzLEjKto5J0CXziVxIPgfR38ISvMrfS2b0iINFeQiP7x%2BkHGKbQvjcRNaXd6yd2WXjdpRdixUuPiAkdplFclFjpkfSQUqUowCcLUiK%2Br3j6XMRjVEUcdHis9xg1buQFsSjRWoBrYTOrk6UiMUM%2FDLmQ0zWN3RH9hDkQQuv38CsbHSi6JQAYvGLXO%2F1%2BRNtugik71KEh1QL5OjAEsyGt%2FYhfzMZv2f9fUKOhTYldbxQ4dh3AHn159XcOd%2Fr8KfLk6X6TjwXLE7jHYcgi2121Ts9Ow%3D",
+          "size": 64448,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "viewer_token_len": 152,
+          "link_text": "CONO25048381"
+        },
+        "detail_grid_totals": [],
+        "detail": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/GetCaseDetail?Viewer=wZHLLoED7FtOgBMLqaf4U3mPtiVMc7gwlXUCfL1cTo55XI9xgtmgB%2FvC%2Fqan7mS1Kq1dalFDagTe3G%2BAgZKTvAQvJdx76RkxKq9AX6hV6gkmDb4YRpLxlsShjhO2cWB9rJXEMIEFhPlaqeEvCOxvBQ%3D%3D",
+          "size": 233650,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "docket_discovery": {
+            "grids": [],
+            "tables": 16,
+            "pager_text": [],
+            "docket_words": 0
+          },
+          "docket_rows": 42,
+          "docket_header": [
+            "date",
+            "description",
+            "additional text",
+            "view / pages"
+          ]
+        }
+      },
+      "surplus_hits": [
+        {
+          "date": "05/19/2026",
+          "description": "Order Granting",
+          "additional": "ORDER ON MOTION FOR DISBURSEMENT OF SURPLUS PROCEEDS TO PLAINTIFF, THE LAKES OF INVERRARY CONDOMINIU S, INC.",
+          "_triggers": [
+            "disburs",
+            "disbursement",
+            "surplus"
+          ]
+        },
+        {
+          "date": "05/19/2026",
+          "description": "Order Disbursing Funds",
+          "additional": "to Plaintiff (surplus proceeds)",
+          "_triggers": [
+            "disburs",
+            "surplus"
+          ]
+        },
+        {
+          "date": "05/12/2026",
+          "description": "Motion for Disbursement",
+          "additional": "Party: Plaintiff The Lakes of Inverrary Condominiums Inc",
+          "_triggers": [
+            "disburs",
+            "disbursement"
+          ]
+        },
+        {
+          "date": "05/06/2026",
+          "description": "Certificate of Title & Certificate of Disbursement Emailed",
+          "additional": "",
+          "_triggers": [
+            "disburs",
+            "disbursement"
+          ]
+        },
+        {
+          "date": "05/05/2026",
+          "description": "Certificate of Disbursements",
+          "additional": "",
+          "_triggers": [
+            "disburs",
+            "disbursement"
+          ]
+        },
+        {
+          "date": "03/13/2026",
+          "description": "Notice of Appearance",
+          "additional": "HOME DEFENSE ALSO KNOWN AS EVO RECOVERY CONSULTATION CORP Party: Defendant Zoubaa, Adil",
+          "_triggers": [
+            "appear",
+            "notice of appearance"
+          ]
+        }
+      ],
+      "result": "DETAIL_OK \u2014 reached case detail page headless"
+    },
+    {
+      "case": "CACE-25-003189",
+      "nodash": "CACE25003189",
+      "stages": {
+        "results": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/Results?TYPE=GetCaseSearchByCase_ECA&INPUT=dHSRi6ovZYJOYR03l1EJzLEjKto5J0CXziVxIPgfR38ISvMrfS2b0iINFeQiP7x%2BkHGKbQvjcRNaXd6yd2WXjdpRdixUuPiAkdplFclFjpkfSQUqUowCcLUiK%2Br3j6XMRjVEUcdHis9xg1buQFsSjRWoBrYTOrk6UiMUM%2FDLmQ0zWN3RH9hDkQQuv38CsbHSi6JQAYvGLXO%2F1%2BRNtugik71KEh1QL5OjZF8SAOVjdUlzclIPJ%2BWX3RTYldbxQ4dh3AHn159XcOd%2Fr8KfLk6X6TjwXLE7jHYcgi2121Ts9Ow%3D",
+          "size": 64431,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "viewer_token_len": 152,
+          "link_text": "CACE25003189"
+        },
+        "detail_grid_totals": [],
+        "detail": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/GetCaseDetail?Viewer=wZHLLoED7FtOgBMLqaf4U5MQElucNhc%2FlXUCfL1cTo55XI9xgtmgB41alUG2RnDtVuQDGlyaoVfe3G%2BAgZKTvAQvJdx76RkxKq9AX6hV6gkmDb4YRpLxlsShjhO2cWB9rJXEMIEFhPlaqeEvCOxvBQ%3D%3D",
+          "size": 344279,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "docket_discovery": {
+            "grids": [],
+            "tables": 16,
+            "pager_text": [],
+            "docket_words": 0
+          },
+          "docket_rows": 94,
+          "docket_header": [
+            "date",
+            "description",
+            "additional text",
+            "view / pages"
+          ]
+        }
+      },
+      "surplus_hits": [
+        {
+          "date": "05/05/2026",
+          "description": "Certificate of Disbursements",
+          "additional": "",
+          "_triggers": [
+            "disburs",
+            "disbursement"
+          ]
+        },
+        {
+          "date": "10/03/2025",
+          "description": "Motion for Default & Default",
+          "additional": "Party: Defendant ALL UNKNOWN HEIRS, SPOUSES DEVISEES, GRANTEES, ASSIGNEES, LIENORS, CREDITORS, TRUSTEES OR CLAIMANTS BY THROUGH UNDER OR AGAINST THE ESTATE OF LORNA I. SKERRY Defendant SKERRY, DEBORAH Defendant SKERRY, JOAN Defendant SKERRY, MIKE Defendant SKERRY, KEVIN",
+          "_triggers": [
+            "claim"
+          ]
+        }
+      ],
+      "result": "DETAIL_OK \u2014 reached case detail page headless"
+    },
+    {
+      "case": "CACE-25-005168",
+      "nodash": "CACE25005168",
+      "stages": {
+        "results": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/Results?TYPE=GetCaseSearchByCase_ECA&INPUT=dHSRi6ovZYJOYR03l1EJzLEjKto5J0CXziVxIPgfR38ISvMrfS2b0iINFeQiP7x%2BkHGKbQvjcRNaXd6yd2WXjdpRdixUuPiAkdplFclFjpkfSQUqUowCcLUiK%2Br3j6XMRjVEUcdHis9xg1buQFsSjRWoBrYTOrk6UiMUM%2FDLmQ0zWN3RH9hDkQQuv38CsbHSi6JQAYvGLXO%2F1%2BRNtugik71KEh1QL5OjZF8SAOVjdUmwW1i4t9fr9BTYldbxQ4dh3AHn159XcOd%2Fr8KfLk6X6TjwXLE7jHYcgi2121Ts9Ow%3D",
+          "size": 64424,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "viewer_token_len": 152,
+          "link_text": "CACE25005168"
+        },
+        "detail_grid_totals": [],
+        "detail": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/GetCaseDetail?Viewer=wZHLLoED7FtOgBMLqaf4U3mxrTG5xaSelXUCfL1cTo55XI9xgtmgB41alUG2RnDtcatKeyJCXTXe3G%2BAgZKTvAQvJdx76RkxKq9AX6hV6gkmDb4YRpLxlsShjhO2cWB9rJXEMIEFhPlaqeEvCOxvBQ%3D%3D",
+          "size": 230593,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "docket_discovery": {
+            "grids": [],
+            "tables": 16,
+            "pager_text": [],
+            "docket_words": 0
+          },
+          "docket_rows": 40,
+          "docket_header": [
+            "date",
+            "description",
+            "additional text",
+            "view / pages"
+          ]
+        }
+      },
+      "surplus_hits": [
+        {
+          "date": "06/07/2026",
+          "description": "Order Disbursing Funds",
+          "additional": "UNOPPOSED ORDER GRANTING DEFENDANT'S. ANDRES GENTLES A/K/A ANDRE GENTLES A/K/A ANDRE S GENTLES, ASS GNEE'S MOTION TO INTERVENE AND TO DISBURSE SURPLUS FUNDS",
+          "_triggers": [
+            "disburs",
+            "surplus"
+          ]
+        },
+        {
+          "date": "05/20/2026",
+          "description": "Motion to Intervene",
+          "additional": "DEFENDANT'S. ANDRES GENTLES A/K/A ANDRE GENTLES A/K/A ANDRE S GENTLES, ASSIGNEE'S MOTION TO INTERVEN AND TO DISBURSE SURPLUS FUNDS",
+          "_triggers": [
+            "disburs",
+            "surplus"
+          ]
+        },
+        {
+          "date": "05/12/2026",
+          "description": "Certificate of Disbursements",
+          "additional": "",
+          "_triggers": [
+            "disburs",
+            "disbursement"
+          ]
+        },
+        {
+          "date": "04/07/2026",
+          "description": "Notice of Appearance",
+          "additional": "GET LIQUID FUNDING, LLC",
+          "_triggers": [
+            "appear",
+            "notice of appearance"
+          ]
+        },
+        {
+          "date": "04/09/2025",
+          "description": "Value Claim Form",
+          "additional": "",
+          "_triggers": [
+            "claim"
+          ]
+        }
+      ],
+      "result": "DETAIL_OK \u2014 reached case detail page headless"
+    },
+    {
+      "case": "CACE-23-019364",
+      "nodash": "CACE23019364",
+      "stages": {
+        "results": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/Results?TYPE=GetCaseSearchByCase_ECA&INPUT=dHSRi6ovZYJOYR03l1EJzLEjKto5J0CXziVxIPgfR38ISvMrfS2b0iINFeQiP7x%2BkHGKbQvjcRNaXd6yd2WXjdpRdixUuPiAkdplFclFjpkfSQUqUowCcLUiK%2Br3j6XMRjVEUcdHis9xg1buQFsSjRWoBrYTOrk6UiMUM%2FDLmQ0zWN3RH9hDkQQuv38CsbHSi6JQAYvGLXO%2F1%2BRNtugik71KEh1QL5OjJPyyqgAGym0zUURJepecdhTYldbxQ4dh3AHn159XcOd%2Fr8KfLk6X6TjwXLE7jHYcgi2121Ts9Ow%3D",
+          "size": 64460,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "viewer_token_len": 152,
+          "link_text": "CACE23019364"
+        },
+        "detail_grid_totals": [],
+        "detail": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/GetCaseDetail?Viewer=wZHLLoED7FtOgBMLqaf4U%2Fua2c%2F2M9gElXUCfL1cTo55XI9xgtmgB41alUG2RnDt6E%2BhNJ1r71ve3G%2BAgZKTvAQvJdx76RkxKq9AX6hV6gkmDb4YRpLxlsShjhO2cWB9rJXEMIEFhPlaqeEvCOxvBQ%3D%3D",
+          "size": 295432,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "docket_discovery": {
+            "grids": [],
+            "tables": 16,
+            "pager_text": [],
+            "docket_words": 0
+          },
+          "docket_rows": 71,
+          "docket_header": [
+            "date",
+            "description",
+            "additional text",
+            "view / pages"
+          ]
+        }
+      },
+      "surplus_hits": [
+        {
+          "date": "12/02/2025",
+          "description": "Notice",
+          "additional": "SERVING CERTIFICATE OF TITLE/DISBURSEMENT Party: Plaintiff Deutsche Bank National Trust Company",
+          "_triggers": [
+            "disburs",
+            "disbursement"
+          ]
+        },
+        {
+          "date": "11/18/2025",
+          "description": "Certificate of Disbursements",
+          "additional": "",
+          "_triggers": [
+            "disburs",
+            "disbursement"
+          ]
+        },
+        {
+          "date": "05/14/2025",
+          "description": "Joint Stipulation",
+          "additional": "AND CONSENT TO IN REM FINAL JUDGMENT",
+          "_triggers": [
+            "stipulation"
+          ]
+        },
+        {
+          "date": "10/19/2023",
+          "description": "Motion for Extension of Time",
+          "additional": "MOTION FOR EXTENSION OF TIME TO RESPOND TO COMPLAINT Party: Defendant Mcauley, Dalanda Defendant Unknown Spouse Of Dalanda Mcauley Defendant Any and All Unknown Parties claiming by, through, under and against the named individual Defendant(s) who are not known to be dead or alive, whether Unknown Parites may claim an interest as Spouses, Heirs, Devisees, Grantees, or other claimants, Defendant(s)",
+          "_triggers": [
+            "claim"
+          ]
+        },
+        {
+          "date": "10/06/2023",
+          "description": "Value Claim Form",
+          "additional": "",
+          "_triggers": [
+            "claim"
+          ]
+        }
+      ],
+      "result": "DETAIL_OK \u2014 reached case detail page headless"
+    },
+    {
+      "case": "CACE-25-004451",
+      "nodash": "CACE25004451",
+      "stages": {
+        "results": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/Results?TYPE=GetCaseSearchByCase_ECA&INPUT=dHSRi6ovZYJOYR03l1EJzLEjKto5J0CXziVxIPgfR38ISvMrfS2b0iINFeQiP7x%2BkHGKbQvjcRNaXd6yd2WXjdpRdixUuPiAkdplFclFjpkfSQUqUowCcLUiK%2Br3j6XMRjVEUcdHis9xg1buQFsSjRWoBrYTOrk6UiMUM%2FDLmQ0zWN3RH9hDkQQuv38CsbHSi6JQAYvGLXO%2F1%2BRNtugik71KEh1QL5OjZF8SAOVjdUnGOcWqgMbscRTYldbxQ4dh3AHn159XcOd%2Fr8KfLk6X6TjwXLE7jHYcgi2121Ts9Ow%3D",
+          "size": 64471,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "viewer_token_len": 152,
+          "link_text": "CACE25004451"
+        },
+        "detail_grid_totals": [],
+        "detail": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/GetCaseDetail?Viewer=wZHLLoED7FtOgBMLqaf4U0Mbi2sm4XnvlXUCfL1cTo55XI9xgtmgB41alUG2RnDtgo1GFl8jeG%2Fe3G%2BAgZKTvAQvJdx76RkxKq9AX6hV6gkmDb4YRpLxlsShjhO2cWB9rJXEMIEFhPlaqeEvCOxvBQ%3D%3D",
+          "size": 232159,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "docket_discovery": {
+            "grids": [],
+            "tables": 16,
+            "pager_text": [],
+            "docket_words": 0
+          },
+          "docket_rows": 37,
+          "docket_header": [
+            "date",
+            "description",
+            "additional text",
+            "view / pages"
+          ]
+        }
+      },
+      "surplus_hits": [
+        {
+          "date": "02/13/2026",
+          "description": "Emergency Motion",
+          "additional": "For Hearing To Claim For The Surplus Retained By Clerk Of $5,873.68 (3rd Party Bidder Romel Hilaire)",
+          "_triggers": [
+            "claim",
+            "surplus"
+          ]
+        },
+        {
+          "date": "11/18/2025",
+          "description": "Certificate of Disbursements",
+          "additional": "",
+          "_triggers": [
+            "disburs",
+            "disbursement"
+          ]
+        }
+      ],
+      "result": "DETAIL_OK \u2014 reached case detail page headless"
+    },
+    {
+      "case": "COCE-25-009070",
+      "nodash": "COCE25009070",
+      "stages": {
+        "results": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/Results?TYPE=GetCaseSearchByCase_ECA&INPUT=dHSRi6ovZYJOYR03l1EJzLEjKto5J0CXziVxIPgfR38ISvMrfS2b0iINFeQiP7x%2BkHGKbQvjcRNaXd6yd2WXjdpRdixUuPiAkdplFclFjpkfSQUqUowCcLUiK%2Br3j6XMRjVEUcdHis9xg1buQFsSjRWoBrYTOrk6UiMUM%2FDLmQ0zWN3RH9hDkQQuv38CsbHSi6JQAYvGLXO%2F1%2BRNtugik71KEh1QL5Oj5t6AfTfhgkdiwma3qyuKvhTYldbxQ4dh3AHn159XcOd%2Fr8KfLk6X6TjwXLE7jHYcgi2121Ts9Ow%3D",
+          "size": 64477,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "viewer_token_len": 152,
+          "link_text": "COCE25009070"
+        },
+        "detail_grid_totals": [],
+        "detail": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/GetCaseDetail?Viewer=wZHLLoED7FtOgBMLqaf4U%2FeZpLEEK6eIlXUCfL1cTo55XI9xgtmgByF46P%2BDnpoIkWzHnseJ92Le3G%2BAgZKTvAQvJdx76RkxKq9AX6hV6gkmDb4YRpLxlsShjhO2cWB9rJXEMIEFhPlY35s0guCY0A%3D%3D",
+          "size": 304487,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "docket_discovery": {
+            "grids": [],
+            "tables": 16,
+            "pager_text": [],
+            "docket_words": 0
+          },
+          "docket_rows": 72,
+          "docket_header": [
+            "date",
+            "description",
+            "additional text",
+            "view / pages"
+          ]
+        }
+      },
+      "surplus_hits": [
+        {
+          "date": "05/04/2026",
+          "description": "Certificate of Title & Certificate of Disbursement Emailed",
+          "additional": "",
+          "_triggers": [
+            "disburs",
+            "disbursement"
+          ]
+        },
+        {
+          "date": "04/28/2026",
+          "description": "Certificate of Disbursements",
+          "additional": "",
+          "_triggers": [
+            "disburs",
+            "disbursement"
+          ]
+        }
+      ],
+      "result": "DETAIL_OK \u2014 reached case detail page headless"
+    },
+    {
+      "case": "COWE-24-061398",
+      "nodash": "COWE24061398",
+      "stages": {
+        "results": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/Results?TYPE=GetCaseSearchByCase_ECA&INPUT=dHSRi6ovZYJOYR03l1EJzLEjKto5J0CXziVxIPgfR38ISvMrfS2b0iINFeQiP7x%2BkHGKbQvjcRNaXd6yd2WXjdpRdixUuPiAkdplFclFjpkfSQUqUowCcLUiK%2Br3j6XMRjVEUcdHis9xg1buQFsSjRWoBrYTOrk6UiMUM%2FDLmQ0zWN3RH9hDkQQuv38CsbHSi6JQAYvGLXO%2F1%2BRNtugik71KEh1QL5OjnJ3zlrB4xK5qOomz24BLiBTYldbxQ4dh3AHn159XcOd%2Fr8KfLk6X6TjwXLE7jHYcgi2121Ts9Ow%3D",
+          "size": 64514,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "viewer_token_len": 152,
+          "link_text": "COWE24061398"
+        },
+        "detail_grid_totals": [],
+        "detail": {
+          "final_url": "https://www.browardclerk.org/Web2/CaseSearchECA/GetCaseDetail?Viewer=wZHLLoED7FtOgBMLqaf4U8IZ1FLy7tpJlXUCfL1cTo55XI9xgtmgB%2BMMT32sMRRw8iTle9Uvyene3G%2BAgZKTvAQvJdx76RkxKq9AX6hV6gkmDb4YRpLxlsShjhO2cWB9rJXEMIEFhPlaqeEvCOxvBQ%3D%3D",
+          "size": 249401,
+          "captcha": {
+            "url_has_CAPTCHA": false,
+            "recaptcha_iframe": false,
+            "challenge_text": false,
+            "aspx_error": false
+          },
+          "case_present": true,
+          "docket_discovery": {
+            "grids": [],
+            "tables": 16,
+            "pager_text": [],
+            "docket_words": 0
+          },
+          "docket_rows": 46,
+          "docket_header": [
+            "date",
+            "description",
+            "additional text",
+            "view / pages"
+          ]
+        }
+      },
+      "surplus_hits": [
+        {
+          "date": "11/07/2025",
+          "description": "Certificate of Disbursements",
+          "additional": "",
+          "_triggers": [
+            "disburs",
+            "disbursement"
+          ]
+        },
+        {
+          "date": "07/23/2025",
+          "description": "Joint Stipulation",
+          "additional": "FOR ENTRY OF CONSENT FINAL JUDGMENT- Linda Ann Panariello a/k/a Linda Ann Sherman",
+          "_triggers": [
+            "stipulation"
+          ]
+        },
+        {
+          "date": "11/15/2024",
+          "description": "Notice of Appearance",
+          "additional": "AND DESIGNATION OF EMAIL ADDRESS Party: Defendant THE ESTATE OF ARTHUR I. SHERMAN",
+          "_triggers": [
+            "appear",
+            "notice of appearance"
+          ]
+        }
+      ],
+      "result": "DETAIL_OK \u2014 reached case detail page headless"
+    }
+  ]
+}

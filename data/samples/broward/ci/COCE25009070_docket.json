@@ -1,0 +1,372 @@
+{
+  "case": "COCE-25-009070",
+  "header": [
+    "date",
+    "description",
+    "additional text",
+    "view / pages"
+  ],
+  "count": 72,
+  "rows": [
+    {
+      "date": "05/04/2026",
+      "description": "Certificate of Title & Certificate of Disbursement Emailed",
+      "additional": ""
+    },
+    {
+      "date": "04/28/2026",
+      "description": "Certificate of Disbursements",
+      "additional": ""
+    },
+    {
+      "date": "04/28/2026",
+      "description": "Certificate of Title",
+      "additional": ""
+    },
+    {
+      "date": "04/22/2026",
+      "description": "Certificate of Sale & Proof of Publication Emailed",
+      "additional": ""
+    },
+    {
+      "date": "04/20/2026",
+      "description": "Certificate of Sale",
+      "additional": "Certificate of Sale"
+    },
+    {
+      "date": "04/17/2026",
+      "description": "Bid Sheet",
+      "additional": ""
+    },
+    {
+      "date": "03/16/2026",
+      "description": "Proof of Publication",
+      "additional": ""
+    },
+    {
+      "date": "03/02/2026",
+      "description": "Notice of Sale",
+      "additional": "APRIL 17, 2026 @ 10:00am"
+    },
+    {
+      "date": "02/26/2026",
+      "description": "Non-Military Affidavit",
+      "additional": ""
+    },
+    {
+      "date": "02/04/2026",
+      "description": "Non-Military Affidavit",
+      "additional": ""
+    },
+    {
+      "date": "01/23/2026",
+      "description": "Notice of Hearing",
+      "additional": ""
+    },
+    {
+      "date": "01/23/2026",
+      "description": "Motion for Default Jgmt",
+      "additional": "AND ATTORNEY'S FEES Party: Plaintiff BREAKERS OF FT. LAUDERDALE CONDOMINIUM ASSOCIATION"
+    },
+    {
+      "date": "12/17/2025",
+      "description": "Motion for Default",
+      "additional": ""
+    },
+    {
+      "date": "12/17/2025",
+      "description": "Notice of Hearing",
+      "additional": ""
+    },
+    {
+      "date": "12/16/2025",
+      "description": "Letter to Judge",
+      "additional": "Party: Plaintiff BREAKERS OF FT. LAUDERDALE CONDOMINIUM ASSOCIATION"
+    },
+    {
+      "date": "12/08/2025",
+      "description": "Notice of Hearing",
+      "additional": ""
+    },
+    {
+      "date": "12/08/2025",
+      "description": "Motion for Default",
+      "additional": ""
+    },
+    {
+      "date": "12/05/2025",
+      "description": "Affidavit of Service",
+      "additional": "Party: Plaintiff BREAKERS OF FT. LAUDERDALE CONDOMINIUM ASSOCIATION"
+    },
+    {
+      "date": "10/20/2025",
+      "description": "Amended Motion",
+      "additional": "FOR DEFAULT JUDGMENT AND ATTORNEY'S FEES Party: Plaintiff BREAKERS OF FT. LAUDERDALE CONDOMINIUM ASSOCIATION"
+    },
+    {
+      "date": "10/20/2025",
+      "description": "Notice of Hearing",
+      "additional": ""
+    },
+    {
+      "date": "10/03/2025",
+      "description": "Notice of Hearing",
+      "additional": ""
+    },
+    {
+      "date": "10/01/2025",
+      "description": "Order Granting",
+      "additional": "ORDER TO REOPEN CASE"
+    },
+    {
+      "date": "10/01/2025",
+      "description": "Motion to Reinstate",
+      "additional": "MOTION TO REOPEN Party: Plaintiff BREAKERS OF FT. LAUDERDALE CONDOMINIUM ASSOCIATION"
+    },
+    {
+      "date": "08/21/2025",
+      "description": "Mediation Report",
+      "additional": ""
+    },
+    {
+      "date": "08/21/2025",
+      "description": "Notice of Hearing",
+      "additional": ""
+    },
+    {
+      "date": "08/15/2025",
+      "description": "Motion for Default Jgmt",
+      "additional": "Party: Plaintiff BREAKERS OF FT. LAUDERDALE CONDOMINIUM ASSOCIATION"
+    },
+    {
+      "date": "08/15/2025",
+      "description": "Affidavit of Costs",
+      "additional": "AND EXPENSES Party: Plaintiff BREAKERS OF FT. LAUDERDALE CONDOMINIUM ASSOCIATION"
+    },
+    {
+      "date": "08/15/2025",
+      "description": "Motion for Summary Final Judgment",
+      "additional": "AND ATTORNEY'S FEES Party: Plaintiff BREAKERS OF FT. LAUDERDALE CONDOMINIUM ASSOCIATION"
+    },
+    {
+      "date": "08/13/2025",
+      "description": "Mediation Report",
+      "additional": ""
+    },
+    {
+      "date": "08/08/2025",
+      "description": "Notice of Mediation",
+      "additional": ""
+    },
+    {
+      "date": "07/29/2025",
+      "description": "Affidavit of Diligent Search",
+      "additional": ""
+    },
+    {
+      "date": "07/10/2025",
+      "description": "Order Setting Case Management Conference",
+      "additional": ", AUGUST 14, 2025 at 9:30 a.m."
+    },
+    {
+      "date": "07/10/2025",
+      "description": "Order Referring Case to Mediation",
+      "additional": ""
+    },
+    {
+      "date": "07/09/2025",
+      "description": "Affidavit of Indebtedness",
+      "additional": ""
+    },
+    {
+      "date": "06/25/2025",
+      "description": "Notice of Hearing",
+      "additional": ""
+    },
+    {
+      "date": "06/25/2025",
+      "description": "Affidavit",
+      "additional": "OF ATTORNEY'S FEES Party: Plaintiff BREAKERS OF FT. LAUDERDALE CONDOMINIUM ASSOCIATION"
+    },
+    {
+      "date": "06/25/2025",
+      "description": "Motion for Default Jgmt",
+      "additional": "MOTION FOR DEFAULT JUDGMENT AND ATTORNEY'S FEES"
+    },
+    {
+      "date": "06/25/2025",
+      "description": "Affidavit of Costs",
+      "additional": ""
+    },
+    {
+      "date": "06/25/2025",
+      "description": "Affidavit of Attorney Fees",
+      "additional": ""
+    },
+    {
+      "date": "06/25/2025",
+      "description": "Affidavit for Service by Publication",
+      "additional": ""
+    },
+    {
+      "date": "06/25/2025",
+      "description": "Affidavit of Diligent Search",
+      "additional": ""
+    },
+    {
+      "date": "06/12/2025",
+      "description": "Order Setting Case Management Conference",
+      "additional": ", JULY 11, 2025 at 10:45 a.m."
+    },
+    {
+      "date": "05/27/2025",
+      "description": "Proof of Publication",
+      "additional": ""
+    },
+    {
+      "date": "05/06/2025",
+      "description": "Notice of Action",
+      "additional": "Party: Plaintiff BREAKERS OF FT. LAUDERDALE CONDOMINIUM ASSOCIATION"
+    },
+    {
+      "date": "04/14/2025",
+      "description": "Order Setting Case Management Conference",
+      "additional": "JUNE 10,2025 at 11:15 a.m"
+    },
+    {
+      "date": "03/19/2025",
+      "description": "Pleadings Sent Up To Judge",
+      "additional": "Defendant's Letter to Judge emailed to judge"
+    },
+    {
+      "date": "03/19/2025",
+      "description": "Order Setting Case Management Conference",
+      "additional": ", APRIL 11, 2025 at 11:00 a.m."
+    },
+    {
+      "date": "03/18/2025",
+      "description": "Letter to Judge",
+      "additional": "Party: Defendant Harvey, Wayne"
+    },
+    {
+      "date": "02/12/2025",
+      "description": "eSummons Issuance",
+      "additional": "Party: Defendant Lovegreen, William L."
+    },
+    {
+      "date": "02/12/2025",
+      "description": "eSummons Issuance",
+      "additional": "Party: Defendant Harvey, Wayne"
+    },
+    {
+      "date": "02/12/2025",
+      "description": "eSummons Issuance",
+      "additional": "Party: Defendant USB TIMESHARES, LLC"
+    },
+    {
+      "date": "02/12/2025",
+      "description": "eSummons Issuance",
+      "additional": "Party: Defendant Houser, Richard"
+    },
+    {
+      "date": "02/12/2025",
+      "description": "eSummons Issuance",
+      "additional": "Party: Defendant Ruiz, Raquel"
+    },
+    {
+      "date": "02/12/2025",
+      "description": "eSummons Issuance",
+      "additional": "Party: Defendant Pitts, Peter"
+    },
+    {
+      "date": "02/12/2025",
+      "description": "eSummons Issuance",
+      "additional": "Party: Defendant Alvarez, Pedro M."
+    },
+    {
+      "date": "02/12/2025",
+      "description": "eSummons Issuance",
+      "additional": "Party: Defendant Adams, Michelle"
+    },
+    {
+      "date": "02/12/2025",
+      "description": "eSummons Issuance",
+      "additional": "Party: Defendant Johnson, Marian K."
+    },
+    {
+      "date": "02/12/2025",
+      "description": "eSummons Issuance",
+      "additional": "Party: Defendant Pitts, Lupe"
+    },
+    {
+      "date": "02/12/2025",
+      "description": "eSummons Issuance",
+      "additional": "Party: Defendant Harvey, Jacqueline"
+    },
+    {
+      "date": "02/12/2025",
+      "description": "eSummons Issuance",
+      "additional": "Party: Defendant Murillo, Filomeno"
+    },
+    {
+      "date": "02/12/2025",
+      "description": "eSummons Issuance",
+      "additional": "Party: Defendant EAST OCEAN DEVELOPMENT CORP."
+    },
+    {
+      "date": "02/12/2025",
+      "description": "eSummons Issuance",
+      "additional": "Party: Defendant Lee, David"
+    },
+    {
+      "date": "02/12/2025",
+      "description": "eSummons Issuance",
+      "additional": "Party: Defendant Vogt, Christopher"
+    },
+    {
+      "date": "02/12/2025",
+      "description": "eSummons Issuance",
+      "additional": "Party: Defendant Gutierrez, Carmen"
+    },
+    {
+      "date": "02/12/2025",
+      "description": "eSummons Issuance",
+      "additional": "Party: Defendant CAPITAL ONE BANK, U.S.A. (NA)"
+    },
+    {
+      "date": "02/12/2025",
+      "description": "eSummons Issuance",
+      "additional": "Party: Defendant Lovegreen, Ann M."
+    },
+    {
+      "date": "02/12/2025",
+      "description": "eSummons Issuance",
+      "additional": "Party: Defendant Letran, Amali V."
+    },
+    {
+      "date": "02/09/2025",
+      "description": "Notice of Lis Pendens",
+      "additional": "Fld & Rec"
+    },
+    {
+      "date": "02/09/2025",
+      "description": "Per AOSC20-23 Amd12, Case is determined Streamlined",
+      "additional": ""
+    },
+    {
+      "date": "02/09/2025",
+      "description": "Civil Cover Sheet",
+      "additional": "Amount: $30,001.00"
+    },
+    {
+      "date": "02/09/2025",
+      "description": "Complaint (eFiled)",
+      "additional": ""
+    },
+    {
+      "date": "04/17/2026",
+      "description": "Foreclosure Sale",
+      "additional": "Hearing Time: 10:00 AM Judicial Officer(s):Not Applicable, , Location: On-line @ www.broward.realforeclose.com"
+    }
+  ]
+}

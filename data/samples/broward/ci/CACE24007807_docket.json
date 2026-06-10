@@ -1,0 +1,597 @@
+{
+  "case": "CACE-24-007807",
+  "header": [
+    "date",
+    "description",
+    "additional text",
+    "view / pages"
+  ],
+  "count": 117,
+  "rows": [
+    {
+      "date": "05/28/2026",
+      "description": "Amended Notice of Hearing",
+      "additional": ""
+    },
+    {
+      "date": "05/20/2026",
+      "description": "Response to Motion",
+      "additional": ""
+    },
+    {
+      "date": "05/20/2026",
+      "description": "Notice of Filing",
+      "additional": ""
+    },
+    {
+      "date": "05/12/2026",
+      "description": "Notice of Hearing",
+      "additional": ""
+    },
+    {
+      "date": "05/08/2026",
+      "description": "Certificate of Service",
+      "additional": ""
+    },
+    {
+      "date": "05/06/2026",
+      "description": "Motion to Stay",
+      "additional": ""
+    },
+    {
+      "date": "05/06/2026",
+      "description": "Motion to Stay",
+      "additional": "DEFENDANT'S REPLY IN OPPOSITION AND MOTION TO VACATE FORECLOSURE SALE"
+    },
+    {
+      "date": "05/04/2026",
+      "description": "Response",
+      "additional": "PLAINTIFF'S RESPONSE TO DEFENDANT SHARONE REID'S VERIFIED OBJECTION TO FORECLOSURE SALE Party: Plaintiff Deutsche Bank Trust Company Americas"
+    },
+    {
+      "date": "05/01/2026",
+      "description": "Certificate of Sale & Proof of Publication Emailed",
+      "additional": ""
+    },
+    {
+      "date": "05/01/2026",
+      "description": "Objection to Sale",
+      "additional": ""
+    },
+    {
+      "date": "05/01/2026",
+      "description": "Objection to Sale",
+      "additional": ""
+    },
+    {
+      "date": "04/29/2026",
+      "description": "Civil Hearing Held",
+      "additional": ""
+    },
+    {
+      "date": "04/29/2026",
+      "description": "Affidavit of Costs",
+      "additional": ""
+    },
+    {
+      "date": "04/29/2026",
+      "description": "Order Cancelling Foreclosure Sale",
+      "additional": "ORDER DENYING DEFENDANT'S EMERGENCY MOTION TO CANCEL FORECLOSURE SALE AND REQUEST FOR COURT-ORDERED MEDIATION"
+    },
+    {
+      "date": "04/29/2026",
+      "description": "Certificate of Sale",
+      "additional": ""
+    },
+    {
+      "date": "04/29/2026",
+      "description": "Bid Sheet",
+      "additional": ""
+    },
+    {
+      "date": "04/28/2026",
+      "description": "Emergency Motion",
+      "additional": "EMERGENCY MOTION TO CANCEL FORECLOSURE SALE AND REQUEST FOR MEDIATION Party: Defendant Reid, Sharone V"
+    },
+    {
+      "date": "04/28/2026",
+      "description": "Notice of Hearing",
+      "additional": "4/29/2026 at 9:15 am via zoom"
+    },
+    {
+      "date": "04/20/2026",
+      "description": "Proof of Publication",
+      "additional": ""
+    },
+    {
+      "date": "04/07/2026",
+      "description": "Notice of Sale - Issued by Attorney",
+      "additional": "10:00 AM, on April 29,2026 Party: Defendant The Unknown Heirs Beneficiaries Devisees Grantees Defendant Silver Shores Master Association Inc Defendant Capital One National Association Defendant United States Of America, Department of The Treasury-Internal Revenue Service Defendant Reid, Sharone V"
+    },
+    {
+      "date": "03/24/2026",
+      "description": "Certificate of Service",
+      "additional": ""
+    },
+    {
+      "date": "03/11/2026",
+      "description": "Ord Canceling/Rescheduling Clerk's Fclsre Sale",
+      "additional": "reset to April 29. 2026, at 10:00 AM"
+    },
+    {
+      "date": "02/10/2026",
+      "description": "Order Granting Motion to Withdraw",
+      "additional": ""
+    },
+    {
+      "date": "02/09/2026",
+      "description": "Civil Hearing Held",
+      "additional": ""
+    },
+    {
+      "date": "02/06/2026",
+      "description": "Notice of Hearing",
+      "additional": ""
+    },
+    {
+      "date": "01/27/2026",
+      "description": "Motion to Withdraw",
+      "additional": "AS COUNSEL FOR DEFENDANT SHARONE REID Party: Attorney Ho-Yen, Diana Althea"
+    },
+    {
+      "date": "12/24/2025",
+      "description": "Notice of Hearing",
+      "additional": ""
+    },
+    {
+      "date": "12/15/2025",
+      "description": "Motion to Reschedule Foreclosure Sale",
+      "additional": "Party: Plaintiff Deutsche Bank Trust Company Americas"
+    },
+    {
+      "date": "12/15/2025",
+      "description": "Notice of Filing",
+      "additional": "ORDER DISMISSING BANKRUPTCY - SHARONE VANESHA REID Party: Plaintiff Deutsche Bank Trust Company Americas"
+    },
+    {
+      "date": "10/19/2025",
+      "description": "Suggestion of Bankruptcy",
+      "additional": "Case No.25-22242-SMG Party: Defendant Reid, Sharone V"
+    },
+    {
+      "date": "10/17/2025",
+      "description": "Certificate of Service",
+      "additional": ""
+    },
+    {
+      "date": "10/16/2025",
+      "description": "Proof of Publication",
+      "additional": ""
+    },
+    {
+      "date": "10/16/2025",
+      "description": "Order Denying",
+      "additional": "ORDER ON DEFENDANT'S VERIFIED MOTION TO VACATE JUDGMENT"
+    },
+    {
+      "date": "10/15/2025",
+      "description": "Response to Motion",
+      "additional": ""
+    },
+    {
+      "date": "09/23/2025",
+      "description": "Notice of Sale - Issued by Attorney",
+      "additional": ""
+    },
+    {
+      "date": "07/18/2025",
+      "description": "Certificate of Service",
+      "additional": ""
+    },
+    {
+      "date": "07/17/2025",
+      "description": "Certificate of Service",
+      "additional": ""
+    },
+    {
+      "date": "07/17/2025",
+      "description": "Ord Canceling/Rescheduling Clerk's Fclsre Sale",
+      "additional": "SALE IS RESET TO OCTOBER 21, 2025"
+    },
+    {
+      "date": "07/17/2025",
+      "description": "Order",
+      "additional": "ORDER ON DEFENDANT'S VERIFIED MOTION TO VACATE JUDGMENT"
+    },
+    {
+      "date": "07/14/2025",
+      "description": "Proof of Publication",
+      "additional": ""
+    },
+    {
+      "date": "07/01/2025",
+      "description": "Notice of Hearing",
+      "additional": ""
+    },
+    {
+      "date": "06/27/2025",
+      "description": "Response to Motion",
+      "additional": ""
+    },
+    {
+      "date": "06/27/2025",
+      "description": "Notice of Sale - Issued by Attorney",
+      "additional": "SALE DATE 7/23/25 AT 10:00 AM, PER ORDER Party: Plaintiff Deutsche Bank Trust Company Americas"
+    },
+    {
+      "date": "06/19/2025",
+      "description": "Certificate of Service",
+      "additional": ""
+    },
+    {
+      "date": "06/19/2025",
+      "description": "Notice of Filing",
+      "additional": ""
+    },
+    {
+      "date": "06/19/2025",
+      "description": "Joint Motion",
+      "additional": "TO VACATE SALE"
+    },
+    {
+      "date": "06/18/2025",
+      "description": "Bid Sheet",
+      "additional": ""
+    },
+    {
+      "date": "06/17/2025",
+      "description": "Order Cancelling Foreclosure Sale",
+      "additional": "The Sale Scheduled for June 18, 2025 is hereby CANCELLED"
+    },
+    {
+      "date": "06/16/2025",
+      "description": "Appearance as Stand-In Counsel",
+      "additional": "Party: Defendant Reid, Sharone V"
+    },
+    {
+      "date": "06/16/2025",
+      "description": "Motion to Vacate Judgment",
+      "additional": "Party: Defendant Reid, Sharone V"
+    },
+    {
+      "date": "06/13/2025",
+      "description": "Response to Motion",
+      "additional": ""
+    },
+    {
+      "date": "06/11/2025",
+      "description": "Proof of Publication",
+      "additional": ""
+    },
+    {
+      "date": "06/11/2025",
+      "description": "Emergency Motion",
+      "additional": "TO CANCEL SALE (JUNE 18, 2025) Party: Defendant Reid, Sharone V"
+    },
+    {
+      "date": "06/11/2025",
+      "description": "Notice of Appearance",
+      "additional": "Party: Defendant Reid, Sharone V"
+    },
+    {
+      "date": "05/29/2025",
+      "description": "Notice of Sale - Issued by Attorney",
+      "additional": "www.broward.realforeclose.com, at 10:00 AM, on June 18, 2025"
+    },
+    {
+      "date": "05/12/2025",
+      "description": "Comment:",
+      "additional": "File created and Original Note and Mortgage placed in the file"
+    },
+    {
+      "date": "05/01/2025",
+      "description": "Certificate of Service",
+      "additional": ""
+    },
+    {
+      "date": "05/01/2025",
+      "description": "Final Disposition Form",
+      "additional": ""
+    },
+    {
+      "date": "04/22/2025",
+      "description": "Notice of Filing",
+      "additional": ""
+    },
+    {
+      "date": "04/22/2025",
+      "description": "Affidavit of Attorney Fees",
+      "additional": ""
+    },
+    {
+      "date": "04/21/2025",
+      "description": "Notice of Filing",
+      "additional": ""
+    },
+    {
+      "date": "04/21/2025",
+      "description": "Affidavit of Costs",
+      "additional": ""
+    },
+    {
+      "date": "04/15/2025",
+      "description": "Not of Filing Original Note & Mortgage",
+      "additional": "Party: Plaintiff Deutsche Bank Trust Company Americas"
+    },
+    {
+      "date": "04/14/2025",
+      "description": "Notice of Filing",
+      "additional": "Copy of the Certification of Business Records Party: Plaintiff Deutsche Bank Trust Company Americas"
+    },
+    {
+      "date": "04/14/2025",
+      "description": "Affidavit",
+      "additional": "CERTIFICATIONOF BUSINESS RECORDS AFFIDAVIT"
+    },
+    {
+      "date": "04/11/2025",
+      "description": "Notice of Filing",
+      "additional": ""
+    },
+    {
+      "date": "03/26/2025",
+      "description": "Notice of Intent",
+      "additional": ""
+    },
+    {
+      "date": "03/25/2025",
+      "description": "Certificate of Service",
+      "additional": ""
+    },
+    {
+      "date": "03/24/2025",
+      "description": "Notice of Non Jury Trial",
+      "additional": ""
+    },
+    {
+      "date": "03/19/2025",
+      "description": "Order Resetting",
+      "additional": "NJ TRIAL"
+    },
+    {
+      "date": "03/07/2025",
+      "description": "Ex Parte Motion",
+      "additional": "PLAINTIFF'S MOTION TO SET CASE FOR TRIAL"
+    },
+    {
+      "date": "02/28/2025",
+      "description": "Order of Default",
+      "additional": ""
+    },
+    {
+      "date": "02/14/2025",
+      "description": "Notice of Hearing",
+      "additional": ""
+    },
+    {
+      "date": "01/23/2025",
+      "description": "Notice of Hearing",
+      "additional": ""
+    },
+    {
+      "date": "01/16/2025",
+      "description": "Motion for Default",
+      "additional": ""
+    },
+    {
+      "date": "01/16/2025",
+      "description": "Non-Military Affidavit",
+      "additional": ""
+    },
+    {
+      "date": "01/16/2025",
+      "description": "Motion for Default",
+      "additional": "Party: Plaintiff Deutsche Bank Trust Company Americas"
+    },
+    {
+      "date": "01/16/2025",
+      "description": "Default",
+      "additional": "against Party: Defendant The Unknown Heirs Beneficiaries Devisees Grantees Defendant Capital One National Association Defendant United States Of America, Department of The Treasury-Internal Revenue Service"
+    },
+    {
+      "date": "01/16/2025",
+      "description": "Affidavit of Proof of Publication",
+      "additional": ""
+    },
+    {
+      "date": "01/16/2025",
+      "description": "Summons Returned Unserved",
+      "additional": "Party: Defendant The Unknown Heirs Beneficiaries Devisees Grantees"
+    },
+    {
+      "date": "01/16/2025",
+      "description": "Affidavit of Diligent Search",
+      "additional": ""
+    },
+    {
+      "date": "01/16/2025",
+      "description": "Proof of Service",
+      "additional": "6/24/2024 Party: Defendant Capital One National Association"
+    },
+    {
+      "date": "01/16/2025",
+      "description": "Proof of Service",
+      "additional": "6/14/2024 Party: Defendant United States Of America, Department of The Treasury-Internal Revenue Service"
+    },
+    {
+      "date": "01/16/2025",
+      "description": "Non-Military Affidavit",
+      "additional": ""
+    },
+    {
+      "date": "11/25/2024",
+      "description": "Order Extending Time",
+      "additional": "Granted"
+    },
+    {
+      "date": "11/11/2024",
+      "description": "Notice of Hearing",
+      "additional": ""
+    },
+    {
+      "date": "09/10/2024",
+      "description": "Proof of Publication",
+      "additional": ""
+    },
+    {
+      "date": "09/04/2024",
+      "description": "Notice of Hearing",
+      "additional": "9/10/24 at 9:15 am"
+    },
+    {
+      "date": "08/15/2024",
+      "description": "Motion for Enlargement of Time",
+      "additional": "TO FILE RESPONSE Party: Defendant Reid, Sharone V"
+    },
+    {
+      "date": "07/26/2024",
+      "description": "Notice of Action",
+      "additional": ""
+    },
+    {
+      "date": "07/26/2024",
+      "description": "Certificate of Mailing",
+      "additional": ""
+    },
+    {
+      "date": "07/22/2024",
+      "description": "Copy to Press",
+      "additional": "Copy of NOA sent to Sun Sentinel"
+    },
+    {
+      "date": "07/22/2024",
+      "description": "Copies Mailed",
+      "additional": "NOA mailed to def last known address"
+    },
+    {
+      "date": "07/16/2024",
+      "description": "Affidavit for Service by Publication",
+      "additional": ""
+    },
+    {
+      "date": "07/16/2024",
+      "description": "Affidavit of Diligent Search",
+      "additional": ""
+    },
+    {
+      "date": "07/09/2024",
+      "description": "Summons Returned Served",
+      "additional": "6/14/2024 2:30 PM Party: Defendant United States Of America, Department of The Treasury-Internal Revenue Service"
+    },
+    {
+      "date": "07/08/2024",
+      "description": "Summons Returned Served",
+      "additional": ""
+    },
+    {
+      "date": "07/08/2024",
+      "description": "Summons Returned Served",
+      "additional": ""
+    },
+    {
+      "date": "07/08/2024",
+      "description": "Notice of Filing",
+      "additional": ""
+    },
+    {
+      "date": "07/05/2024",
+      "description": "Summons Returned Unserved",
+      "additional": "THE UNKNOWN HEIRS, BENEFICIARIES, DEVISEES, GRANTEES, ASSIGNEES, LIENORS, CREDITORS, TRUSTEES AND AL OTHERS WHO MAY CLAIM AN Party: Defendant The Unknown Heirs Beneficiaries Devisees Grantees"
+    },
+    {
+      "date": "07/03/2024",
+      "description": "Summons Returned Served",
+      "additional": "june 17th, 2024 Party: Defendant Reid, Sharone V"
+    },
+    {
+      "date": "06/19/2024",
+      "description": "Answer",
+      "additional": "DEFENDANT, SILVER SHORES MASTER ASSOCIATION, INC.'S, ANSWER TO PLAINTIFF'S VERIFIED MORTGAGE FORECLO E COMPLAINT"
+    },
+    {
+      "date": "06/07/2024",
+      "description": "eSummons Issuance",
+      "additional": "CAPITAL ONE, NATIONAL ASSOCIATION"
+    },
+    {
+      "date": "06/07/2024",
+      "description": "eSummons Issuance",
+      "additional": "SHARONE V. REID"
+    },
+    {
+      "date": "06/07/2024",
+      "description": "eSummons Issuance",
+      "additional": "SILVER SHORES MASTER ASSOCIATION, INC"
+    },
+    {
+      "date": "06/07/2024",
+      "description": "eSummons Issuance",
+      "additional": "THE UNKNOWN HEIRS, BENEFICIARIES, DEVISEES, GRANTEES, ASSIGNEES, LIENORS, CREDITORS, TRUSTEES AND AL OTHERS WHO MAY CLAIM AN INTEREST IN THE ESTATE OF JERIMAINE A. REID A/K/A JERIMAINE REID, DECEASED"
+    },
+    {
+      "date": "06/07/2024",
+      "description": "eSummons Issuance",
+      "additional": "UNITED STATES OF AMERICA, DEPARTMENT OF THE TREASURY -INTERNAL REVENUE SERVICE"
+    },
+    {
+      "date": "06/03/2024",
+      "description": "Per AOSC20-23 Amd12, Case is determined Streamlined",
+      "additional": ""
+    },
+    {
+      "date": "06/03/2024",
+      "description": "Civil Cover Sheet",
+      "additional": "Amount: $100,001.00"
+    },
+    {
+      "date": "06/03/2024",
+      "description": "Complaint (eFiled)",
+      "additional": "VERIFIED MORTGAGE FORECLOSURE Party: Attorney Lumbreras, Ryan N., ESQ. Plaintiff Deutsche Bank Trust Company Americas"
+    },
+    {
+      "date": "06/03/2024",
+      "description": "Notice of Lis Pendens",
+      "additional": ""
+    },
+    {
+      "date": "06/03/2024",
+      "description": "Value Claim Form",
+      "additional": ""
+    },
+    {
+      "date": "06/03/2024",
+      "description": "Notice of Filing",
+      "additional": "Certification of Possession Party: Attorney Lumbreras, Ryan N., ESQ. Plaintiff Deutsche Bank Trust Company Americas"
+    },
+    {
+      "date": "04/29/2026",
+      "description": "Foreclosure Sale",
+      "additional": "Hearing Time: 10:00 AM Judicial Officer(s):Not Applicable, , Location: On-line @ www.broward.realforeclose.com"
+    },
+    {
+      "date": "10/21/2025",
+      "description": "Foreclosure Sale",
+      "additional": "CANCELED Suggestion of Bankruptcy Hearing Time: 10:00 AM Judicial Officer(s):Not Applicable, , Location: On-line @ www.broward.realforeclose.com"
+    },
+    {
+      "date": "07/23/2025",
+      "description": "Foreclosure Sale",
+      "additional": "CANCELED Cancelled Hearing Time: 10:00 AM Judicial Officer(s):Not Applicable, , Location: On-line @ www.broward.realforeclose.com PER ORDER"
+    },
+    {
+      "date": "06/18/2025",
+      "description": "Foreclosure Sale",
+      "additional": "CANCELED Per Order Hearing Time: 10:00 AM Judicial Officer(s):Not Applicable, , Location: On-line @ www.broward.realforeclose.com"
+    }
+  ]
+}

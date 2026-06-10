@@ -1,0 +1,242 @@
+{
+  "case": "COWE-24-061398",
+  "header": [
+    "date",
+    "description",
+    "additional text",
+    "view / pages"
+  ],
+  "count": 46,
+  "rows": [
+    {
+      "date": "06/05/2026",
+      "description": "Comment:",
+      "additional": "check # 120940 picked up at window at Central"
+    },
+    {
+      "date": "04/21/2026",
+      "description": "Voided Check",
+      "additional": "Ck#120309 / $45,772.00"
+    },
+    {
+      "date": "04/14/2026",
+      "description": "Affidavit",
+      "additional": "of lost check Party: Plaintiff SABAL PALM CONDOMINIUMS OF PINE ISLAND RIDGE ASSOC"
+    },
+    {
+      "date": "04/14/2026",
+      "description": "Notice of Change of Address",
+      "additional": "Party: Plaintiff SABAL PALM CONDOMINIUMS OF PINE ISLAND RIDGE ASSOC"
+    },
+    {
+      "date": "11/07/2025",
+      "description": "Certificate of Title",
+      "additional": ""
+    },
+    {
+      "date": "11/07/2025",
+      "description": "Certificate of Disbursements",
+      "additional": ""
+    },
+    {
+      "date": "10/27/2025",
+      "description": "Certificate of Sale",
+      "additional": ""
+    },
+    {
+      "date": "10/24/2025",
+      "description": "Bid Sheet",
+      "additional": ""
+    },
+    {
+      "date": "08/11/2025",
+      "description": "Proof of Publication",
+      "additional": ""
+    },
+    {
+      "date": "07/28/2025",
+      "description": "Notice of Sale - Issued by Attorney",
+      "additional": ""
+    },
+    {
+      "date": "07/23/2025",
+      "description": "Joint Stipulation",
+      "additional": "FOR ENTRY OF CONSENT FINAL JUDGMENT- Linda Ann Panariello a/k/a Linda Ann Sherman"
+    },
+    {
+      "date": "07/16/2025",
+      "description": "Notice of Cancellation",
+      "additional": ""
+    },
+    {
+      "date": "07/01/2025",
+      "description": "Ord Setting Non-Jury Trial",
+      "additional": "July 24, 2025 @ 11:30 a.m"
+    },
+    {
+      "date": "07/01/2025",
+      "description": "Notice of Hearing",
+      "additional": ""
+    },
+    {
+      "date": "06/20/2025",
+      "description": "Motion to Withdraw",
+      "additional": "Party: Defendant THE ESTATE OF ARTHUR I. SHERMAN Defendant UNKNOWN HEIRS OF THE ESTATE OF ARTHUR I SHERMAN"
+    },
+    {
+      "date": "06/20/2025",
+      "description": "Notice of Charging Lien",
+      "additional": "LIEN FOR FEES AND COSTS INCURRED BY WILLIAM A TRECO, ESO. AND TEPPS TRECO"
+    },
+    {
+      "date": "06/09/2025",
+      "description": "Order",
+      "additional": "SETTING NON JURY TRIAL - IN PERSON"
+    },
+    {
+      "date": "06/03/2025",
+      "description": "Mediation Report",
+      "additional": "no agreement"
+    },
+    {
+      "date": "05/13/2025",
+      "description": "Notice",
+      "additional": "/PLAINTIFF'S NOTICE OF CERTIFICATION OF AUTHORITY"
+    },
+    {
+      "date": "05/01/2025",
+      "description": "Notice of Mediation",
+      "additional": ""
+    },
+    {
+      "date": "04/24/2025",
+      "description": "Order Referring Case to Mediation",
+      "additional": ""
+    },
+    {
+      "date": "01/10/2025",
+      "description": "Order Setting Case Management Conference",
+      "additional": "04-29-2025 2:30 pm ."
+    },
+    {
+      "date": "01/09/2025",
+      "description": "Uniform Order Setting Pretrial Deadline",
+      "additional": ""
+    },
+    {
+      "date": "12/04/2024",
+      "description": "Answer & Affirmative Defenses",
+      "additional": "ANSWER AND AFFIRMATIVE DEFENSES TO COMPLAINT Party: Defendant THE ESTATE OF ARTHUR I. SHERMAN Defendant UNKNOWN HEIRS OF THE ESTATE OF ARTHUR I SHERMAN"
+    },
+    {
+      "date": "11/15/2024",
+      "description": "Response to Request for Admissions",
+      "additional": "Party: Defendant THE ESTATE OF ARTHUR I. SHERMAN"
+    },
+    {
+      "date": "11/15/2024",
+      "description": "Motion for Extension of Time",
+      "additional": "DEFENDANT'S MOTION FOR EXTENSION OTO RESPOND TO DISCOVERY PROPOUNDED BY Party: Defendant THE ESTATE OF ARTHUR I. SHERMAN"
+    },
+    {
+      "date": "11/15/2024",
+      "description": "Motion for Extension of Time",
+      "additional": "Party: Defendant THE ESTATE OF ARTHUR I. SHERMAN"
+    },
+    {
+      "date": "11/15/2024",
+      "description": "Notice of Appearance",
+      "additional": "AND DESIGNATION OF EMAIL ADDRESS Party: Defendant THE ESTATE OF ARTHUR I. SHERMAN"
+    },
+    {
+      "date": "10/29/2024",
+      "description": "Non-Military Affidavit",
+      "additional": ""
+    },
+    {
+      "date": "10/29/2024",
+      "description": "Summons Returned Served",
+      "additional": "10/18/2024 Party: Defendant DOE, JANE"
+    },
+    {
+      "date": "10/29/2024",
+      "description": "Summons Returned Served",
+      "additional": "10/18/2024"
+    },
+    {
+      "date": "10/29/2024",
+      "description": "Summons Returned Unserved",
+      "additional": "Party: Defendant UNKNOWN HEIRS OF THE ESTATE OF ARTHUR I SHERMAN"
+    },
+    {
+      "date": "10/29/2024",
+      "description": "Summons Returned Unserved",
+      "additional": "Party: Defendant DOE, JOHN"
+    },
+    {
+      "date": "10/29/2024",
+      "description": "Affidavit of Diligent Search",
+      "additional": ""
+    },
+    {
+      "date": "10/07/2024",
+      "description": "eSummons Issuance",
+      "additional": "20 calendar days Party: Defendant THE ESTATE OF ARTHUR I. SHERMAN"
+    },
+    {
+      "date": "10/07/2024",
+      "description": "eSummons Issuance",
+      "additional": "20 calendar days Party: Defendant UNKNOWN HEIRS OF THE ESTATE OF ARTHUR I SHERMAN"
+    },
+    {
+      "date": "10/07/2024",
+      "description": "eSummons Issuance",
+      "additional": "20 calendar days Party: Defendant DOE, JOHN"
+    },
+    {
+      "date": "10/07/2024",
+      "description": "eSummons Issuance",
+      "additional": "20 calendar days Party: Defendant DOE, JANE"
+    },
+    {
+      "date": "10/01/2024",
+      "description": "Per AOSC20-23 Amd12, Case is determined Streamlined",
+      "additional": ""
+    },
+    {
+      "date": "10/01/2024",
+      "description": "Civil Cover Sheet",
+      "additional": "Amount: $8,001.00"
+    },
+    {
+      "date": "10/01/2024",
+      "description": "Notice of Lis Pendens",
+      "additional": "Fld & Rec"
+    },
+    {
+      "date": "10/01/2024",
+      "description": "Interrogatories",
+      "additional": "TO DEFENDANT, THE ESTATE OF ARTHUR I. SHERMAN AND UNKNOWN HEIRS OF THE ESTATE OF ARTHUR I I SHERMAN Party: Plaintiff SABAL PALM CONDOMINIUMS OF PINE ISLAND RIDGE ASSOC"
+    },
+    {
+      "date": "10/01/2024",
+      "description": "Request for Admissions",
+      "additional": "TO DEFENDANT, THE ESTATE OF ARTHUR I. SHERMAN AND UNKNOWN HEIRS OF THE ESTATE OF ARTHUR I SHERMAN Party: Plaintiff SABAL PALM CONDOMINIUMS OF PINE ISLAND RIDGE ASSOC"
+    },
+    {
+      "date": "10/01/2024",
+      "description": "Request for Production",
+      "additional": "FIRST REOUEST FOR PRODUCTION TO DEFENDANT, THE ESTATE OF ARTHUR I SHERMAN AND UNKNOWN HEIRS OF THE STATE OF ARTHUR I SHERMAN Party: Plaintiff SABAL PALM CONDOMINIUMS OF PINE ISLAND RIDGE ASSOC"
+    },
+    {
+      "date": "10/01/2024",
+      "description": "Complaint (eFiled)",
+      "additional": ""
+    },
+    {
+      "date": "10/24/2025",
+      "description": "Foreclosure Sale",
+      "additional": "Hearing Time: 10:00 AM Judicial Officer(s):Not Applicable, , Location: On-line @ www.broward.realforeclose.com"
+    }
+  ]
+}

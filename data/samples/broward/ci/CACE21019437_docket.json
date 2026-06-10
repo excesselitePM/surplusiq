@@ -1,0 +1,507 @@
+{
+  "case": "CACE-21-019437",
+  "header": [
+    "date",
+    "description",
+    "additional text",
+    "view / pages"
+  ],
+  "count": 99,
+  "rows": [
+    {
+      "date": "11/12/2025",
+      "description": "Certificate of Disbursements",
+      "additional": ""
+    },
+    {
+      "date": "11/12/2025",
+      "description": "Certificate of Title",
+      "additional": ""
+    },
+    {
+      "date": "10/29/2025",
+      "description": "Certificate of Sale",
+      "additional": ""
+    },
+    {
+      "date": "10/29/2025",
+      "description": "Bid Sheet",
+      "additional": ""
+    },
+    {
+      "date": "10/27/2025",
+      "description": "Order Denying",
+      "additional": "Defendant's Motion to Cancel October 29, 2025 Foreclosure Sale"
+    },
+    {
+      "date": "10/27/2025",
+      "description": "Order Amending Judgment",
+      "additional": ""
+    },
+    {
+      "date": "10/22/2025",
+      "description": "Cross Notice",
+      "additional": "notice of hearing via Zoom on Monday, October 27, 2025 at 9:15 A.M"
+    },
+    {
+      "date": "10/21/2025",
+      "description": "Notice of Hearing",
+      "additional": ""
+    },
+    {
+      "date": "10/21/2025",
+      "description": "Motion to Cancel Foreclosure Sale",
+      "additional": "Party: Defendant Fedele, Michael Defendant Fedele, Rae A."
+    },
+    {
+      "date": "10/20/2025",
+      "description": "Motion to Amend Final Judgment",
+      "additional": "Party: Plaintiff The Bank Of New York Mellon"
+    },
+    {
+      "date": "10/20/2025",
+      "description": "Motion to Cancel Foreclosure Sale",
+      "additional": "Party: Defendant Fedele, Michael Defendant Fedele, Rae A."
+    },
+    {
+      "date": "10/15/2025",
+      "description": "Proof of Publication",
+      "additional": ""
+    },
+    {
+      "date": "09/26/2025",
+      "description": "Notice of Sale - Issued by Attorney",
+      "additional": ""
+    },
+    {
+      "date": "09/13/2025",
+      "description": "Order Granting Motion",
+      "additional": "ORDER GRANTING DEFENDANT'S MOTION TO CANCEL SEPTEMBER 16. 2025 FORECLOSURE SALE"
+    },
+    {
+      "date": "09/05/2025",
+      "description": "Notice of Hearing",
+      "additional": ""
+    },
+    {
+      "date": "09/05/2025",
+      "description": "Motion to Cancel Foreclosure Sale",
+      "additional": "TO CANCEL FORECLOSURE SALE Party: Defendant Fedele, Michael Defendant Fedele, Rae A."
+    },
+    {
+      "date": "09/03/2025",
+      "description": "Proof of Publication",
+      "additional": ""
+    },
+    {
+      "date": "07/29/2025",
+      "description": "Notice of Sale - Issued by Attorney",
+      "additional": "www.broward.realforeclose.com beginning at 10:00 AM on September 16, 2025"
+    },
+    {
+      "date": "07/26/2025",
+      "description": "Amended Order",
+      "additional": "AMENDED ORDER SETTING / RESETTING FORECLOSURE SALE"
+    },
+    {
+      "date": "07/22/2025",
+      "description": "Order Rescheduling Foreclosure Sale",
+      "additional": ""
+    },
+    {
+      "date": "07/22/2025",
+      "description": "Motion to Cancel Foreclosure Sale",
+      "additional": "Party: Defendant Fedele, Michael Defendant Fedele, Rae A."
+    },
+    {
+      "date": "07/21/2025",
+      "description": "Notice of Hearing",
+      "additional": ""
+    },
+    {
+      "date": "07/19/2025",
+      "description": "Notice of Hearing",
+      "additional": ""
+    },
+    {
+      "date": "07/18/2025",
+      "description": "Notice of Appearance",
+      "additional": ""
+    },
+    {
+      "date": "07/18/2025",
+      "description": "Motion to Cancel Foreclosure Sale",
+      "additional": "Party: Defendant Fedele, Michael Defendant Fedele, Rae A."
+    },
+    {
+      "date": "07/15/2025",
+      "description": "Motion to Amend Final Judgment",
+      "additional": ""
+    },
+    {
+      "date": "07/07/2025",
+      "description": "Notice of Sale - Issued by Attorney",
+      "additional": ""
+    },
+    {
+      "date": "06/20/2025",
+      "description": "Certificate of Mailing",
+      "additional": "COPY OF ORDER ON PLAINTIFF'S MOTION TO RESCHEDULE FORECLOSURE SALE AND ORDER ON STIPULATION OF COUNS L Party: Plaintiff The Bank Of New York Mellon"
+    },
+    {
+      "date": "06/05/2025",
+      "description": "Amended Notice of Hearing",
+      "additional": ""
+    },
+    {
+      "date": "06/05/2025",
+      "description": "Order for Substitution of Counsel",
+      "additional": ""
+    },
+    {
+      "date": "06/05/2025",
+      "description": "Ord Canceling/Rescheduling Clerk's Fclsre Sale",
+      "additional": ""
+    },
+    {
+      "date": "05/29/2025",
+      "description": "Notice of Hearing",
+      "additional": ""
+    },
+    {
+      "date": "05/16/2025",
+      "description": "Notice of Appearance",
+      "additional": "Party: Plaintiff The Bank Of New York Mellon"
+    },
+    {
+      "date": "05/16/2025",
+      "description": "Stipulation for Substitution of Counsel",
+      "additional": "William Nussbaum, III Florida Bar No. 06647 Party: Plaintiff The Bank Of New York Mellon"
+    },
+    {
+      "date": "05/16/2025",
+      "description": "Motion to Reset Sale Date",
+      "additional": "Party: Plaintiff The Bank Of New York Mellon"
+    },
+    {
+      "date": "02/07/2024",
+      "description": "Suggestion of Bankruptcy",
+      "additional": ""
+    },
+    {
+      "date": "12/26/2023",
+      "description": "Notice of Filing Affidavit",
+      "additional": ""
+    },
+    {
+      "date": "12/12/2023",
+      "description": "Notice of Sale - Issued by Attorney",
+      "additional": ""
+    },
+    {
+      "date": "12/08/2023",
+      "description": "Notice of Sale - Issued by Attorney",
+      "additional": ""
+    },
+    {
+      "date": "12/08/2023",
+      "description": "Certificate of Mailing",
+      "additional": ""
+    },
+    {
+      "date": "11/14/2023",
+      "description": "Notice of Hearing",
+      "additional": ""
+    },
+    {
+      "date": "11/10/2023",
+      "description": "Notice of Filing",
+      "additional": ""
+    },
+    {
+      "date": "09/01/2023",
+      "description": "Notice of Cancellation",
+      "additional": ""
+    },
+    {
+      "date": "08/31/2023",
+      "description": "Suggestion of Bankruptcy",
+      "additional": "case number 23-17076-PDR Party: Defendant Fedele, Michael"
+    },
+    {
+      "date": "08/14/2023",
+      "description": "Notice of Hearing",
+      "additional": ""
+    },
+    {
+      "date": "05/10/2023",
+      "description": "Notice of Cancellation",
+      "additional": ""
+    },
+    {
+      "date": "05/09/2023",
+      "description": "Comment:",
+      "additional": "File created and Original Note, Mortgage and Loan Modification documents placed in the file"
+    },
+    {
+      "date": "05/02/2023",
+      "description": "Foreclosure Form",
+      "additional": ""
+    },
+    {
+      "date": "05/02/2023",
+      "description": "Notice of Filing",
+      "additional": ""
+    },
+    {
+      "date": "05/02/2023",
+      "description": "Notice of Filing",
+      "additional": ""
+    },
+    {
+      "date": "03/24/2023",
+      "description": "Notice of Hearing",
+      "additional": ""
+    },
+    {
+      "date": "03/20/2023",
+      "description": "Not of Filing Original Note & Mortgage",
+      "additional": "Party: Plaintiff The Bank Of New York Mellon"
+    },
+    {
+      "date": "03/16/2023",
+      "description": "Affidavit of Attorney Fees",
+      "additional": ""
+    },
+    {
+      "date": "03/15/2023",
+      "description": "Original Documents",
+      "additional": "Party: Plaintiff The Bank Of New York Mellon"
+    },
+    {
+      "date": "03/15/2023",
+      "description": "Affidavit of Attorney Fees",
+      "additional": "Party: Plaintiff The Bank Of New York Mellon"
+    },
+    {
+      "date": "03/15/2023",
+      "description": "Affidavit of Reasonable Attorney Fees",
+      "additional": "Party: Plaintiff The Bank Of New York Mellon"
+    },
+    {
+      "date": "03/15/2023",
+      "description": "Affidavit of Indebtedness",
+      "additional": "Party: Plaintiff The Bank Of New York Mellon"
+    },
+    {
+      "date": "03/15/2023",
+      "description": "Motion for Summary Final Judgment",
+      "additional": "Party: Plaintiff The Bank Of New York Mellon"
+    },
+    {
+      "date": "06/13/2022",
+      "description": "Suggestion of Bankruptcy",
+      "additional": "Case Number 22-14559-SMG Party: Plaintiff The Bank Of New York Mellon"
+    },
+    {
+      "date": "05/19/2022",
+      "description": "Reply to Affirmative Defenses",
+      "additional": ""
+    },
+    {
+      "date": "04/05/2022",
+      "description": "Reply to Affirmative Defenses",
+      "additional": ""
+    },
+    {
+      "date": "03/28/2022",
+      "description": "Notice of Cancellation",
+      "additional": "April 5, 2022 at 8:45am"
+    },
+    {
+      "date": "03/28/2022",
+      "description": "Notice of Dropping Parties- Generic",
+      "additional": "Unknown Tenants/Owners 1; Unknown Tenants/Owners 2; Unknown Tenants/Owners 3"
+    },
+    {
+      "date": "03/28/2022",
+      "description": "Answer & Affirmative Defenses",
+      "additional": "Party: Defendant Fedele, Michael Defendant Fedele, Rae A."
+    },
+    {
+      "date": "03/22/2022",
+      "description": "Notice of Hearing",
+      "additional": ""
+    },
+    {
+      "date": "03/17/2022",
+      "description": "Motion for Default",
+      "additional": "by the Court against Defendants Michael Fedeie and Rae A. Fedele Party: Plaintiff The Bank Of New York Mellon"
+    },
+    {
+      "date": "03/17/2022",
+      "description": "Non-Military Affidavit",
+      "additional": ""
+    },
+    {
+      "date": "03/17/2022",
+      "description": "Non-Military Affidavit",
+      "additional": ""
+    },
+    {
+      "date": "02/24/2022",
+      "description": "Reply to Affirmative Defenses",
+      "additional": ""
+    },
+    {
+      "date": "02/14/2022",
+      "description": "Certificate of Mailing",
+      "additional": "Party: Plaintiff The Bank Of New York Mellon"
+    },
+    {
+      "date": "02/11/2022",
+      "description": "Agreed Order Granting",
+      "additional": "Motion for Enlargement of Time"
+    },
+    {
+      "date": "02/10/2022",
+      "description": "Certificate of Mailing",
+      "additional": "Order for Substitution of Counsel Party: Plaintiff The Bank Of New York Mellon"
+    },
+    {
+      "date": "02/09/2022",
+      "description": "Stipulation for Substitution of Counsel",
+      "additional": "GARY GASSEL, ESQUIRE Florida Bar No. 500690 Party: Plaintiff The Bank Of New York Mellon"
+    },
+    {
+      "date": "02/09/2022",
+      "description": "Order for Substitution of Counsel",
+      "additional": ""
+    },
+    {
+      "date": "01/26/2022",
+      "description": "Notice of Filing Designation of Emailing Addresses",
+      "additional": "NOTICE OF DESIGNATION OF PRIMARY AND SECONDARY E-MAIL ADDRESS IN COMPLIANCE WITH NEW MANDATORY E-MAI SERVICE RULE"
+    },
+    {
+      "date": "01/26/2022",
+      "description": "Notice of Appearance",
+      "additional": "Party: Plaintiff The Bank Of New York Mellon"
+    },
+    {
+      "date": "01/26/2022",
+      "description": "Response to Motion",
+      "additional": "RESPONSE TO MOTION FOR EXTENSION Party: Plaintiff The Bank Of New York Mellon"
+    },
+    {
+      "date": "12/06/2021",
+      "description": "Reply to Answer",
+      "additional": ""
+    },
+    {
+      "date": "11/17/2021",
+      "description": "Notice of Appearance",
+      "additional": "Party: Defendant Fedele, Michael Defendant Fedele, Rae A."
+    },
+    {
+      "date": "11/17/2021",
+      "description": "Motion for Extension of Time",
+      "additional": "to respond to the Complaint Party: Defendant Fedele, Michael Defendant Fedele, Rae A."
+    },
+    {
+      "date": "11/12/2021",
+      "description": "Answer to Complaint",
+      "additional": "Party: Defendant Pembroke Isles Homeowners Association, Inc."
+    },
+    {
+      "date": "11/05/2021",
+      "description": "Summons Returned Served",
+      "additional": "10/30/2021 Party: Defendant Fedele, Rae A."
+    },
+    {
+      "date": "11/04/2021",
+      "description": "Summons Returned Served",
+      "additional": "11/2/2021 Party: Defendant Pembroke Isles Homeowners Association, Inc."
+    },
+    {
+      "date": "11/04/2021",
+      "description": "Summons Returned Served",
+      "additional": "10/30/2021 Party: Defendant Fedele, Michael"
+    },
+    {
+      "date": "11/04/2021",
+      "description": "Summons Returned Unserved",
+      "additional": "UNKNOWN TENANTS/OWNERS 1"
+    },
+    {
+      "date": "10/26/2021",
+      "description": "Per AOSC20-23 Amd12, Case is determined Streamlined",
+      "additional": ""
+    },
+    {
+      "date": "10/26/2021",
+      "description": "Civil Cover Sheet",
+      "additional": "Amount: $100,001.00"
+    },
+    {
+      "date": "10/26/2021",
+      "description": "Complaint (eFiled)",
+      "additional": "VERIFIED FOR FORECLOSE MORTGAGE Party: Plaintiff The Bank Of New York Mellon"
+    },
+    {
+      "date": "10/26/2021",
+      "description": "Notice of Lis Pendens",
+      "additional": ""
+    },
+    {
+      "date": "10/26/2021",
+      "description": "Value Claim Form",
+      "additional": ""
+    },
+    {
+      "date": "10/26/2021",
+      "description": "eSummons Issuance",
+      "additional": "Party: Defendant Fedele, Michael"
+    },
+    {
+      "date": "10/26/2021",
+      "description": "eSummons Issuance",
+      "additional": "Party: Defendant Pembroke Isles Homeowners Association, Inc."
+    },
+    {
+      "date": "10/26/2021",
+      "description": "eSummons Issuance",
+      "additional": "Party: Defendant Fedele, Rae A."
+    },
+    {
+      "date": "10/26/2021",
+      "description": "eSummons Issuance",
+      "additional": "UNKNOWN TENANTS/OWNERS 1"
+    },
+    {
+      "date": "10/26/2021",
+      "description": "Clerk's Certificate of Compliance W-2020-73CIV/2020-74-UFC",
+      "additional": "NONE"
+    },
+    {
+      "date": "10/29/2025",
+      "description": "Foreclosure Sale",
+      "additional": "Hearing Time: 10:00 AM Judicial Officer(s):Not Applicable, , Location: On-line @ www.broward.realforeclose.com"
+    },
+    {
+      "date": "09/16/2025",
+      "description": "Foreclosure Sale",
+      "additional": "CANCELED Per Order Hearing Time: 10:00 AM Judicial Officer(s):Not Applicable, , Location: On-line @ www.broward.realforeclose.com"
+    },
+    {
+      "date": "08/06/2025",
+      "description": "Foreclosure Sale",
+      "additional": "CANCELED Entered in Error Hearing Time: 10:00 AM Judicial Officer(s):Not Applicable, , Location: On-line @ www.broward.realforeclose.com"
+    },
+    {
+      "date": "02/08/2024",
+      "description": "Foreclosure Sale",
+      "additional": "CANCELED Suggestion of Bankruptcy Hearing Time: 10:00 AM Judicial Officer(s):Not Applicable, , Location: On-line @ www.broward.realforeclose.com"
+    }
+  ]
+}

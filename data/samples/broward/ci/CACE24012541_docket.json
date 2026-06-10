@@ -1,0 +1,432 @@
+{
+  "case": "CACE-24-012541",
+  "header": [
+    "date",
+    "description",
+    "additional text",
+    "view / pages"
+  ],
+  "count": 84,
+  "rows": [
+    {
+      "date": "05/28/2026",
+      "description": "Motion for Order",
+      "additional": "TO COMPEL AUDIT Party: Defendant Merritt, Randolph"
+    },
+    {
+      "date": "05/28/2026",
+      "description": "Amended Motion",
+      "additional": "AMENDED MOTION TO COMPEL AUDIT Party: Defendant Merritt, Randolph Defendant Delgado, Kellie"
+    },
+    {
+      "date": "03/13/2026",
+      "description": "Order Disbursing Funds",
+      "additional": "Get Liquid Funding, LLC"
+    },
+    {
+      "date": "03/06/2026",
+      "description": "Hearing Proceedings",
+      "additional": ""
+    },
+    {
+      "date": "03/06/2026",
+      "description": "Clerk's Exhibit List",
+      "additional": ""
+    },
+    {
+      "date": "03/06/2026",
+      "description": "Exhibit Worksheet",
+      "additional": ""
+    },
+    {
+      "date": "02/26/2026",
+      "description": "Notice of Appearance",
+      "additional": "Party: Defendant Delgado, Kellie"
+    },
+    {
+      "date": "01/05/2026",
+      "description": "Response to Motion",
+      "additional": ""
+    },
+    {
+      "date": "01/05/2026",
+      "description": "Motion for Order",
+      "additional": "Party: Defendant Merritt, Randolph"
+    },
+    {
+      "date": "12/29/2025",
+      "description": "Notice of Change of Address",
+      "additional": ""
+    },
+    {
+      "date": "12/16/2025",
+      "description": "Notice of Hearing",
+      "additional": ""
+    },
+    {
+      "date": "12/07/2025",
+      "description": "Motion to Strike",
+      "additional": "Party: Defendant Merritt, Randolph Defendant Delgado, Kellie"
+    },
+    {
+      "date": "12/07/2025",
+      "description": "Motion to Strike",
+      "additional": "Party: Defendant Merritt, Randolph Defendant Delgado, Kellie"
+    },
+    {
+      "date": "12/03/2025",
+      "description": "Notice of Filing Affidavit",
+      "additional": ""
+    },
+    {
+      "date": "11/29/2025",
+      "description": "Exhibits",
+      "additional": ""
+    },
+    {
+      "date": "11/25/2025",
+      "description": "Motion for Writ of Possession",
+      "additional": "Purchaser, IDEM RE HOLDINGS I, LLC"
+    },
+    {
+      "date": "11/22/2025",
+      "description": "Motion to Strike",
+      "additional": "Party: Defendant Merritt, Randolph Defendant Delgado, Kellie"
+    },
+    {
+      "date": "11/12/2025",
+      "description": "Certificate of Title",
+      "additional": "Was sold to: IDEM RE HOLDINGS I LLC"
+    },
+    {
+      "date": "11/12/2025",
+      "description": "Certificate of Disbursements",
+      "additional": ""
+    },
+    {
+      "date": "11/07/2025",
+      "description": "Order On Motion for Sanctions",
+      "additional": ""
+    },
+    {
+      "date": "11/04/2025",
+      "description": "Motion for Disbursement",
+      "additional": "SURPLUS PROCEEDS Party: Plaintiff Plantation Club Association Inc"
+    },
+    {
+      "date": "11/03/2025",
+      "description": "Motion for Disbursement",
+      "additional": "DEFENDANT RANDOLPH MERRITT'S ASSIGNEE'S MOTION TO INTERVENE AND TO DISBURSE SURPLUS FUNDS"
+    },
+    {
+      "date": "10/31/2025",
+      "description": "Order Denying",
+      "additional": "Motions"
+    },
+    {
+      "date": "10/29/2025",
+      "description": "Bid Sheet",
+      "additional": ""
+    },
+    {
+      "date": "10/29/2025",
+      "description": "Certificate of Sale",
+      "additional": ""
+    },
+    {
+      "date": "10/26/2025",
+      "description": "Emergency Motion",
+      "additional": "REQUEST FOR EMERGENCY RELIEF"
+    },
+    {
+      "date": "10/23/2025",
+      "description": "Affidavit",
+      "additional": "PLAINTIFF'S AFFIDAVIT OF POST JUDGMENT INTEREST & COSTS"
+    },
+    {
+      "date": "10/23/2025",
+      "description": "Notice of Hearing",
+      "additional": ""
+    },
+    {
+      "date": "10/23/2025",
+      "description": "Notice of Appearance",
+      "additional": "GET LIQUID FUNDING, LLC"
+    },
+    {
+      "date": "10/22/2025",
+      "description": "Proof of Publication",
+      "additional": ""
+    },
+    {
+      "date": "10/21/2025",
+      "description": "Motion for Sanctions",
+      "additional": ""
+    },
+    {
+      "date": "10/16/2025",
+      "description": "Response to Motion",
+      "additional": ""
+    },
+    {
+      "date": "10/16/2025",
+      "description": "Emergency Motion",
+      "additional": "TO DELAY SALE DATE BY 90 DAYS Party: Defendant Merritt, Randolph"
+    },
+    {
+      "date": "10/06/2025",
+      "description": "Motion for Judgment",
+      "additional": "MOTION TO STRIKE PLEADING AND FOR SANCTIONS FOR FRAUD ON THE COURT Party: Defendant Merritt, Randolph"
+    },
+    {
+      "date": "09/22/2025",
+      "description": "Motion for Order",
+      "additional": "FOR FORENSIC ACCOUNTING Party: Plaintiff Plantation Club Association Inc"
+    },
+    {
+      "date": "09/21/2025",
+      "description": "Order to Withdraw As Counsel",
+      "additional": ""
+    },
+    {
+      "date": "09/02/2025",
+      "description": "Response to Motion",
+      "additional": ""
+    },
+    {
+      "date": "08/31/2025",
+      "description": "Motion to Vacate Judgment",
+      "additional": "MOTION TO SET ASIDE FINAL JUDGMENT Party: Defendant Merritt, Randolph"
+    },
+    {
+      "date": "08/06/2025",
+      "description": "Final Disposition Form",
+      "additional": ""
+    },
+    {
+      "date": "08/04/2025",
+      "description": "Notice of Hearing",
+      "additional": ""
+    },
+    {
+      "date": "08/04/2025",
+      "description": "Certificate of Service",
+      "additional": ""
+    },
+    {
+      "date": "08/04/2025",
+      "description": "Notice of Sale - Issued by Attorney",
+      "additional": ""
+    },
+    {
+      "date": "07/31/2025",
+      "description": "Notice of Appearance",
+      "additional": "CO-COUNSEL FOR POLIAKOFF BACKER, LLP"
+    },
+    {
+      "date": "07/25/2025",
+      "description": "Notice of Appearance",
+      "additional": "ANTHONY J. ALONEFTIS, ESQ."
+    },
+    {
+      "date": "07/25/2025",
+      "description": "Notice of Hearing",
+      "additional": ""
+    },
+    {
+      "date": "07/23/2025",
+      "description": "Motion to Withdraw",
+      "additional": ""
+    },
+    {
+      "date": "07/22/2025",
+      "description": "Notice of Hearing",
+      "additional": ""
+    },
+    {
+      "date": "07/10/2025",
+      "description": "Order Vacating Default",
+      "additional": "1. Plaintiff's Motion is GRANTED. 2. The Court's Sua Sponte Order on Default Entered Against Defenda t, to Take Action, and Impending Dismissal, is VACATED"
+    },
+    {
+      "date": "07/01/2025",
+      "description": "Motion to Vacate Default",
+      "additional": "PLAINTIFF'S MOTION TO VACATE SUA SPONTE ORDER ON DEFAULT ENTERED AGAINST DEFENDANT, TO TAKE ACTION, ND IMPENDING DISMISSAL Party: Plaintiff Plantation Club Association Inc"
+    },
+    {
+      "date": "06/24/2025",
+      "description": "Notice of Mediation",
+      "additional": ""
+    },
+    {
+      "date": "06/16/2025",
+      "description": "Notice of Appearance",
+      "additional": "RANDOLPH MERRITT"
+    },
+    {
+      "date": "06/09/2025",
+      "description": "Sua Sponte Order",
+      "additional": ""
+    },
+    {
+      "date": "06/09/2025",
+      "description": "Order Granting Motion to Withdraw",
+      "additional": ""
+    },
+    {
+      "date": "05/20/2025",
+      "description": "Re-Notice of Hearing",
+      "additional": ""
+    },
+    {
+      "date": "05/20/2025",
+      "description": "Notice of Cancellation",
+      "additional": ""
+    },
+    {
+      "date": "05/19/2025",
+      "description": "Notice of Hearing",
+      "additional": ""
+    },
+    {
+      "date": "05/16/2025",
+      "description": "Motion for Summary Judgment",
+      "additional": "OF FORECLOSURE, ATTORNEY'S FEES AND COSTS Party: Plaintiff Plantation Club Association Inc"
+    },
+    {
+      "date": "05/16/2025",
+      "description": "Notice of Hearing",
+      "additional": ""
+    },
+    {
+      "date": "05/16/2025",
+      "description": "Motion for Extension of Time",
+      "additional": ", PLANTATION CLUB ASSOCIATION, INC. , PLAINTIFF'S MOTION TO EXTEND AND/OR AMEND UNIFORM TRIAL ORDER"
+    },
+    {
+      "date": "05/05/2025",
+      "description": "Notice of Hearing",
+      "additional": ""
+    },
+    {
+      "date": "03/12/2025",
+      "description": "Motion to Withdraw",
+      "additional": "Party: Defendant Merritt, Randolph"
+    },
+    {
+      "date": "12/23/2024",
+      "description": "Motion for Default & Default",
+      "additional": "against Party: Defendant Delgado, Kellie"
+    },
+    {
+      "date": "11/07/2024",
+      "description": "Motion for Default",
+      "additional": ""
+    },
+    {
+      "date": "11/05/2024",
+      "description": "Reply to Affirmative Defenses",
+      "additional": ""
+    },
+    {
+      "date": "11/04/2024",
+      "description": "Answer to Complaint",
+      "additional": "Party: Defendant Merritt, Randolph"
+    },
+    {
+      "date": "10/04/2024",
+      "description": "Uniform Order Setting Pretrial Deadline",
+      "additional": "CALENDAR CALL: 07-28-2025 at 10:00 AM"
+    },
+    {
+      "date": "10/04/2024",
+      "description": "Agreed Order",
+      "additional": ""
+    },
+    {
+      "date": "09/27/2024",
+      "description": "Notice of Appearance",
+      "additional": "Party: Defendant Merritt, Randolph"
+    },
+    {
+      "date": "09/27/2024",
+      "description": "Motion for Extension of Time",
+      "additional": "DEFENDANT S MOTION FOR EXTENSION OF TIME TO RESPOND TO COMPLAINT Party: Defendant Merritt, Randolph"
+    },
+    {
+      "date": "09/13/2024",
+      "description": "Summons Returned Served",
+      "additional": "11th day of September, 2024, 1:00 pm Party: Defendant Delgado, Kellie"
+    },
+    {
+      "date": "09/13/2024",
+      "description": "Summons Returned Served",
+      "additional": "11th day of September, 2024, 1:00 pm Party: Defendant Delgado, Kellie"
+    },
+    {
+      "date": "09/13/2024",
+      "description": "Summons Returned Unserved",
+      "additional": "on UNKNOWN TENANT IN POSSESSION, 6855 W. BROWARD BLVD., UNIT 409, PLANTATION, FL 33317. Party: Defendant Delgado, Kellie"
+    },
+    {
+      "date": "09/04/2024",
+      "description": "eSummons Issuance",
+      "additional": "Party: Defendant Merritt, Randolph"
+    },
+    {
+      "date": "09/04/2024",
+      "description": "eSummons Issuance",
+      "additional": "Party: Defendant Delgado, Kellie"
+    },
+    {
+      "date": "09/04/2024",
+      "description": "eSummons Issuance",
+      "additional": "Party: Defendant Unknown Tenant in Possession"
+    },
+    {
+      "date": "08/30/2024",
+      "description": "Per AOSC20-23 Amd12, Case is determined Streamlined",
+      "additional": ""
+    },
+    {
+      "date": "08/30/2024",
+      "description": "Civil Cover Sheet",
+      "additional": "Amount: $1.00"
+    },
+    {
+      "date": "08/30/2024",
+      "description": "Value Claim Form",
+      "additional": ""
+    },
+    {
+      "date": "08/30/2024",
+      "description": "Lis Pendens",
+      "additional": "Fld & Rec"
+    },
+    {
+      "date": "08/30/2024",
+      "description": "Complaint (eFiled)",
+      "additional": "Party: Attorney Lewis, Arthur E, ESQ. Plaintiff Plantation Club Association Inc"
+    },
+    {
+      "date": "08/30/2024",
+      "description": "Summons Returned Unserved/Unexecuted",
+      "additional": ""
+    },
+    {
+      "date": "08/30/2024",
+      "description": "Summons Returned Unserved/Unexecuted",
+      "additional": ""
+    },
+    {
+      "date": "08/30/2024",
+      "description": "Summons Returned Unserved/Unexecuted",
+      "additional": ""
+    },
+    {
+      "date": "10/29/2025",
+      "description": "Foreclosure Sale",
+      "additional": "Hearing Time: 10:00 AM Judicial Officer(s):Not Applicable, , Location: On-line @ www.broward.realforeclose.com"
+    }
+  ]
+}
