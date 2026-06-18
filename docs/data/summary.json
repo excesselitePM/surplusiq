@@ -1,65 +1,73 @@
 {
-  "generated_at": "2026-06-17T14:41:04",
-  "total_leads": 29,
+  "generated_at": "2026-06-18T14:28:29",
+  "total_leads": 31,
   "total_leads_pre_filter": 44,
-  "killed_filtered_count": 14,
+  "killed_filtered_count": 12,
   "below_floor_filtered_count": 1,
   "min_display_surplus": 5000.0,
   "confirmed_surplus_total": 0,
   "estimated_surplus_total": 62438.0,
-  "apparent_surplus_total": 1937999.44,
+  "apparent_surplus_total": 2326574.88,
   "docket_verified_positive_count": 6,
   "docket_verified_positive_total": 277102.82,
   "confirmed_surplus_count": 0,
   "estimated_surplus_count": 1,
-  "apparent_surplus_count": 28,
+  "apparent_surplus_count": 30,
   "killed_count": 0,
   "red_count": 0,
   "pipeline_ready_count": 0,
   "pr_matched_count": 18,
-  "docket_matched_count": 34,
+  "docket_matched_count": 32,
   "by_state": {
     "FL": {
       "leads": 22,
-      "surplus": 1739333.9799999997
+      "surplus": 1665467.5899999996
     },
     "OH": {
       "leads": 22,
-      "surplus": 1100782.32
+      "surplus": 1400934.5000000002
     }
   },
   "by_county": [
     {
+      "county_id": "broward-fl",
+      "county_name": "Broward",
+      "state": "FL",
+      "leads": 6,
+      "surplus": 545347.5,
+      "top_lead": 169763.94
+    },
+    {
       "county_id": "miami-dade-fl",
       "county_name": "Miami-Dade",
       "state": "FL",
-      "leads": 8,
-      "surplus": 641359.49,
+      "leads": 7,
+      "surplus": 515993.92999999993,
       "top_lead": 230651.02
     },
     {
       "county_id": "cuyahoga-oh",
       "county_name": "Cuyahoga",
       "state": "OH",
-      "leads": 14,
-      "surplus": 514218.29,
+      "leads": 12,
+      "surplus": 446455.17,
       "top_lead": 95253.0
-    },
-    {
-      "county_id": "broward-fl",
-      "county_name": "Broward",
-      "state": "FL",
-      "leads": 5,
-      "surplus": 494906.89999999997,
-      "top_lead": 169763.94
     },
     {
       "county_id": "orange-fl",
       "county_name": "Orange",
       "state": "FL",
       "leads": 5,
-      "surplus": 378894.82000000007,
+      "surplus": 379953.39,
       "top_lead": 239387.84
+    },
+    {
+      "county_id": "hamilton-oh",
+      "county_name": "Hamilton",
+      "state": "OH",
+      "leads": 2,
+      "surplus": 367915.3,
+      "top_lead": 353415.3
     },
     {
       "county_id": "franklin-oh",
@@ -96,9 +104,9 @@
   ],
   "by_score": {
     "A+": 8,
-    "A": 11,
-    "B": 12,
-    "C": 11
+    "A": 12,
+    "B": 10,
+    "C": 12
   },
   "top_5_confirmed_leads": [],
   "top_5_estimated_leads": [
@@ -113,6 +121,15 @@
     }
   ],
   "top_5_apparent_leads": [
+    {
+      "county": "Hamilton",
+      "state": "OH",
+      "case_number": "A2002969 (11756)",
+      "address": "1774 VICTORIA CT",
+      "surplus": 353415.3,
+      "money_status": "apparent_surplus",
+      "evidence_level": "auction_only"
+    },
     {
       "county": "Franklin",
       "state": "OH",
@@ -148,15 +165,6 @@
       "surplus": 154387.93,
       "money_status": "apparent_surplus",
       "evidence_level": "docket_reviewed"
-    },
-    {
-      "county": "Duval",
-      "state": "FL",
-      "case_number": "16-2025-CA-006229-AXXX-MA",
-      "address": "12752 W BURNING TREE LN",
-      "surplus": 134387.47,
-      "money_status": "apparent_surplus",
-      "evidence_level": "auction_only"
     }
   ],
   "coverage": {
