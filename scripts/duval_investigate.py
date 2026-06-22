@@ -193,24 +193,67 @@ async def main():
                           "selects": land_char.get("selects"),
                           "buttons": land_char.get("buttons")}, indent=2)[:3500])
 
-        # ── STAGE B: disclaimer / accept gate ──
-        clicked = await try_accept_disclaimer(page)
-        if clicked:
-            print(f"\n===== STAGE B: clicked disclaimer ({clicked}) =====")
+        # ── STAGE B: open Case Search (openCmsPage) + enumerate frames ──
+        print("\n===== STAGE B: OPEN CASE SEARCH =====")
+        # wait for the auto PublicLogin to settle (Login Status: Public Access)
+        try:
+            await page.wait_for_function(
+                "() => /Public Access/i.test(document.body.innerText)", timeout=20000)
+        except Exception:
+            pass
+        login_status = await page.evaluate(
+            "() => { const e=document.getElementById('c_AccessTypeLabel'); "
+            "return e ? e.innerText.trim() : ''; }")
+        print(f"  login status label: {login_status!r}")
+
+        # trigger the Case Search nav (faithful: same call as the onclick)
+        try:
+            await page.evaluate("() => { if (typeof openCmsPage==='function') openCmsPage(); }")
+        except Exception as e:
+            print(f"  openCmsPage() error: {e}")
+        # the search window loads async ("Preparing a new search window")
+        try:
+            await page.wait_for_load_state("networkidle", timeout=20000)
+        except Exception:
+            pass
+        # wait for the 'Preparing...' placeholder to be replaced by real content
+        try:
+            await page.wait_for_function(
+                "() => { const t=document.body.innerText||''; "
+                "return !/Preparing a new search window/i.test(t) || "
+                "document.querySelectorAll('iframe').length>0; }", timeout=20000)
+        except Exception:
+            pass
+
+        # enumerate all frames + characterize each (search form likely in an iframe)
+        frames_info = []
+        for fr in page.frames:
             try:
-                await page.wait_for_load_state("networkidle", timeout=15000)
-            except Exception:
-                pass
-            post_html = await dump(page, "B_after_accept", "PORTAL")
-            post_char = await characterize(page)
-            summary["after_accept"] = {
-                "selector": clicked, "final_url": page.url, "html_size": len(post_html),
-                "captcha": captcha_markers(post_html, page.url),
-                "characterize": post_char,
-            }
-            print(json.dumps({"url": page.url, "inputs": post_char.get("inputs"),
-                              "buttons": post_char.get("buttons"),
-                              "links": post_char.get("links")}, indent=2)[:3000])
+                finfo = {"url": fr.url, "name": fr.name}
+                fchar = await fr.evaluate(
+                    r"""() => ({
+                        inputs: Array.from(document.querySelectorAll('input,textarea')).map(i=>({
+                            id:i.id,name:i.name,type:i.type,placeholder:i.placeholder,
+                            aria:i.getAttribute('aria-label')||''})).slice(0,40),
+                        selects: Array.from(document.querySelectorAll('select')).map(s=>({
+                            id:s.id,name:s.name,opts:Array.from(s.options).slice(0,10).map(o=>o.value+':'+o.text.slice(0,24))})).slice(0,15),
+                        buttons: Array.from(document.querySelectorAll('button,input[type=submit],input[type=button],a[onclick],[role=button]'))
+                            .map(b=>({tag:b.tagName,id:b.id,
+                                      text:((b.innerText||b.value||'').replace(/\s+/g,' ').trim()).slice(0,40),
+                                      onclick:(b.getAttribute('onclick')||'').slice(0,90)})).slice(0,30),
+                        body_head:(document.body?document.body.innerText:'').replace(/\s+/g,' ').trim().slice(0,300),
+                    })""")
+                finfo["characterize"] = fchar
+                frames_info.append(finfo)
+            except Exception as e:
+                frames_info.append({"url": getattr(fr, "url", "?"), "error": str(e)[:120]})
+        await dump(page, "B_case_search", "PORTAL")
+        summary["case_search"] = {
+            "login_status": login_status,
+            "frame_count": len(page.frames),
+            "frames": frames_info,
+        }
+        print(json.dumps(frames_info, indent=2)[:4500])
 
         # ── STAGE C: best-effort case search for each case ──
         for cn in cases:
@@ -218,127 +261,157 @@ async def main():
             print(f"\n===== STAGE C: SEARCH {cn} =====")
             rec = {"case": cn, "tag": tag, "steps": {}}
             try:
-                # find a likely case-number search box
+                # find a likely case-number search box ACROSS ALL FRAMES (the
+                # search form loads inside an iframe in the CoreCMS tab UI)
                 box = None
-                for sel in [
+                search_frame = page
+                box_selectors = [
                     "input[placeholder*='case' i]", "input[aria-label*='case' i]",
                     "input[id*='Case' i]", "input[name*='Case' i]",
                     "input[id*='Search' i]", "input[placeholder*='search' i]",
-                    "input[type='text']:visible", "input[type='search']:visible",
-                ]:
-                    loc = page.locator(sel).first
-                    try:
-                        if await loc.count() > 0 and await loc.is_visible():
-                            box = loc
-                            rec["steps"]["search_box_selector"] = sel
-                            break
-                    except Exception:
-                        continue
+                    "input[type='text']", "input[type='search']",
+                ]
+                for fr in page.frames:
+                    for sel in box_selectors:
+                        loc = fr.locator(sel).first
+                        try:
+                            if await loc.count() > 0 and await loc.is_visible():
+                                box = loc
+                                search_frame = fr
+                                rec["steps"]["search_box_selector"] = sel
+                                rec["steps"]["search_frame_url"] = fr.url[:120]
+                                break
+                        except Exception:
+                            continue
+                    if box:
+                        break
                 if not box:
-                    rec["result"] = "NO_SEARCH_BOX — see landing inventory"
+                    rec["result"] = "NO_SEARCH_BOX — see case_search frame inventory"
                     summary["results"].append(rec)
-                    print("  no search box found")
+                    print("  no search box found in any frame")
                     continue
 
                 await box.click(timeout=5000)
                 await box.fill("")
                 await box.type(cn, delay=30)
-                # submit: Enter, then fall back to a search button
+                # submit: the CoreCMS search is an AJAX/ASMX call, usually no full
+                # navigation. Press Enter, then fall back to a Search button IN THE
+                # SAME FRAME, then just wait for results to populate.
                 try:
-                    async with page.expect_navigation(wait_until="domcontentloaded", timeout=12000):
-                        await box.press("Enter")
+                    await box.press("Enter")
                 except Exception:
-                    for bsel in ["button:has-text('Search')", "input[type=submit][value*='Search' i]",
-                                 "#btnSearch", "[id*='Search'][role=button]", "button[type=submit]"]:
-                        b = page.locator(bsel).first
+                    pass
+                for bsel in ["input[type=submit][value*='Search' i]", "button:has-text('Search')",
+                             "input[type=button][value*='Search' i]", "#btnSearch",
+                             "a[onclick*='earch']", "[id*='Search'][role=button]"]:
+                    b = search_frame.locator(bsel).first
+                    try:
                         if await b.count() > 0 and await b.is_visible():
-                            try:
-                                async with page.expect_navigation(wait_until="domcontentloaded", timeout=12000):
-                                    await b.click(timeout=5000)
-                            except Exception:
-                                await b.click(timeout=5000)
+                            await b.click(timeout=5000)
                             break
+                    except Exception:
+                        continue
                 try:
                     await page.wait_for_load_state("networkidle", timeout=15000)
                 except Exception:
                     pass
+                # give the ASMX result grid a moment to render rows
+                try:
+                    await search_frame.wait_for_function(
+                        "(want) => document.body && "
+                        "document.body.innerText.replace(/[^A-Za-z0-9]/g,'').toUpperCase().includes(want)",
+                        arg=tag, timeout=12000)
+                except Exception:
+                    pass
 
                 res_html = await dump(page, "C_search", tag)
+                # search results may be in the frame; capture both frame + page text
+                frame_present = False
+                hits = {}
+                try:
+                    fr_html = await search_frame.content()
+                    frame_present = tag in re.sub(r"[^A-Za-z0-9]", "", fr_html).upper()
+                    (OUT / f"{tag}_C_searchframe.html").write_text(fr_html, encoding="utf-8")
+                    hits = await search_frame.evaluate(
+                        r"""(cn) => {
+                            const want = cn.replace(/[^A-Za-z0-9]/g,'').toUpperCase();
+                            const els = Array.from(document.querySelectorAll('a[href],[onclick],tr,td'));
+                            const matches = els.filter(a => (a.innerText||'').replace(/[^A-Za-z0-9]/g,'').toUpperCase().includes(want))
+                                .map(a => ({tag:a.tagName,text:(a.innerText||'').trim().slice(0,70),
+                                            href:(a.getAttribute && a.getAttribute('href')||'').slice(0,90),
+                                            onclick:(a.getAttribute && a.getAttribute('onclick')||'').slice(0,90)}));
+                            return {result_matches: matches.slice(0,10),
+                                    tables: document.querySelectorAll('table').length};
+                        }""", cn)
+                except Exception as e:
+                    hits = {"frame_eval_error": str(e)[:120]}
                 rec["steps"]["search"] = {
                     "final_url": page.url, "size": len(res_html),
                     "captcha": captcha_markers(res_html, page.url),
-                    "case_present": tag in re.sub(r"[^A-Za-z0-9]", "", res_html).upper(),
+                    "case_present_frame": frame_present,
+                    "hits": hits,
                 }
-                # is there a results row / link to open the case detail?
-                hits = await page.evaluate(
-                    r"""(cn) => {
-                        const want = cn.replace(/[^A-Za-z0-9]/g,'').toUpperCase();
-                        const links = Array.from(document.querySelectorAll('a[href],[onclick]'));
-                        const matches = links.filter(a => (a.innerText||'').replace(/[^A-Za-z0-9]/g,'').toUpperCase().includes(want))
-                            .map(a => ({text:(a.innerText||'').trim().slice(0,60),
-                                        href:(a.getAttribute('href')||'').slice(0,90),
-                                        onclick:(a.getAttribute('onclick')||'').slice(0,90)}));
-                        return {result_links: matches.slice(0,8),
-                                tables: document.querySelectorAll('table').length};
-                    }""", cn)
-                rec["steps"]["search"]["hits"] = hits
 
-                # ── try opening the first matching case-detail link ──
+                # ── try opening the case detail from the results (in-frame) ──
                 opened = False
-                detail_link = page.locator(
-                    f"a:has-text('{cn}'), a:has-text('{tag}')").first
-                if await detail_link.count() == 0:
-                    # try a generic results-grid row link
-                    detail_link = page.locator("table a[href], .k-grid a, a[onclick*='Case']").first
-                if await detail_link.count() > 0:
+                for dsel in [f"a:has-text('{cn}')", f"a:has-text('{tag}')",
+                             "table a[href]", "a[onclick*='ase']", "tr[onclick]"]:
+                    dl = search_frame.locator(dsel).first
                     try:
-                        async with page.expect_navigation(wait_until="domcontentloaded", timeout=15000):
-                            await detail_link.click(timeout=6000)
-                        opened = True
-                    except Exception as e:
-                        rec["steps"]["detail_nav_error"] = str(e)[:160]
-                        try:
-                            await detail_link.click(timeout=5000)
+                        if await dl.count() > 0 and await dl.is_visible():
+                            await dl.click(timeout=6000)
                             opened = True
-                        except Exception:
-                            pass
+                            rec["steps"]["detail_link_selector"] = dsel
+                            break
+                    except Exception:
+                        continue
                 if opened:
                     try:
                         await page.wait_for_load_state("networkidle", timeout=15000)
                     except Exception:
                         pass
                     det_html = await dump(page, "D_detail", tag)
-                    # docket discovery: count rows in any tables, look for column headers
-                    disc = await page.evaluate(
-                        r"""() => {
-                            const tabs = Array.from(document.querySelectorAll('table')).map(t => {
-                                const head = (t.querySelector('thead tr') || t.rows[0]);
-                                const cols = head ? Array.from(head.cells).map(c => (c.innerText||'').replace(/\s+/g,' ').trim()) : [];
-                                const body = t.querySelector('tbody') ? t.querySelector('tbody').rows.length : Math.max(0, t.rows.length-1);
-                                return {cols, rows: body};
-                            }).filter(t => t.cols.length || t.rows);
-                            const pager = Array.from(document.querySelectorAll('[class*=pager],[class*=Pager],.k-pager-info'))
-                                .map(p => (p.innerText||'').trim().slice(0,80)).filter(Boolean);
-                            const bodytext = document.body.innerText||'';
-                            return {tables: tabs.slice(0,12), pager,
-                                    docket_word_hits: (bodytext.match(/docket|register of actions|case events|filings/gi)||[]).length};
-                        }"""
-                    )
-                    rec["steps"]["detail"] = {
-                        "final_url": page.url, "size": len(det_html),
-                        "captcha": captcha_markers(det_html, page.url),
-                        "case_present": tag in re.sub(r"[^A-Za-z0-9]", "", det_html).upper(),
-                        "docket_discovery": disc,
-                    }
-                    rec["result"] = ("DETAIL_OK" if rec["steps"]["detail"]["case_present"]
-                                     else "DETAIL_UNCLEAR")
+                    # docket discovery across ALL frames
+                    best = {}
+                    for fr in page.frames:
+                        try:
+                            fr_html = await fr.content()
+                            if tag not in re.sub(r"[^A-Za-z0-9]", "", fr_html).upper():
+                                continue
+                            (OUT / f"{tag}_D_detailframe.html").write_text(fr_html, encoding="utf-8")
+                            disc = await fr.evaluate(
+                                r"""() => {
+                                    const tabs = Array.from(document.querySelectorAll('table')).map(t => {
+                                        const head=(t.querySelector('thead tr')||t.rows[0]);
+                                        const cols=head?Array.from(head.cells).map(c=>(c.innerText||'').replace(/\s+/g,' ').trim()):[];
+                                        const body=t.querySelector('tbody')?t.querySelector('tbody').rows.length:Math.max(0,t.rows.length-1);
+                                        return {cols, rows: body};
+                                    }).filter(t => t.cols.length || t.rows);
+                                    const pager=Array.from(document.querySelectorAll('[class*=pager],[class*=Pager],.k-pager-info'))
+                                        .map(p=>(p.innerText||'').trim().slice(0,80)).filter(Boolean);
+                                    const bt=document.body.innerText||'';
+                                    return {frame_url: location.href, tables: tabs.slice(0,15), pager,
+                                            docket_word_hits:(bt.match(/docket|register of actions|case events|filings|dockets/gi)||[]).length};
+                                }""")
+                            best = disc
+                            break
+                        except Exception:
+                            continue
+                    rec["steps"]["detail"] = {"docket_discovery": best,
+                                              "case_present": bool(best)}
+                    rec["result"] = "DETAIL_OK" if best else "DETAIL_UNCLEAR"
                 else:
-                    rec["result"] = "SEARCH_DONE_NO_DETAIL_LINK"
+                    rec["result"] = ("SEARCH_HIT_NO_DETAIL_LINK" if (frame_present or
+                                     rec["steps"]["search"]["case_present_frame"])
+                                     else "SEARCH_DONE_NO_RESULT")
 
-                # reset to landing for the next case
+                # reset: re-open Case Search for the next case
                 try:
                     await page.goto(LANDING, wait_until="domcontentloaded", timeout=30000)
-                    await try_accept_disclaimer(page)
+                    await page.wait_for_function(
+                        "() => /Public Access/i.test(document.body.innerText)", timeout=15000)
+                    await page.evaluate("() => { if (typeof openCmsPage==='function') openCmsPage(); }")
+                    await page.wait_for_load_state("networkidle", timeout=15000)
                 except Exception:
                     pass
             except Exception as e:
