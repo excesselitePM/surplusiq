@@ -1,0 +1,101 @@
+CORE - Clerk Online Resource ePortal
+Return to Homepage
+Site Navigation
+General
+
+Welcome Page
+Accessibility
+
+Court Records
+
+Case Search
+
+Account
+
+Overview
+Logout
+Close all tabs
+Please wait
+Case Search
+2016-CC-14225
+ 
+Case 16-2016-CC-014225-XXXX-MA
+Department	County Civil	Division	CC-B
+Case Status	CLOSED	File Date	12/9/2016 3:03:25 PM
+Judge Name	ARIAS, ROBERTO A.	Officer	
+Private Attorney	Koberlein, David Michael		
+Parties
+Name / DOB / DL / ID #	Party Type
+Race / Sex	Address
+SURPLUS FUNDS RECOVERY SERVICE, LLC AS AGENT FOR: NORMAN ELLIOTT HOFFMAN	PLAINTIFF
+/	
+1047 DELTONA BLVD
+DELTONA, FL32725
+
+RONNIE FUSSELL AS CLERK OF COURT FOR DUVAL COUNTY	DEFENDANT
+/	
+501 W. ADAMS ST.
+JACKSONVILLE, FL32202
+
+Compass Bank	DEFENDANT
+/	
+Attorneys
+Attorney	Address	For Parties
+Koberlein, David Michael
+Private Attorney (89817)	1059 Mayflower Ave
+Deltona, FL32725-6939	SURPLUS FUNDS RECOVERY SERVICE, LLC AS AGENT FOR: NORMAN ELLIOTT HOFFMAN (PLAINTIFF)
+
+Fees
+Date	Description	Assessed	Paid	Balance
+12/10/2016	CO/CLAIMS>$2500 3/1/2012	$300.00	$300.00	$0.00
+Dockets
+Line /
+Document 	Count	Effective
+Entered	Description	Pages	Image
+1
+D2	--	12/9/2016
+12/10/2016	COMPLAINT	15	
+Available
+
+VOR, Ready to view
+
+2
+D1	--	12/9/2016
+12/10/2016	COVER SHEET	2	
+Must Register
+
+View on request
+
+3	--	12/9/2016
+12/10/2016	COMPLAINT ON CONTRACT OR OTHER DEBT		
+4
+D4	--	12/10/2016
+12/10/2016	CASE FEES PAID: $300.00 ON RECEIPT NUMBER 2812981	1	
+Available
+
+Public access
+
+5	--	12/15/2016
+12/15/2016	TRANSFERRED CASE FROM DIVISION CC-H TO DIVISION CC-B REASON: Per Memorandum from Judge Shore.		
+6	--	11/30/2017
+11/30/2017	NOTICE OF PROPOSED DISMISSAL ISSUED		
+7	--	11/30/2017
+11/30/2017	ORDER SETTING HEARING FOR 2/27/2018 09:30 AM RM 728		
+8
+D8	--	2/28/2018
+3/1/2018	ORDER OF DISMISSAL WITHOUT PREJUDICE	1	
+Available
+
+VOR, Ready to view
+
+
+
+
+
+
+
+
+
+
+User Name: Public Access
+Login Status: Public Access

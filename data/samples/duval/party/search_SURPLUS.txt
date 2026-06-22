@@ -1,0 +1,504 @@
+CORE - Clerk Online Resource ePortal
+Return to Homepage
+Site Navigation
+General
+
+Welcome Page
+Accessibility
+
+Court Records
+
+Case Search
+
+Account
+
+Overview
+Logout
+Close all tabs
+Please wait
+Case Search
+Search Results
+ 
+Jump to Bottom
+   
+Page:  of 5
+Case Number
+Citation Number
+	
+Parties & Information
+	
+Case Type
+Division
+	
+Case Status
+Next Court Date
+	
+Relevance
+
+
+2005-CA-003174-XXXX
+	
+NOSTALGIC , WAREHOUSE, INC., A COLORADO CORPORATION (P)
+SURPLUS , LIQUIDATORS, INC., A FLORIDA CORPORATION (D)
+	
+COMPLAINT ON CONTRACT OR OTHER DEBT (use on cases prior to 2010).
+Division: CV-C
+	
+CLOSED
+----
+	
+825
+
+
+2016-CA-002623-XXXX
+	
+THE BANK OF NEW YORK MELL (P)
+HALPIN JR, JOSEPH F (D)
+UNKNOWN SPOUSE OF JOSEPH (D)
+ASSET ACCEPTANCE LLC (D)
+UNKNOWN PARTIES IN POSSES (D)
+UNKNOWN PARTIES IN POSSES (D)
+Surplus Refund Corp. (3)
+SURPLUS REFUND CORPORATIO (3)
+	
+Homestead Residential Foreclosure - $50,001 - $249,999
+Division: FC-A
+	
+CLOSED
+----
+	
+650
+
+
+2023-CA-005281-XXXX
+	
+FORBIS, JALENE (P)
+E.C. BARTON & COMPANY (D)
+SURPLUS WAREHOUSE (D)
+	
+Other Negligence-Premises Liability-Commercial
+Division: CV-D
+	
+CLOSED
+----
+	
+325
+
+
+2020-CA-006415-XXXX
+	
+RONNIE FUSSELL, IN HIS OF (P)
+MULLIS, MARCHELE (D)
+SURPLUS FUNDS USA, LLC (D)
+	
+Other Real Property Actions $0 - $50,000
+Division: CV-B
+	
+CLOSED
+----
+	
+325
+
+
+2017-CA-003824-XXXX
+	
+PNC BANK NA (P)
+MCCUE, THE UNKNOW HEIRS OF JAMES R (D)
+WELLS FARGO BANK, NATIONA (D)
+ALTON, SUZANNE MARGARET (D)
+HUTCHINSON, JOHN CAMERON (D)
+HUTCHINSON, STUART RHEA (D)
+UNKNOWN PARTY #1 (D)
+UNKNOWN PARTY #2 (D)
+UNKNOWN PARTY #3 (D)
+UNKNOWN PARTY #4 (D)
+SURPLUS REFUND CORP (3)
+	
+Homestead Residential Foreclosure - $0 - $50,000
+Division: FC-H
+	
+CLOSED
+----
+	
+325
+
+
+2017-CA-000908-XXXX
+	
+M&T BANK (P)
+ALDRIDGE JR, G W (D)
+Unknown Spouse Of G.W. Al (D)
+UNKNOWN TENANT #1 (D)
+UNKNOWN TENANT #2 (D)
+BANK OF AMERICA, N.A. (D)
+Surplus Return Group (T)
+	
+Non-Homestead Residential Foreclosure $50,001 - $249,999
+Division: FC-H
+	
+CLOSED
+----
+	
+325
+
+
+2016-CC-014225-XXXX
+	
+SURPLUS FUNDS RECOVERY SE (P)
+RONNIE FUSSELL AS CLERK O (D)
+Compass Bank (D)
+	
+COMPLAINT ON CONTRACT OR OTHER DEBT
+Division: CC-B
+	
+CLOSED
+----
+	
+325
+
+
+2016-CA-006997-XXXX
+	
+NATIONSTAR MORTGAGE LLC (P)
+MCKINLEY, MICHAEL S (D)
+NATIONSTAR MORTGAGE LLC (D)
+DISCOVER BANK (D)
+Portfolio Recovery Associ (D)
+CHAPELGATE ASSOCIATION, I (D)
+Unknown Party #1 (D)
+Unknown Party #2 (D)
+Unknown Party #3 (D)
+Unknown Party #4 (D)
+YOSSI REALTY, LLC (3)
+Surplus Refund Corp. (3)
+	
+Homestead Residential Foreclosure - $50,001 - $249,999
+Division: FC-B
+	
+CLOSED
+----
+	
+325
+
+
+2016-CA-003812-XXXX
+	
+WELLS FARGO FINANCIAL SYS (P)
+BUCKLEY, JOHN (D)
+WELLS FARGO BANK, N.A. S/ (D)
+UNKNOWN TENANTS/OWNERS 1 (D)
+UNKNOWN TENANTS/OWNERS 2 (D)
+UNKNOWN TENANTS/OWNERS 3 (D)
+Surplus Refund Corp. (3)
+	
+Homestead Residential Foreclosure - $50,001 - $249,999
+Division: FC-F
+	
+CLOSED
+----
+	
+325
+
+
+2016-CC-003534-XXXX
+	
+CHIMNEY LAKES OWNERS ASSO (P)
+ADAMS, JUDITH (D)
+JUDITH ADAMS, UNKNOWN SPOUSE OF (D)
+#1, UNKNOWN TENANT (D)
+#2, UNKNOWN TENANT (D)
+Surplus Refund Corp (3)
+	
+FORECLOSURE
+Division: CC-K
+	
+CLOSED
+----
+	
+325
+
+
+2016-CA-002428-XXXX
+	
+THE BANK OF NEW YORK MELL (P)
+PLACHINSKY, ESTHER (D)
+PLACHINSKY, NAFTALY (D)
+WATERMILL MASTER ASSOCIAT (D)
+RESTORE 24 INC (D)
+UNKNOWN TENANT IN POSSESS (D)
+SURPLUS REFUND CORPORATIO (3)
+	
+Homestead Residential Foreclosure - $50,001 - $249,999
+Division: FC-G
+	
+CLOSED
+----
+	
+325
+
+
+2016-CA-000244-XXXX
+	
+FNMA (P)
+UNKNOWN HEIRS OF DAVID S. (D)
+UNKNOWN TENANT NO. 1 (D)
+UNKNOWN TENANT NO. 2 (D)
+DAWSON, ADAM D. (D)
+DAWSON, AARON P. (D)
+SURPLUS REFUND CORP. (3)
+	
+Non-Homestead Residential Foreclosure $50,001 - $249,999
+Division: FC-B
+	
+CLOSED
+----
+	
+325
+
+
+2015-CA-006573-XXXX
+	
+THE BANK OF NEW YORK MELL (P)
+NORDAN, WILLIAM CHARLES (D)
+UNKNOWN SPOUSE OF WILLIAM (D)
+SUMMER SANDS ASSOCIATION (D)
+GOODCHILD, PETER J (D)
+NELSON GOODCHILD, KELLY L (D)
+Surplus Recovery, Llc (3)
+	
+Homestead Residential Foreclosure - $50,001 - $249,999
+Division: FC-B
+	
+CLOSED
+----
+	
+325
+
+
+2015-CA-006099-XXXX
+	
+CORLAR LLC DBA 20 CAPITAL (P)
+BAKER, Winton (D)
+BAKER, JOE ANN (D)
+IN POSSESSION, ANY UNKNOWN TENANT (D)
+SURPLUS REFUND CORPORATIO (3)
+	
+Homestead Residential Foreclosure - $0 - $50,000
+Division: FC-C
+	
+CLOSED
+----
+	
+325
+
+
+2015-CA-005490-XXXX
+	
+JPMORGAN CHASE BANK NATIO (P)
+LEWIS, OLIN (D)
+LEWIS, RONDA (D)
+FLORIDA HOUSING FINANCE C (D)
+1, UNKNOWN PARTY (D)
+2, UNKNOWN PARTY (D)
+3, UNKNOWN PARTY (D)
+4, UNKNOWN PARTY (D)
+SURPLUS REFUND CORPORATIO (3)
+	
+Homestead Residential Foreclosure - $50,001 - $249,999
+Division: FC-F
+	
+CLOSED
+----
+	
+325
+
+
+2015-CA-002903-XXXX
+	
+WELLS FARGO BANK, N.A. SU (P)
+FAIRCLOTH, MARTHA HAMLIN (DECEASED) (D)
+FAIRCLOTH, Ralph Wayne (D)
+ANDERSON, Debra Ann (D)
+JAX FEDERAL CREDIT UNION (D)
+UNKNOWN TENANTS (D)
+SURPLUS REFUND CORPORATIO (3)
+	
+Homestead Residential Foreclosure - $0 - $50,000
+Division: FC-G
+	
+CLOSED
+----
+	
+325
+
+
+2015-CA-002305-XXXX
+	
+BRANCH BANKING AND TRUST (P)
+HERTHEL, MICHAEL S (D)
+UNKNOWN SPOSUE OF MICHAEL (D)
+UNKNOWN TENANT 1 (D)
+UNKNOWN TENANT 2 (D)
+UNKNOWN TENANT 3 (D)
+UNKNOWN TENANT 4 (D)
+SURPLUS REFUND CORPORATIO (3)
+	
+Non-Homestead Residential Foreclosure $50,001 - $249,999
+Division: FC-B
+	
+CLOSED
+----
+	
+325
+
+
+2015-CC-000492-XXXX
+	
+BRANDYWINE LAKES HOMEOWNE (P)
+RICHARD UNKNOWN SPOUSE OF, KETTY (D)
+SPOUSE, UNKNOWN (D)
+TENANT, UNKNOWN (D)
+SURPLUS REFUND CORPORATIO (3)
+DUVAL COUNTY LAND TRUST # (3)
+	
+FORECLOSURE
+Division: CC-B
+	
+CLOSED
+----
+	
+325
+
+
+2014-CC-014948-XXXX
+	
+Bartram Springs Homeowner (P)
+ENGSTROM, CRISTIE (D)
+UNDETERMINED PARTIES (D)
+USAA FEDERAL SAVING BANK (D)
+SURPLUS REFUND CORPORATIO (3)
+	
+FORECLOSURE
+Division: CC-A
+	
+CLOSED
+----
+	
+325
+
+
+2014-CA-007121-XXXX
+	
+GREEN TREE SERVICING LLC (P)
+MENESES, VERONICA L (D)
+THE UNKNOWN TENANT IN POS (D)
+THE UNKNOWN SPOUSE OF VER (D)
+THE UNKNOWN SPOUSE OF ALF (D)
+Mortgage Electronic Regis (D)
+Harbor Winds Homeowners A (D)
+MENESES, ALFREDO M (D)
+SURPLUS REFUND CORPORATIO (3)
+	
+Homestead Residential Foreclosure - $50,001 - $249,999
+Division: FC-F
+	
+CLOSED
+----
+	
+325
+
+
+2014-CA-006342-XXXX
+	
+CITIMORTGAGE INC (P)
+DUCHANTIER, EDMOND (D)
+UNKNOWN SPOUSE OF EDMOND (D)
+UNKNOWN TENANT 1 (D)
+UNKNOWN TENANT 2 (D)
+SURPLUS REFUND CORPORATIO (3)
+	
+Homestead Residential Foreclosure - $0 - $50,000
+Division: FC-F
+	
+CLOSED
+----
+	
+325
+
+
+2014-CA-003326-XXXX
+	
+FEDERAL NATIONAL MORTGAGE (P)
+JORDAN, FAYE B (Deceased) (D)
+Somerset, Senella (D)
+SURPLUS REFUND CORPORATIO (3)
+	
+Homestead Residential Foreclosure - $0 - $50,000
+Division: FC-H
+	
+CLOSED
+----
+	
+325
+
+
+2013-CC-014577-XXXX
+	
+EVEREST EVERGREEN LP A FO (P)
+LIVINGSTON, EBONY M (D)
+TENANT, UNKNOWN (D)
+BRAYWICK OWNERS ASSOCIATI (D)
+SURPLUS REFUND CORPORATIO (3)
+	
+FORECLOSURE
+Division: CC-J
+	
+CLOSED
+----
+	
+325
+
+
+2013-CA-010493-XXXX
+	
+JPMORGAN CHASE BANK, NATI (P)
+ROBINSON, DOROTHY V. (D)
+JPMORGAN CHASE BANK (P)
+SURPLUS REFUND CORPORATIO (3)
+	
+Non-Homestead Residential Foreclosure $50,001 - $249,999
+Division: FC-F
+	
+CLOSED
+----
+	
+325
+
+
+2012-CC-000215-XXXX
+	
+THE COLONY AT SAN JOSE CO (P)
+MALDONADO, CALEB (D)
+Unknown Tenant 1 (D)
+Unknown Tenant 2 (D)
+Surplus Assistance Group, (T)
+	
+FORECLOSURE
+Division: CC-F
+	
+DISPOSED
+----
+	
+325
+Return to Top
+   
+Page:  of 5
+
+
+
+
+
+
+
+User Name: Public Access
+Login Status: Public Access

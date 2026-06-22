@@ -1,0 +1,127 @@
+CORE - Clerk Online Resource ePortal
+Return to Homepage
+Site Navigation
+General
+
+Welcome Page
+Accessibility
+
+Court Records
+
+Case Search
+
+Account
+
+Overview
+Logout
+Close all tabs
+Please wait
+Case Search
+2023-CA-5281
+ 
+Case 16-2023-CA-005281-XXXX-MA
+Department	Circuit Civil	Division	CV-D
+Case Status	CLOSED	File Date	3/21/2023 7:29:59 PM
+Judge Name	NORTON, VIRGINIA B.	Officer	
+Private Attorney	Davis, Dexter Van		
+Parties
+Name / DOB / DL / ID #	Party Type
+Race / Sex	Address
+JALENE FORBIS	PLAINTIFF
+/	
+303 NORTH LIBERTY STREET
+JACKSONVILLE, FL32202
+
+E.C. BARTON & COMPANY	DEFENDANT
+/	
+2929 BROWNS LANE
+JONESBORO, AR72401
+
+SURPLUS WAREHOUSE	DEFENDANT
+/	
+9400 ATLANTIC BLVD
+50
+JACKSONVILLE, FL32225
+Attorneys
+Attorney	Address	For Parties
+Davis, Dexter Van
+Private Attorney (121967)	303 N Liberty St
+Jacksonville, FL32202-2726	JALENE FORBIS (PLAINTIFF)
+
+Fees
+Date	Description	Assessed	Paid	Balance
+04/04/2023	SUMMONS($10/ea) 6/17/2017	$10.00	$10.00	$0.00
+03/27/2023	CIR/GENERALCIVIL 7/1/2019	$401.00	$401.00	$0.00
+Dockets
+Line /
+Document 	Count	Effective
+Entered	Description	Pages	Image
+1	--	3/21/2023
+3/27/2023	OTHER NEGLIGENCE-PREMISES LIABILITY-COMMERCIAL		
+2
+D2	--	3/21/2023
+3/27/2023	COVER SHEET	3	
+Available
+
+VOR, Ready to view
+
+3
+D3	--	3/21/2023
+3/27/2023	COMPLAINT	3	
+Available
+
+VOR, Ready to view
+
+4
+D4	--	3/27/2023
+3/27/2023	CASE FEES PAID: $401.00 ON RECEIPT NUMBER 4366108	1	
+Available
+
+Public access
+
+5
+D5	--	3/28/2023
+3/28/2023	ORDER SETTING CASE MANAGEMENT PLAN FOR NON-COMPLEX CASES	9	
+Available
+
+VOR, Ready to view
+
+6
+D6	--	3/28/2023
+4/4/2023	SUMMONS ISSUED FOR E.C. BARTON & COMPANY D.B.A. SURPLUS WAREHOUSE	1	
+Available
+
+VOR, Ready to view
+
+7
+D7	--	3/31/2023
+4/4/2023	CASE FEES PAID: $10.00 ON RECEIPT NUMBER 4374536	1	
+Available
+
+Public access
+
+8
+D8	--	5/15/2023
+5/15/2023	AMENDED ORDER SETTING CASE MANAGEMENT PLAN FOR NON-COMPLEX CASES	8	
+Available
+
+VOR, Ready to view
+
+9
+D9	--	10/24/2023
+10/26/2023	NOTICE OF VOLUNTARY DISMISSAL WITH PREJUDICE (PLAINTIFF'S)	1	
+Available
+
+Public access
+
+
+
+
+
+
+
+
+
+
+User Name: Public Access
+Login Status: Public Access

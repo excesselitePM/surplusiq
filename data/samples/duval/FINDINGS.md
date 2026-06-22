@@ -123,19 +123,73 @@ case parties — no fragile 3-stage heuristic needed.
 - **NOT FOUND in any sampled case**: `Motion for Surplus`, `Claim to Surplus`,
   `Motion to Intervene`, recovery-firm NOA, surplus disbursement to a third party.
 
-### ⚠️ GAP — surplus-CLAIM (kill) vocabulary NOT ground-truthed
-**None of the 7 sampled cases (sold 26–74 days ago) has any surplus-claim activity.**
-The auction data available does not reach far enough back to sample cases old enough
-to have accrued claims (Duval claims evidently lag the sale/disbursement by more than
-~90 days; available Duval auction files older than April 2026 are empty). So the
-kill/claim vocabulary that is the core of Phase 2 could **not** be confirmed on real
-Duval text. Per the project rule ("don't code terms that aren't in real dockets"),
-the production claim-detector must NOT be shipped on assumption. Options to close the
-gap before/just-after build:
-  1. Sample Duval cases sold ~6–18 months ago (need an older case list — e.g. pull a
-     month of late-2025 sold foreclosures and re-run the probe).
-  2. Build the claim detector by porting the Miami/Broward patterns but mark it
-     UNVALIDATED, and validate against the first real Duval claims as they appear.
+### Surplus-CLAIM (kill) vocabulary — GROUND-TRUTHED (option a, party-name search)
+
+The 7 recently-sold cases had no claims (Duval claims lag the sale/disbursement by
+months). Sourced older CLAIMED cases via the portal's **party-name search**
+(`scripts/duval_party_search.py`, run 27979917867): Last Name = recovery-firm term
+→ `getCaseSearch` → results grid. 8 searches + 8 opened dockets (well under budget).
+Real claim vocabulary below; all in the Dockets **Description** column. Samples in
+`party/*_docket.txt`.
+
+**Recovery-firm party signature (structured — the cleanest kill signal):**
+The claimant is added as a case **party with type `3rd Party` / `THIRD PARTY
+DEFENDANT`** (the `(3)` / `(T)` code in the results grid). Real:
+- `Surplus Refund Corp.  3rd Party` (2016-CA-002623, 2016-CA-006997)
+- `Surplus Return Group  THIRD PARTY DEFENDANT` (2017-CA-000908)
+
+**Surplus-claim motions/orders (Description column, verbatim):**
+- `MOTION TO AUTHORIZE DISBURSEMENT OF SURPLUS FUNDS (SURPLUS REFUND CORPORATION)`
+- `MOTION FOR DISBURSEMENT OF REGISTRY FUNDS TO AUTHORIZE DISBURSEMENT OF SURPLUS FUNDS FILED BY SURPLUS REFUND CORPORATION`
+- `MOTION TO DISBURSE SURPLUS FUNDS` / `MOTION TO DIRECT CLERK TO DISBURSE SURPLUS FUNDS TO PLTFF`
+- `PETITION FOR DISBURSEMENT OF SURPLUS FUNDS (SURPLUS TRUSTEE'S)`
+- `NOTICE OF APPOINTMENT OF SURPLUS TRUSTEE (SURPLUS RETURN GROUP, LLC)`
+- `REQUEST (BANK OF AMERICA NA) AND NOTICE OF INTENT TO CLAIM EXCESS PROCEEDS` (junior lienholder)
+- `ORDER AUTHORIZING DISBURSEMENT OF SURPLUS FUNDS` / `... SURPLUS PROCEEDS`
+- `ORDER GRANTING SURPLUS TRUSTEES PETITION FOR DISBURSEMENT OF SURPLUS FUNDS`
+→ Match rule: **"surplus" anchor + a disburse/claim/petition/intent verb** (same
+shape as Broward), so the `VALUE OF ... CLAIM` cover sheet and routine plaintiff
+disbursements never false-fire.
+
+**Surplus fee-codes (Fees section — structured, unambiguous kill marker):**
+`SURPLUS-DISB PROCEEDS-EA`, `SURPLUS-APPOINT TRUSTEE`, `SURPLUS-NOTIFY TRUSTEE APPT`.
+These appear ONLY when a surplus disbursement/trustee process ran; the 7 clean cases
+had none. A clean structured signal independent of Description text.
+
+**Recovery-firm NOA — structure confirmed (solves the Broward 3-stage problem):**
+`NOTICE OF APPEARANCE OF COUNSEL <attorney> FOR <party>` holds for BOTH benign and
+recovery NOAs — the represented party is named inline:
+- recovery: `NOTICE OF APPEARANCE OF COUNSEL STEVEN IMPARATO FOR SURPLUS REFUND CORP.`
+            `NOTICE OF APPEARANCE OF COUNSEL JUSTIN MOOREFIELD FOR SURPLUS RETURN GROUP`
+- benign:   `... FOR SHAIB RIOS FOR BANK OF AMERICA, N.A.` / `... FOR <homeowner/HOA>`
+→ Detect a recovery-firm NOA by matching the `FOR <party>` against surplus/recovery
+vocabulary or the 3rd-party firm list — no fragile heuristic.
+
+**Disbursement BALANCE = surplus amount (confirmed across cases):**
+Two formats: recent = one line `CERTIFICATE OF FORECLOSURE DISBURSEMENT $X TO:
+<plaintiff> BALANCE: $Y`; older = a SEQUENCE of `CERTIFICATE OF DISBURSEMENTS DISBURSE
+$X TO: <payee> (BAL $Y)` lines, each reducing the balance, first to the plaintiff
+(payoff) and last to claimant/owner ending `(BAL. $0.00)`. **Surplus = balance after
+the first (plaintiff) disbursement.** Caveat: `MOTION FOR ADDITIONAL ADVANCES FROM THE
+REGISTRY OF THE COURT` (plaintiff clawback) can reduce it — treat a pending one as
+caution.
+
+### Cross-county firm check (point 4) — Duval needs its OWN known-firm list
+Jacksonville is dominated by a LOCAL firm set, not Broward's. Counts (party search):
+- **SURPLUS REFUND CORP / SURPLUS REFUND CORPORATION** — the heavyweight (~15+ FC
+  cases; counsel Kenner & Imparato PLLC / Steven Imparato, Boca Raton).
+- **SURPLUS RETURN GROUP, LLC** — acts as court-appointed "surplus trustee" (counsel
+  Justin Moorefield). Also: Surplus Recovery LLC, Surplus Funds Recovery SE, Surplus
+  Funds USA LLC, National Equity Recovery.
+- Broward firms mostly ABSENT; only **GET LIQUID FUNDING** reaches Duval (rarely —
+  e.g. 3rd party alongside National Equity Recovery in 2023-CC-001783). PRIORITY
+  SURPLUS / NEW BEGINNINGS / PRESTIGE / CAPITAL CRAFTER / EVO RECOVERY: 0 Duval hits.
+
+### Gap status: CLOSED
+Real Duval claim vocabulary obtained. Ready to build a production scraper porting the
+Miami-Dade evidence model with Duval-specific (a) Description-column docket extractor,
+(b) surplus-claim patterns above, (c) 3rd-party/fee-code/NOA-party kill signals, (d)
+disbursement-BALANCE surplus extraction, (e) a Duval-local known-firm list.
 
 ---
 
