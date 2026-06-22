@@ -127,6 +127,33 @@ def main() -> int:
         _check(_classify(case).classification in {"green", "yellow"},
                f"{case} pursuable")
 
+    # ── Regression: generic-keyword tokens must NOT override a benign party/counsel
+    #    appearance (the GHIDOTTI-class bug, now generalized). The pre-fix code
+    #    gated Stage 1/2 on is_recovery, so a legit "Party: Plaintiff X Funding LLC"
+    #    was false-killed on the bare "funding"/"consulting"/"equity group" keyword.
+    #    The fix gates Stage 1/2 on a KNOWN-FIRM name only. These cases were a blind
+    #    spot for the old 22-case suite — no benign party carried a generic token.
+    print("\n6. generic-keyword benign parties must NOT false-kill (was blind spot)")
+    for ap in [
+        "Notice of Appearance Party: Plaintiff Pennymac Loan Funding LLC",
+        "Party: Defendant Sunrise Consulting LLC",
+        "Party: Plaintiff Coastal Capital Consulting, LLC",
+        "GREENBERG TRAURIG, P.A. Attorneys for Plaintiff Riverside Equity Group",
+    ]:
+        _check(classify_appearance(ap, set(), set())[0] == NOA_BENIGN,
+               f"benign (generic token): {ap[:48]}")
+
+    # ── Counterpart: the fix must NOT open a false-NEGATIVE hole. A real recovery
+    #    firm appearing in RESIDUAL (no party/counsel token) must still KILL — by
+    #    known name AND by bare generic keyword on an unknown firm.
+    print("\n7. residual recovery firms must STILL kill (no false-negative hole)")
+    for firm in ["PRIORITY SURPLUS LLC", "Get Liquid Funding, LLC"]:
+        _check(classify_appearance(firm, set(), set())[0] == NOA_RECOVERY_KILL,
+               f"known firm residual kills: {firm[:40]}")
+    for firm in ["Apex Surplus Funding LLC", "Statewide Asset Recovery Group"]:
+        _check(classify_appearance(firm, set(), set())[0] == NOA_RECOVERY_KILL,
+               f"unknown generic-keyword firm residual kills: {firm[:40]}")
+
     print("\n" + "=" * 70)
     print(f"  RESULT: {_PASS}/{_PASS + _FAIL} checks passed")
     print("=" * 70)

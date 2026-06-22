@@ -105,9 +105,13 @@ _ADMIN_NOISE_NOTE = "certificate of disbursements = routine admin, not a surplus
 #   Stage 2  benign-counsel — ESQ / "as counsel for" / co-counsel / email designation
 #   Stage 3  residual       — surplus-keyword / known-firm → KILL; else → CAUTION,
 #                             with PARTY-NAME, purchaser/non-party, and HOA exclusions
-# Stages 1+2 are gated by the recovery guard: a row that ALSO names a recovery firm
-# is NOT benigned (e.g. CONO-25-048381 "HOME DEFENSE ... EVO RECOVERY ... Party:
-# Defendant Zoubaa" carries a Party token but is a surplus firm).
+# Stages 1+2 are gated by the KNOWN-FIRM guard ONLY (a ground-truthed recovery-firm
+# NAME), NOT by generic keywords: a row that ALSO names a known recovery firm is NOT
+# benigned (e.g. CONO-25-048381 "HOME DEFENSE ... EVO RECOVERY ... Party: Defendant
+# Zoubaa" carries a Party token but names a known surplus firm). A generic keyword
+# alone ("funding", "consulting", "equity group") must NOT override a structured
+# party/counsel token — that was the GHIDOTTI-class false kill (a "Party: Plaintiff
+# XYZ Funding LLC" is the case's own lender). Generic keywords act ONLY in Stage 3.
 
 # Generic keywords that self-identify a surplus-recovery / funding operation:
 RECOVERY_KEYWORDS = [
@@ -216,6 +220,15 @@ def collect_party_and_purchaser_names(rows: list) -> tuple:
     return party, purchaser
 
 
+def _is_known_firm(text: str) -> bool:
+    """Specific, ground-truthed recovery-firm NAMES only (Eric's known-company
+    list). Distinct from _is_recovery_firm — it does NOT match generic keywords.
+    This is the guard that disables the benign party/counsel stages: only a known
+    firm name overrides a structured 'Party:'/counsel token, never a bare keyword."""
+    low = text.lower()
+    return any(k in low for k in KNOWN_RECOVERY_FIRMS)
+
+
 def _is_recovery_firm(text: str) -> bool:
     low = text.lower()
     return (any(k in low for k in KNOWN_RECOVERY_FIRMS)
@@ -230,20 +243,25 @@ def classify_appearance(additional: str, party_names: set, purchaser_names: set)
     """
     ad = _norm(additional)
     low = ad.lower()
+    is_known = _is_known_firm(ad)
     is_recovery = _is_recovery_firm(ad)
 
-    # Stage 1 — benign party token (unless the row also names a recovery firm).
-    if re.search(r"party:\s*(?:plaintiff|defendant)", low) and not is_recovery:
+    # Stage 1 — benign party token. Gated on a KNOWN-FIRM match ONLY, NOT generic
+    # keywords: a "Party: Plaintiff XYZ Funding LLC" is the case's own lender,
+    # benign — the generic "funding"/"consulting"/"equity group" keyword must not
+    # override a structured party token (the GHIDOTTI-class false kill). A row
+    # naming a ground-truthed recovery firm still falls through to the Stage-3 kill.
+    if re.search(r"party:\s*(?:plaintiff|defendant)", low) and not is_known:
         return (NOA_BENIGN, ad)
     # leading "Defendant <name>" / "Plaintiff <name>" (no "Party:" prefix), e.g.
     # "Defendant Asmart Group, LLC" — a named case party, benign.
-    if re.match(r"(?:defendant|plaintiff)\s+[A-Z]", ad, re.I) and not is_recovery:
+    if re.match(r"(?:defendant|plaintiff)\s+[A-Z]", ad, re.I) and not is_known:
         return (NOA_BENIGN, ad)
 
-    # Stage 2 — benign counsel (unless recovery firm). "Attorneys for the
-    # Plaintiff(s)/Defendant(s)" is case counsel, benign — what the GHIDOTTI/BERGER
-    # live false kill needed.
-    if not is_recovery and re.search(
+    # Stage 2 — benign counsel. Same known-firm gate. "Attorneys for the
+    # Plaintiff(s)/Defendant(s)" (incl. "...for Plaintiff XYZ Equity Group") is case
+    # counsel, benign — what the GHIDOTTI/BERGER live false kill needed.
+    if not is_known and re.search(
             r"\besq\b|as counsel for|co-?counsel|attorneys? for|"
             r"designation of (?:electronic )?(?:e-?)?mail", low):
         return (NOA_BENIGN, ad)
