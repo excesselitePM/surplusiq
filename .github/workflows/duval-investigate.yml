@@ -1,0 +1,51 @@
+name: Duval Investigate
+
+# THROWAWAY investigation workflow (Duval CoreCMS portal characterization +
+# CAPTCHA-from-CI check + docket vocabulary sampling). Not part of the daily
+# pipeline. Manual-dispatch only. Safe to delete once Duval investigation is
+# signed off. Does NOT commit anything — artifacts only.
+
+on:
+  workflow_dispatch:
+    inputs:
+      cases:
+        description: 'Comma-separated Duval case numbers (CoreCMS mortgage CA/CC; NOT tax-deed TD numbers)'
+        required: false
+        default: '16-2025-CA-005932-AXXX-MA,16-2025-CA-004483-AXXX-MA,16-2023-CA-010844-XXXX-MA'
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Install Playwright Chromium
+        run: python -m playwright install --with-deps chromium
+
+      - name: Run Duval investigation probe (headless, datacenter IP)
+        run: python scripts/duval_investigate.py "${{ github.event.inputs.cases }}"
+
+      - name: Upload investigation artifacts (HTML + screenshots + summary)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: duval-investigation
+          path: data/samples/duval/ci/
+          if-no-files-found: warn
+          retention-days: 7
