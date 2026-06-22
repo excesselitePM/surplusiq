@@ -255,17 +255,35 @@ async def main():
         }
         print(json.dumps(frames_info, indent=2)[:4500])
 
-        # ── STAGE C: best-effort case search for each case ──
+        # ── STAGE C: open each case in a FRESH context (no tab accumulation) ──
         for cn in cases:
             tag = tag_of(cn)
             print(f"\n===== STAGE C: SEARCH {cn} =====")
             rec = {"case": cn, "tag": tag, "steps": {}}
+            cpage = None
+            ccontext = None
             try:
-                # PASTE-FULL path: "Enter a case number" -> c_UcnEntryBox_<GUID>
-                # (GUID is per-tab; match by id prefix) -> Open Case button calls
-                # getCaseTabByUcnBoxId(boxId). Single frame, no iframe.
-                search_frame = page
-                box = page.locator("input[id^='c_UcnEntryBox_']").first
+                ccontext = await browser.new_context(
+                    viewport={"width": 1400, "height": 1400},
+                    ignore_https_errors=True, user_agent=REAL_UA)
+                cpage = await ccontext.new_page()
+                await cpage.goto(LANDING, wait_until="domcontentloaded", timeout=60000)
+                try:
+                    await cpage.wait_for_function(
+                        "() => /Public Access/i.test(document.body.innerText)", timeout=25000)
+                except Exception:
+                    pass
+                await cpage.evaluate("() => { if (typeof openCmsPage==='function') openCmsPage(); }")
+                try:
+                    await cpage.wait_for_load_state("networkidle", timeout=20000)
+                except Exception:
+                    pass
+                # PASTE-FULL path: c_UcnEntryBox_<GUID> -> getCaseTabByUcnBoxId(boxId)
+                try:
+                    await cpage.wait_for_selector("input[id^='c_UcnEntryBox_']", timeout=20000)
+                except Exception:
+                    pass
+                box = cpage.locator("input[id^='c_UcnEntryBox_']").first
                 if await box.count() == 0:
                     rec["result"] = "NO_UCN_BOX — see case_search inventory"
                     summary["results"].append(rec)
@@ -273,64 +291,41 @@ async def main():
                     continue
                 box_id = await box.get_attribute("id")
                 rec["steps"]["ucn_box_id"] = box_id
-                await box.click(timeout=5000)
+                await box.click(timeout=8000)
                 await box.fill(cn)
                 # faithful trigger: call the page's own Open-Case handler
                 try:
-                    await page.evaluate("(bid) => getCaseTabByUcnBoxId(bid)", box_id)
+                    await cpage.evaluate("(bid) => getCaseTabByUcnBoxId(bid)", box_id)
                 except Exception as e:
                     rec["steps"]["open_case_error"] = str(e)[:140]
-                    # fallback: click the Open Case button
                     try:
-                        await page.locator("input[id^='c_SubmitCaseLookupButton_']").first.click(timeout=5000)
+                        await cpage.locator("input[id^='c_SubmitCaseLookupButton_']").first.click(timeout=5000)
                     except Exception:
                         pass
                 try:
-                    await page.wait_for_load_state("networkidle", timeout=20000)
+                    await cpage.wait_for_load_state("networkidle", timeout=20000)
                 except Exception:
                     pass
                 # wait for the case tab to populate (case number lands in the DOM)
                 try:
-                    await page.wait_for_function(
+                    await cpage.wait_for_function(
                         "(want) => document.body && "
                         "document.body.innerText.replace(/[^A-Za-z0-9]/g,'').toUpperCase().includes(want)",
                         arg=tag, timeout=15000)
                 except Exception:
                     pass
 
-                res_html = await dump(page, "C_search", tag)
-                # search results may be in the frame; capture both frame + page text
-                frame_present = False
-                hits = {}
-                try:
-                    fr_html = await search_frame.content()
-                    frame_present = tag in re.sub(r"[^A-Za-z0-9]", "", fr_html).upper()
-                    (OUT / f"{tag}_C_searchframe.html").write_text(fr_html, encoding="utf-8")
-                    hits = await search_frame.evaluate(
-                        r"""(cn) => {
-                            const want = cn.replace(/[^A-Za-z0-9]/g,'').toUpperCase();
-                            const els = Array.from(document.querySelectorAll('a[href],[onclick],tr,td'));
-                            const matches = els.filter(a => (a.innerText||'').replace(/[^A-Za-z0-9]/g,'').toUpperCase().includes(want))
-                                .map(a => ({tag:a.tagName,text:(a.innerText||'').trim().slice(0,70),
-                                            href:(a.getAttribute && a.getAttribute('href')||'').slice(0,90),
-                                            onclick:(a.getAttribute && a.getAttribute('onclick')||'').slice(0,90)}));
-                            return {result_matches: matches.slice(0,10),
-                                    tables: document.querySelectorAll('table').length};
-                        }""", cn)
-                except Exception as e:
-                    hits = {"frame_eval_error": str(e)[:120]}
+                res_html = await dump(cpage, "C_search", tag)
                 rec["steps"]["search"] = {
-                    "final_url": page.url, "size": len(res_html),
-                    "captcha": captcha_markers(res_html, page.url),
-                    "case_present_frame": frame_present,
-                    "hits": hits,
+                    "final_url": cpage.url, "size": len(res_html),
+                    "captcha": captcha_markers(res_html, cpage.url),
                 }
 
                 # Open Case lands directly on the case-detail tab — run docket
                 # discovery unconditionally across all frames + persist full text.
-                det_html = await dump(page, "D_detail", tag)
+                det_html = await dump(cpage, "D_detail", tag)
                 best = {}
-                for fr in page.frames:
+                for fr in cpage.frames:
                     try:
                         fr_html = await fr.content()
                         if tag not in re.sub(r"[^A-Za-z0-9]", "", fr_html).upper():
@@ -360,19 +355,16 @@ async def main():
                         continue
                 rec["steps"]["detail"] = {"docket_discovery": best, "case_present": bool(best)}
                 rec["result"] = "DETAIL_OK" if best else "OPEN_UNCLEAR — see D_detail artifacts"
-
-                # reset: re-open Case Search for the next case
-                try:
-                    await page.goto(LANDING, wait_until="domcontentloaded", timeout=30000)
-                    await page.wait_for_function(
-                        "() => /Public Access/i.test(document.body.innerText)", timeout=15000)
-                    await page.evaluate("() => { if (typeof openCmsPage==='function') openCmsPage(); }")
-                    await page.wait_for_load_state("networkidle", timeout=15000)
-                except Exception:
-                    pass
             except Exception as e:
                 rec["result"] = f"EXCEPTION: {type(e).__name__}: {str(e)[:160]}"
-                await dump(page, "ERROR", tag)
+                if cpage:
+                    await dump(cpage, "ERROR", tag)
+            finally:
+                if ccontext:
+                    try:
+                        await ccontext.close()
+                    except Exception:
+                        pass
             summary["results"].append(rec)
             print(json.dumps(rec, indent=2)[:3500])
 
