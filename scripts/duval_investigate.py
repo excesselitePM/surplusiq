@@ -268,26 +268,41 @@ async def main():
                     ignore_https_errors=True, user_agent=REAL_UA)
                 cpage = await ccontext.new_page()
                 await cpage.goto(LANDING, wait_until="domcontentloaded", timeout=60000)
+                # WAIT for PublicLogin to actually settle before opening search —
+                # the login-status label is populated by the PublicLogin response.
+                # Opening search before it lands triggers the v2 captcha/login gate.
                 try:
                     await cpage.wait_for_function(
-                        "() => /Public Access/i.test(document.body.innerText)", timeout=25000)
+                        "() => { const e=document.getElementById('c_AccessTypeLabel'); "
+                        "return e && /public access/i.test(e.innerText); }", timeout=30000)
                 except Exception:
                     pass
+                try:
+                    await cpage.wait_for_load_state("networkidle", timeout=15000)
+                except Exception:
+                    pass
+                login_lbl = await cpage.evaluate(
+                    "() => { const e=document.getElementById('c_AccessTypeLabel'); return e?e.innerText.trim():''; }")
+                rec["steps"]["login_label"] = login_lbl
+                # open Case Search, then wait for the UCN box to actually render
                 await cpage.evaluate("() => { if (typeof openCmsPage==='function') openCmsPage(); }")
                 try:
                     await cpage.wait_for_load_state("networkidle", timeout=20000)
                 except Exception:
                     pass
                 # PASTE-FULL path: c_UcnEntryBox_<GUID> -> getCaseTabByUcnBoxId(boxId)
+                box = None
                 try:
-                    await cpage.wait_for_selector("input[id^='c_UcnEntryBox_']", timeout=20000)
+                    await cpage.wait_for_selector("input[id^='c_UcnEntryBox_']",
+                                                  state="visible", timeout=25000)
+                    box = cpage.locator("input[id^='c_UcnEntryBox_']").first
                 except Exception:
                     pass
-                box = cpage.locator("input[id^='c_UcnEntryBox_']").first
-                if await box.count() == 0:
-                    rec["result"] = "NO_UCN_BOX — see case_search inventory"
+                if box is None or await box.count() == 0:
+                    rec["result"] = f"NO_UCN_BOX (login={login_lbl!r}) — see diag dump"
+                    await dump(cpage, "C_noucnbox", tag)
                     summary["results"].append(rec)
-                    print("  no UCN entry box found")
+                    print(f"  no UCN entry box found (login={login_lbl!r})")
                     continue
                 box_id = await box.get_attribute("id")
                 rec["steps"]["ucn_box_id"] = box_id
