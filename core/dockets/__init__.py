@@ -18,6 +18,7 @@ from .montgomery import MontgomeryDocketScraper, parse_montgomery_case_number
 from .summit import SummitDocketScraper, parse_summit_case_number
 from .hamilton import HamiltonDocketScraper
 from .broward import BrowardDocketScraper, parse_broward_case_number
+from .duval import DuvalDocketScraper, parse_duval_case_number
 
 
 # Registry — add new counties here as they're implemented
@@ -29,6 +30,7 @@ SCRAPER_REGISTRY = {
     "summit-oh":     SummitDocketScraper,
     "hamilton-oh":   HamiltonDocketScraper,
     "broward-fl":    BrowardDocketScraper,
+    "duval-fl":      DuvalDocketScraper,
 }
 
 
@@ -50,6 +52,7 @@ __all__ = [
     "SummitDocketScraper",
     "HamiltonDocketScraper",
     "BrowardDocketScraper",
+    "DuvalDocketScraper",
     "get_scraper",
     "SCRAPER_REGISTRY",
 ]
