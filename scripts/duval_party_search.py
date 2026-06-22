@@ -27,16 +27,20 @@ LANDING = "https://core.duvalclerk.com/CoreCms.aspx?mode=PublicAccess"
 REAL_UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
            "(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36")
 OUT = Path("data/samples/duval/party")
-UCN_RE = re.compile(r"16-20\d{2}-C[AC]-\d{6}-[A-Z0-9]{3,4}-[A-Z]{2}", re.I)
-MAX_OPEN = 12
+# Duval results-grid UCN format: YYYY-DIV-NNNNNN-XXXX  (no '16-' prefix, no '-MA')
+UCN_RE = re.compile(r"\b20\d{2}-C[A-Z]-\d{6}-[A-Z0-9]{3,4}\b")
+# foreclosure case-number filter (CA circuit civil / CC county civil)
+FORECL_RE = re.compile(r"\b20\d{2}-C[AC]-\d{6}-[A-Z0-9]{3,4}\b")
+MAX_OPEN = 8
 
 DEFAULT_TERMS = [
-    # generic full-text party-name levers
-    "SURPLUS", "RECOVERY", "FUNDING",
-    # Broward known recovery firms (cross-county check)
-    "PRIORITY SURPLUS", "GET LIQUID FUNDING", "THE RECOVERY AGENTS", "AMERIFUND",
-    "NEW BEGINNINGS TRUSTEE", "PRESTIGE PROCESSING", "CAPITAL CRAFTER",
-    "HOME DEFENSE", "EVO RECOVERY",
+    # precise generic lever — party name contains 'surplus' = recovery firm
+    "SURPLUS",
+    # discovered Jacksonville surplus-recovery firms (from the SURPLUS sweep)
+    "SURPLUS REFUND CORP", "SURPLUS RECOVERY", "SURPLUS RETURN GROUP",
+    "SURPLUS FUNDS RECOVERY", "NATIONAL EQUITY RECOVERY",
+    # Broward known recovery firms that may reach Jacksonville (cross-county check)
+    "GET LIQUID FUNDING", "AMERIFUND",
 ]
 
 
@@ -154,48 +158,68 @@ async def party_search(context, term: str) -> dict:
 
 async def open_case(context, ucn: str) -> dict:
     tag = re.sub(r"[^A-Za-z0-9]", "", ucn).upper()
-    rec = {"ucn": ucn, "result": "", "claim_lines": []}
+    seq = ""
+    m = re.search(r"20\d{2}-C[A-Z]-(\d{6})", ucn)
+    if m:
+        seq = m.group(1)
+    # paste-format variants — the UcnEntryBox accepts the full FL UCN; the results
+    # grid omits the '16-' county prefix and '-MA' suffix, so try both shapes.
+    variants = [f"16-{ucn}-MA", ucn, re.sub(r"-[A-Z0-9]{3,4}$", "", ucn)]
+    rec = {"ucn": ucn, "seq": seq, "result": "", "tried": [], "claim_lines": []}
     page = await context.new_page()
     try:
         await settle_public_access(page)
-        await open_search_form(page)
-        box = page.locator("input[id^='c_UcnEntryBox_']").first
-        if await box.count() == 0:
-            rec["result"] = "no UCN box"; return rec
-        bid = await box.get_attribute("id")
-        await box.click(timeout=8000)
-        await box.fill(ucn)
-        try:
-            await page.evaluate("(b) => getCaseTabByUcnBoxId(b)", bid)
-        except Exception:
-            pass
-        try:
-            await page.wait_for_load_state("networkidle", timeout=20000)
-        except Exception:
-            pass
-        try:
-            await page.wait_for_function(
-                "(w) => document.body && document.body.innerText.replace(/[^A-Za-z0-9]/g,'').toUpperCase().includes(w)",
-                arg=tag, timeout=15000)
-        except Exception:
-            pass
         body = ""
-        for fr in page.frames:
-            try:
-                t = await fr.evaluate("() => document.body ? document.body.innerText : ''")
-                if tag in re.sub(r"[^A-Za-z0-9]", "", t).upper():
-                    body = t; break
-            except Exception:
+        for variant in variants:
+            await open_search_form(page)
+            box = page.locator("input[id^='c_UcnEntryBox_']").first
+            if await box.count() == 0:
                 continue
+            bid = await box.get_attribute("id")
+            await box.click(timeout=8000)
+            await box.fill(variant)
+            rec["tried"].append(variant)
+            try:
+                await page.evaluate("(b) => getCaseTabByUcnBoxId(b)", bid)
+            except Exception:
+                pass
+            try:
+                await page.wait_for_load_state("networkidle", timeout=18000)
+            except Exception:
+                pass
+            try:
+                await page.wait_for_function(
+                    "(s) => document.body && /Dockets/i.test(document.body.innerText) "
+                    "&& document.body.innerText.includes(s)", arg=seq, timeout=12000)
+            except Exception:
+                pass
+            for fr in page.frames:
+                try:
+                    t = await fr.evaluate("() => document.body ? document.body.innerText : ''")
+                    if seq and seq in t and re.search(r"Dockets", t):
+                        body = t; break
+                except Exception:
+                    continue
+            if body:
+                rec["opened_with"] = variant
+                break
+            # reset for next variant
+            try:
+                await page.goto(LANDING, wait_until="domcontentloaded", timeout=30000)
+                await settle_public_access(page)
+            except Exception:
+                pass
         if not body:
-            rec["result"] = "OPEN_UNCLEAR"; return rec
+            rec["result"] = "OPEN_UNCLEAR (no variant resolved)"
+            return rec
         OUT.mkdir(parents=True, exist_ok=True)
         (OUT / f"{tag}_docket.txt").write_text(body, encoding="utf-8")
         # scan Description lines for claim/recovery vocabulary
-        CLAIM = re.compile(r"surplus|interven|disburs|excess|claim to|motion for surplus|"
-                           r"notice of appearance|assignment|unclaimed|escheat|recovery|funding", re.I)
-        rec["claim_lines"] = [l.strip()[:160] for l in body.splitlines()
-                              if CLAIM.search(l) and len(l.strip()) > 8][:30]
+        CLAIM = re.compile(r"surplus|interven|disburs|excess|claim|motion for|"
+                           r"notice of appearance|assignment|unclaimed|escheat|recovery|"
+                           r"registry|certificate of (sale|title|foreclosure)", re.I)
+        rec["claim_lines"] = [l.strip()[:170] for l in body.splitlines()
+                              if CLAIM.search(l) and len(l.strip()) > 8][:40]
         rec["result"] = "OK"
         return rec
     except Exception as e:
