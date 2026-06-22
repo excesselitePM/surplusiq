@@ -261,66 +261,40 @@ async def main():
             print(f"\n===== STAGE C: SEARCH {cn} =====")
             rec = {"case": cn, "tag": tag, "steps": {}}
             try:
-                # find a likely case-number search box ACROSS ALL FRAMES (the
-                # search form loads inside an iframe in the CoreCMS tab UI)
-                box = None
+                # PASTE-FULL path: "Enter a case number" -> c_UcnEntryBox_<GUID>
+                # (GUID is per-tab; match by id prefix) -> Open Case button calls
+                # getCaseTabByUcnBoxId(boxId). Single frame, no iframe.
                 search_frame = page
-                box_selectors = [
-                    "input[placeholder*='case' i]", "input[aria-label*='case' i]",
-                    "input[id*='Case' i]", "input[name*='Case' i]",
-                    "input[id*='Search' i]", "input[placeholder*='search' i]",
-                    "input[type='text']", "input[type='search']",
-                ]
-                for fr in page.frames:
-                    for sel in box_selectors:
-                        loc = fr.locator(sel).first
-                        try:
-                            if await loc.count() > 0 and await loc.is_visible():
-                                box = loc
-                                search_frame = fr
-                                rec["steps"]["search_box_selector"] = sel
-                                rec["steps"]["search_frame_url"] = fr.url[:120]
-                                break
-                        except Exception:
-                            continue
-                    if box:
-                        break
-                if not box:
-                    rec["result"] = "NO_SEARCH_BOX — see case_search frame inventory"
+                box = page.locator("input[id^='c_UcnEntryBox_']").first
+                if await box.count() == 0:
+                    rec["result"] = "NO_UCN_BOX — see case_search inventory"
                     summary["results"].append(rec)
-                    print("  no search box found in any frame")
+                    print("  no UCN entry box found")
                     continue
-
+                box_id = await box.get_attribute("id")
+                rec["steps"]["ucn_box_id"] = box_id
                 await box.click(timeout=5000)
-                await box.fill("")
-                await box.type(cn, delay=30)
-                # submit: the CoreCMS search is an AJAX/ASMX call, usually no full
-                # navigation. Press Enter, then fall back to a Search button IN THE
-                # SAME FRAME, then just wait for results to populate.
+                await box.fill(cn)
+                # faithful trigger: call the page's own Open-Case handler
                 try:
-                    await box.press("Enter")
-                except Exception:
-                    pass
-                for bsel in ["input[type=submit][value*='Search' i]", "button:has-text('Search')",
-                             "input[type=button][value*='Search' i]", "#btnSearch",
-                             "a[onclick*='earch']", "[id*='Search'][role=button]"]:
-                    b = search_frame.locator(bsel).first
+                    await page.evaluate("(bid) => getCaseTabByUcnBoxId(bid)", box_id)
+                except Exception as e:
+                    rec["steps"]["open_case_error"] = str(e)[:140]
+                    # fallback: click the Open Case button
                     try:
-                        if await b.count() > 0 and await b.is_visible():
-                            await b.click(timeout=5000)
-                            break
+                        await page.locator("input[id^='c_SubmitCaseLookupButton_']").first.click(timeout=5000)
                     except Exception:
-                        continue
+                        pass
                 try:
-                    await page.wait_for_load_state("networkidle", timeout=15000)
+                    await page.wait_for_load_state("networkidle", timeout=20000)
                 except Exception:
                     pass
-                # give the ASMX result grid a moment to render rows
+                # wait for the case tab to populate (case number lands in the DOM)
                 try:
-                    await search_frame.wait_for_function(
+                    await page.wait_for_function(
                         "(want) => document.body && "
                         "document.body.innerText.replace(/[^A-Za-z0-9]/g,'').toUpperCase().includes(want)",
-                        arg=tag, timeout=12000)
+                        arg=tag, timeout=15000)
                 except Exception:
                     pass
 
@@ -352,58 +326,40 @@ async def main():
                     "hits": hits,
                 }
 
-                # ── try opening the case detail from the results (in-frame) ──
-                opened = False
-                for dsel in [f"a:has-text('{cn}')", f"a:has-text('{tag}')",
-                             "table a[href]", "a[onclick*='ase']", "tr[onclick]"]:
-                    dl = search_frame.locator(dsel).first
+                # Open Case lands directly on the case-detail tab — run docket
+                # discovery unconditionally across all frames + persist full text.
+                det_html = await dump(page, "D_detail", tag)
+                best = {}
+                for fr in page.frames:
                     try:
-                        if await dl.count() > 0 and await dl.is_visible():
-                            await dl.click(timeout=6000)
-                            opened = True
-                            rec["steps"]["detail_link_selector"] = dsel
-                            break
+                        fr_html = await fr.content()
+                        if tag not in re.sub(r"[^A-Za-z0-9]", "", fr_html).upper():
+                            continue
+                        (OUT / f"{tag}_D_detailframe.html").write_text(fr_html, encoding="utf-8")
+                        # persist the full visible text for vocabulary ground-truth
+                        body_txt = await fr.evaluate("() => document.body ? document.body.innerText : ''")
+                        (OUT / f"{tag}_D_detail.txt").write_text(body_txt, encoding="utf-8")
+                        disc = await fr.evaluate(
+                            r"""() => {
+                                const tabs = Array.from(document.querySelectorAll('table')).map(t => {
+                                    const head=(t.querySelector('thead tr')||t.rows[0]);
+                                    const cols=head?Array.from(head.cells).map(c=>(c.innerText||'').replace(/\s+/g,' ').trim()):[];
+                                    const body=t.querySelector('tbody')?t.querySelector('tbody').rows.length:Math.max(0,t.rows.length-1);
+                                    return {cols, rows: body};
+                                }).filter(t => t.cols.length || t.rows);
+                                const pager=Array.from(document.querySelectorAll('[class*=pager],[class*=Pager],.k-pager-info'))
+                                    .map(p=>(p.innerText||'').trim().slice(0,80)).filter(Boolean);
+                                const bt=document.body.innerText||'';
+                                return {frame_url: location.href, tables: tabs.slice(0,20), pager,
+                                        docket_word_hits:(bt.match(/docket|register of actions|case events|filings|dockets/gi)||[]).length,
+                                        body_len: bt.length};
+                            }""")
+                        best = disc
+                        break
                     except Exception:
                         continue
-                if opened:
-                    try:
-                        await page.wait_for_load_state("networkidle", timeout=15000)
-                    except Exception:
-                        pass
-                    det_html = await dump(page, "D_detail", tag)
-                    # docket discovery across ALL frames
-                    best = {}
-                    for fr in page.frames:
-                        try:
-                            fr_html = await fr.content()
-                            if tag not in re.sub(r"[^A-Za-z0-9]", "", fr_html).upper():
-                                continue
-                            (OUT / f"{tag}_D_detailframe.html").write_text(fr_html, encoding="utf-8")
-                            disc = await fr.evaluate(
-                                r"""() => {
-                                    const tabs = Array.from(document.querySelectorAll('table')).map(t => {
-                                        const head=(t.querySelector('thead tr')||t.rows[0]);
-                                        const cols=head?Array.from(head.cells).map(c=>(c.innerText||'').replace(/\s+/g,' ').trim()):[];
-                                        const body=t.querySelector('tbody')?t.querySelector('tbody').rows.length:Math.max(0,t.rows.length-1);
-                                        return {cols, rows: body};
-                                    }).filter(t => t.cols.length || t.rows);
-                                    const pager=Array.from(document.querySelectorAll('[class*=pager],[class*=Pager],.k-pager-info'))
-                                        .map(p=>(p.innerText||'').trim().slice(0,80)).filter(Boolean);
-                                    const bt=document.body.innerText||'';
-                                    return {frame_url: location.href, tables: tabs.slice(0,15), pager,
-                                            docket_word_hits:(bt.match(/docket|register of actions|case events|filings|dockets/gi)||[]).length};
-                                }""")
-                            best = disc
-                            break
-                        except Exception:
-                            continue
-                    rec["steps"]["detail"] = {"docket_discovery": best,
-                                              "case_present": bool(best)}
-                    rec["result"] = "DETAIL_OK" if best else "DETAIL_UNCLEAR"
-                else:
-                    rec["result"] = ("SEARCH_HIT_NO_DETAIL_LINK" if (frame_present or
-                                     rec["steps"]["search"]["case_present_frame"])
-                                     else "SEARCH_DONE_NO_RESULT")
+                rec["steps"]["detail"] = {"docket_discovery": best, "case_present": bool(best)}
+                rec["result"] = "DETAIL_OK" if best else "OPEN_UNCLEAR — see D_detail artifacts"
 
                 # reset: re-open Case Search for the next case
                 try:
