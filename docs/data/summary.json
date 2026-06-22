@@ -1,23 +1,23 @@
 {
-  "generated_at": "2026-06-22T21:20:54",
-  "total_leads": 28,
+  "generated_at": "2026-06-22T21:38:56",
+  "total_leads": 27,
   "total_leads_pre_filter": 41,
-  "killed_filtered_count": 11,
+  "killed_filtered_count": 12,
   "below_floor_filtered_count": 2,
   "min_display_surplus": 5000.0,
   "confirmed_surplus_total": 76750.22,
-  "estimated_surplus_total": 62438.0,
-  "apparent_surplus_total": 2108379.34,
+  "estimated_surplus_total": 0,
+  "apparent_surplus_total": 1879459.7,
   "docket_verified_positive_count": 6,
   "docket_verified_positive_total": 370935.82,
   "confirmed_surplus_count": 1,
-  "estimated_surplus_count": 1,
+  "estimated_surplus_count": 0,
   "apparent_surplus_count": 26,
   "killed_count": 0,
   "red_count": 0,
   "pipeline_ready_count": 1,
   "pr_matched_count": 19,
-  "docket_matched_count": 31,
+  "docket_matched_count": 36,
   "by_state": {
     "FL": {
       "leads": 18,
@@ -25,7 +25,7 @@
     },
     "OH": {
       "leads": 23,
-      "surplus": 1465500.5000000002
+      "surplus": 1243236.4700000002
     }
   },
   "by_county": [
@@ -52,14 +52,6 @@
       "leads": 2,
       "surplus": 367915.3,
       "top_lead": 353415.3
-    },
-    {
-      "county_id": "franklin-oh",
-      "county_name": "Franklin",
-      "state": "OH",
-      "leads": 1,
-      "surplus": 278364.03,
-      "top_lead": 278364.03
     },
     {
       "county_id": "broward-fl",
@@ -92,11 +84,19 @@
       "leads": 3,
       "surplus": 70512.64000000001,
       "top_lead": 35109.38
+    },
+    {
+      "county_id": "montgomery-oh",
+      "county_name": "Montgomery",
+      "state": "OH",
+      "leads": 1,
+      "surplus": 56100.0,
+      "top_lead": 56100.0
     }
   ],
   "by_score": {
-    "A+": 8,
-    "A": 9,
+    "A+": 7,
+    "A": 10,
     "B": 9,
     "C": 12
   },
@@ -111,17 +111,7 @@
       "evidence_level": "docket_confirmed"
     }
   ],
-  "top_5_estimated_leads": [
-    {
-      "county": "Duval",
-      "state": "FL",
-      "case_number": "16-2025-CA-006213-AXXX-MA",
-      "address": "5604 CRUZ RD",
-      "surplus": 62438.0,
-      "money_status": "estimated_surplus",
-      "evidence_level": "property_enriched"
-    }
-  ],
+  "top_5_estimated_leads": [],
   "top_5_apparent_leads": [
     {
       "county": "Hamilton",
@@ -129,15 +119,6 @@
       "case_number": "A2002969 (11756)",
       "address": "1774 VICTORIA CT",
       "surplus": 353415.3,
-      "money_status": "apparent_surplus",
-      "evidence_level": "auction_only"
-    },
-    {
-      "county": "Franklin",
-      "state": "OH",
-      "case_number": "25CV5599 (17378)",
-      "address": "5373 LILAC AVENUE",
-      "surplus": 278364.03,
       "money_status": "apparent_surplus",
       "evidence_level": "auction_only"
     },
@@ -165,6 +146,15 @@
       "case_number": "2016-012537-CA-01",
       "address": "12078 SW 249 ST",
       "surplus": 144430.37,
+      "money_status": "apparent_surplus",
+      "evidence_level": "docket_reviewed"
+    },
+    {
+      "county": "Duval",
+      "state": "FL",
+      "case_number": "16-2025-CA-006229-AXXX-MA",
+      "address": "12752 W BURNING TREE LN",
+      "surplus": 134387.47,
       "money_status": "apparent_surplus",
       "evidence_level": "docket_reviewed"
     }
