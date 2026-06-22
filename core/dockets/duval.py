@@ -479,14 +479,29 @@ class DuvalDocketScraper(DocketScraper):
 
     # ── Phase 1: drive the Public-Access path, return case-detail text ──────────
 
-    async def fetch_docket(self, case_number: str) -> dict:
-        """Return {ok, url, text, case_present, error}. text = case-detail tab
-        innerText. Never fabricates: on any failure text='' and ok=False."""
+    async def fetch_docket(self, case_number: str, attempts: int = 3) -> dict:
+        """Return {ok, url, text, case_present, error}. Retries the whole nav on
+        *retrieval* timeouts only — the heavy Tyler WebForms portal (auto
+        PublicLogin + recaptcha + ~25 ScriptResource.axd) can exceed a single
+        timeout under the cap-3 parallel docket batch + xvfb contention, where a
+        single-county run is fine. A parse/wrong-case result never retries."""
         parsed = parse_duval_case_number(case_number)
         if not parsed:
             return {"ok": False, "url": "", "text": "", "case_present": False,
                     "error": f"case number not parseable (or tax-deed): {case_number}"}
+        last = {"ok": False, "url": "", "text": "", "case_present": False, "error": "no attempt"}
+        for i in range(max(1, attempts)):
+            last = await self._fetch_once(parsed)
+            # retry only on retrieval timeouts / empty page; not on a real wrong-case
+            if last["ok"] or "timeout" not in last.get("error", "").lower() \
+                    and "did not render" not in last.get("error", "").lower() \
+                    and "not reached" not in last.get("error", "").lower():
+                return last
+        return last
 
+    async def _fetch_once(self, parsed: dict) -> dict:
+        """Single navigation attempt → case-detail tab innerText. Never fabricates:
+        on any failure text='' and ok=False."""
         out = {"ok": False, "url": "", "text": "", "case_present": False, "error": ""}
         diag = Path("data/diagnostics/duval-fl")
         diag.mkdir(parents=True, exist_ok=True)
@@ -499,7 +514,7 @@ class DuvalDocketScraper(DocketScraper):
             )
             page = await context.new_page()
             try:
-                await page.goto(LANDING_URL, wait_until="domcontentloaded", timeout=60000)
+                await page.goto(LANDING_URL, wait_until="domcontentloaded", timeout=90000)
                 # WAIT for anonymous PublicLogin to settle before opening search.
                 try:
                     await page.wait_for_function(
