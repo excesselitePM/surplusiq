@@ -196,8 +196,8 @@ async def open_case(context, ucn: str) -> dict:
 
 
 async def main():
-    terms = ([t.strip() for t in sys.argv[1].split(",") if t.strip()]
-             if len(sys.argv) > 1 else DEFAULT_TERMS)
+    arg = sys.argv[1].strip() if len(sys.argv) > 1 else ""
+    terms = [t.strip() for t in arg.split(",") if t.strip()] if arg else DEFAULT_TERMS
     OUT.mkdir(parents=True, exist_ok=True)
     summary = {"terms": terms, "searches": [], "opened": []}
     async with async_playwright() as pw:
