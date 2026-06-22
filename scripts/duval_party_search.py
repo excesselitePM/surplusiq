@@ -110,22 +110,32 @@ async def party_search(context, term: str) -> dict:
             await page.wait_for_load_state("networkidle", timeout=20000)
         except Exception:
             pass
-        # let results render
+        # getCaseSearch opens a SEPARATE results tab that first shows "Preparing a
+        # new search window". Wait until that placeholder is GONE *and* the results
+        # have materialised (a UCN, a 'no records' message, or a result count).
         try:
             await page.wait_for_function(
-                "() => { const t=document.body.innerText||''; "
-                "return /result|no records|matches|case/i.test(t); }", timeout=12000)
+                r"""() => {
+                    const t = document.body ? document.body.innerText : '';
+                    if (/Preparing a new search window/i.test(t)) return false;
+                    return /16-20\d{2}-C[AC]-\d{6}/.test(t)
+                        || /no\s+(records|cases|results|matches|rows)/i.test(t)
+                        || /\d+\s+(match|matches|result|results|record|records|cases?)\b/i.test(t)
+                        || /search results/i.test(t);
+                }""", timeout=35000)
         except Exception:
             pass
         body = await page.evaluate("() => document.body ? document.body.innerText : ''")
+        html = await page.content()
         low = body.lower()
-        rec["captcha"] = "captcha challenge" in low and "required captcha" in low
-        # result count phrasing
-        m = re.search(r"(\d+)\s+(?:result|record|match|case)", low)
-        rec["result_count_text"] = m.group(0) if m else ("no records" if "no record" in low else "")
+        rec["captcha"] = "required captcha" in low
+        rec["still_preparing"] = "preparing a new search window" in low
+        m = re.search(r"(\d+)\s+(?:result|record|match|matches|case)s?\b", low)
+        rec["result_count_text"] = (m.group(0) if m else
+                                    ("no records" if re.search(r"no\s+(records|cases|results|matches)", low) else ""))
         ucns = []
         seen = set()
-        for u in UCN_RE.findall(body):
+        for u in UCN_RE.findall(body) + UCN_RE.findall(html):
             U = u.upper()
             if U not in seen:
                 seen.add(U); ucns.append(U)
