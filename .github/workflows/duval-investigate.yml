@@ -13,6 +13,19 @@ on:
         required: false
         default: '16-2025-CA-005932-AXXX-MA,16-2025-CA-004483-AXXX-MA,16-2023-CA-010844-XXXX-MA'
         type: string
+      mode:
+        description: 'probe = case-number characterization; party = recovery-firm party-name search (Phase-2 vocab)'
+        required: false
+        default: 'probe'
+        type: choice
+        options:
+          - probe
+          - party
+      party_terms:
+        description: 'Comma-separated party-name search terms (used when mode=party). Empty = default firm/generic list.'
+        required: false
+        default: ''
+        type: string
 
 permissions:
   contents: read
@@ -38,14 +51,19 @@ jobs:
       - name: Install Playwright Chromium
         run: python -m playwright install --with-deps chromium
 
-      - name: Run Duval investigation probe (headless, datacenter IP)
+      - name: Run Duval case-number probe (headless, datacenter IP)
+        if: ${{ github.event.inputs.mode != 'party' }}
         run: python scripts/duval_investigate.py "${{ github.event.inputs.cases }}"
+
+      - name: Run Duval party-name search (Phase-2 vocab, headless, datacenter IP)
+        if: ${{ github.event.inputs.mode == 'party' }}
+        run: python scripts/duval_party_search.py "${{ github.event.inputs.party_terms }}"
 
       - name: Upload investigation artifacts (HTML + screenshots + summary)
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: duval-investigation
-          path: data/samples/duval/ci/
+          path: data/samples/duval/
           if-no-files-found: warn
           retention-days: 7
