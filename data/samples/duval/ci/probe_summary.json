@@ -1,0 +1,2016 @@
+{
+  "landing": "https://core.duvalclerk.com/CoreCms.aspx?mode=PublicAccess",
+  "cases": [
+    "16-2025-CA-006229-AXXX-MA",
+    "16-2025-CA-006213-AXXX-MA",
+    "16-2023-CA-010844-XXXX-MA",
+    "16-2025-CA-006061-AXXX-MA",
+    "16-2025-CA-004483-AXXX-MA",
+    "16-2025-CA-005105-AXXX-MA",
+    "16-2025-CA-005932-AXXX-MA"
+  ],
+  "results": [
+    {
+      "case": "16-2025-CA-006229-AXXX-MA",
+      "tag": "162025CA006229AXXXMA",
+      "steps": {
+        "login_label": "Public Access",
+        "ucn_box_id": "c_UcnEntryBox_9a3abb3a_c4a9_4628_837e_7d1ff559b752",
+        "search": {
+          "final_url": "https://core.duvalclerk.com/CoreCms.aspx?mode=PublicAccess",
+          "size": 207584,
+          "captcha": {
+            "any_recaptcha": true,
+            "any_hcaptcha": false,
+            "v3_score_hint": false,
+            "v2_challenge_hint": false,
+            "sitekey": "",
+            "url_has_captcha": false,
+            "challenge_text": false
+          }
+        },
+        "detail": {
+          "docket_discovery": {
+            "frame_url": "https://core.duvalclerk.com/CoreCms.aspx?mode=PublicAccess",
+            "tables": [
+              {
+                "cols": [
+                  "General"
+                ],
+                "rows": 8
+              },
+              {
+                "cols": [
+                  "",
+                  "",
+                  ""
+                ],
+                "rows": 3
+              },
+              {
+                "cols": [
+                  "Enter a case number clear fields"
+                ],
+                "rows": 4
+              },
+              {
+                "cols": [
+                  "",
+                  "Enter a case number",
+                  "clear fields"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "Search by criteria"
+                ],
+                "rows": 8
+              },
+              {
+                "cols": [
+                  "Department",
+                  "Circuit Civil",
+                  "Division",
+                  "FC-B"
+                ],
+                "rows": 4
+              },
+              {
+                "cols": [
+                  "Name / DOB / DL / ID #",
+                  "Party Type Race / Sex",
+                  "Address"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "Attorney",
+                  "Address",
+                  "For Parties"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "Date",
+                  "Description",
+                  "Assessed",
+                  "Paid",
+                  "Balance"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "Line / Document",
+                  "Count",
+                  "Effective Entered",
+                  "Description",
+                  "Pages",
+                  "Image"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "CORE User Login"
+                ],
+                "rows": 4
+              },
+              {
+                "cols": [
+                  "Email Address:",
+                  ""
+                ],
+                "rows": 3
+              },
+              {
+                "cols": [
+                  "CORE - Required Captcha Challenge"
+                ],
+                "rows": 3
+              },
+              {
+                "cols": [
+                  ""
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "CORE User Agreement Acceptance"
+                ],
+                "rows": 6
+              },
+              {
+                "cols": [
+                  "",
+                  "Loading CORE public access, please wait...",
+                  ""
+                ],
+                "rows": 3
+              },
+              {
+                "cols": [
+                  "Enter a case number clear fields"
+                ],
+                "rows": 4
+              },
+              {
+                "cols": [
+                  "",
+                  "Enter a case number",
+                  "clear fields"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "Search by criteria"
+                ],
+                "rows": 8
+              },
+              {
+                "cols": [
+                  "Department",
+                  "Circuit Civil",
+                  "Division",
+                  "FC-B"
+                ],
+                "rows": 4
+              }
+            ],
+            "pager": [],
+            "docket_word_hits": 1,
+            "body_len": 8052
+          },
+          "case_present": true
+        }
+      },
+      "result": "DETAIL_OK"
+    },
+    {
+      "case": "16-2025-CA-006213-AXXX-MA",
+      "tag": "162025CA006213AXXXMA",
+      "steps": {
+        "login_label": "Public Access",
+        "ucn_box_id": "c_UcnEntryBox_b861eb4c_59a4_4304_823e_319cffde18e6",
+        "search": {
+          "final_url": "https://core.duvalclerk.com/CoreCms.aspx?mode=PublicAccess",
+          "size": 206138,
+          "captcha": {
+            "any_recaptcha": true,
+            "any_hcaptcha": false,
+            "v3_score_hint": false,
+            "v2_challenge_hint": false,
+            "sitekey": "",
+            "url_has_captcha": false,
+            "challenge_text": false
+          }
+        },
+        "detail": {
+          "docket_discovery": {
+            "frame_url": "https://core.duvalclerk.com/CoreCms.aspx?mode=PublicAccess",
+            "tables": [
+              {
+                "cols": [
+                  "General"
+                ],
+                "rows": 8
+              },
+              {
+                "cols": [
+                  "",
+                  "",
+                  ""
+                ],
+                "rows": 3
+              },
+              {
+                "cols": [
+                  "Enter a case number clear fields"
+                ],
+                "rows": 4
+              },
+              {
+                "cols": [
+                  "",
+                  "Enter a case number",
+                  "clear fields"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "Search by criteria"
+                ],
+                "rows": 8
+              },
+              {
+                "cols": [
+                  "Department",
+                  "Circuit Civil",
+                  "Division",
+                  "FC-H"
+                ],
+                "rows": 4
+              },
+              {
+                "cols": [
+                  "Name / DOB / DL / ID #",
+                  "Party Type Race / Sex",
+                  "Address"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "Attorney",
+                  "Address",
+                  "For Parties"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "Date",
+                  "Description",
+                  "Assessed",
+                  "Paid",
+                  "Balance"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "Line / Document",
+                  "Count",
+                  "Effective Entered",
+                  "Description",
+                  "Pages",
+                  "Image"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "CORE User Login"
+                ],
+                "rows": 4
+              },
+              {
+                "cols": [
+                  "Email Address:",
+                  ""
+                ],
+                "rows": 3
+              },
+              {
+                "cols": [
+                  "CORE - Required Captcha Challenge"
+                ],
+                "rows": 3
+              },
+              {
+                "cols": [
+                  ""
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "CORE User Agreement Acceptance"
+                ],
+                "rows": 6
+              },
+              {
+                "cols": [
+                  "",
+                  "Loading CORE public access, please wait...",
+                  ""
+                ],
+                "rows": 3
+              },
+              {
+                "cols": [
+                  "Enter a case number clear fields"
+                ],
+                "rows": 4
+              },
+              {
+                "cols": [
+                  "",
+                  "Enter a case number",
+                  "clear fields"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "Search by criteria"
+                ],
+                "rows": 8
+              },
+              {
+                "cols": [
+                  "Department",
+                  "Circuit Civil",
+                  "Division",
+                  "FC-H"
+                ],
+                "rows": 4
+              }
+            ],
+            "pager": [],
+            "docket_word_hits": 1,
+            "body_len": 8167
+          },
+          "case_present": true
+        }
+      },
+      "result": "DETAIL_OK"
+    },
+    {
+      "case": "16-2023-CA-010844-XXXX-MA",
+      "tag": "162023CA010844XXXXMA",
+      "steps": {
+        "login_label": "Public Access",
+        "ucn_box_id": "c_UcnEntryBox_8ce2c5fb_8c8f_4d5e_9689_37ba9661c6e3",
+        "search": {
+          "final_url": "https://core.duvalclerk.com/CoreCms.aspx?mode=PublicAccess",
+          "size": 226437,
+          "captcha": {
+            "any_recaptcha": true,
+            "any_hcaptcha": false,
+            "v3_score_hint": false,
+            "v2_challenge_hint": false,
+            "sitekey": "",
+            "url_has_captcha": false,
+            "challenge_text": false
+          }
+        },
+        "detail": {
+          "docket_discovery": {
+            "frame_url": "https://core.duvalclerk.com/CoreCms.aspx?mode=PublicAccess",
+            "tables": [
+              {
+                "cols": [
+                  "General"
+                ],
+                "rows": 8
+              },
+              {
+                "cols": [
+                  "",
+                  "",
+                  ""
+                ],
+                "rows": 3
+              },
+              {
+                "cols": [
+                  "Enter a case number clear fields"
+                ],
+                "rows": 4
+              },
+              {
+                "cols": [
+                  "",
+                  "Enter a case number",
+                  "clear fields"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "Search by criteria"
+                ],
+                "rows": 8
+              },
+              {
+                "cols": [
+                  "Department",
+                  "Circuit Civil",
+                  "Division",
+                  "FC-E"
+                ],
+                "rows": 4
+              },
+              {
+                "cols": [
+                  "Name / DOB / DL / ID #",
+                  "Party Type Race / Sex",
+                  "Address"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "Attorney",
+                  "Address",
+                  "For Parties"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "Date",
+                  "Description",
+                  "Assessed",
+                  "Paid",
+                  "Balance"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "Date",
+                  "Time",
+                  "Type",
+                  "Location",
+                  "Courtroom",
+                  "Cancelled"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "Line / Document",
+                  "Count",
+                  "Effective Entered",
+                  "Description",
+                  "Pages",
+                  "Image"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "CORE User Login"
+                ],
+                "rows": 4
+              },
+              {
+                "cols": [
+                  "Email Address:",
+                  ""
+                ],
+                "rows": 3
+              },
+              {
+                "cols": [
+                  "CORE - Required Captcha Challenge"
+                ],
+                "rows": 3
+              },
+              {
+                "cols": [
+                  ""
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "CORE User Agreement Acceptance"
+                ],
+                "rows": 6
+              },
+              {
+                "cols": [
+                  "",
+                  "Loading CORE public access, please wait...",
+                  ""
+                ],
+                "rows": 3
+              },
+              {
+                "cols": [
+                  "Enter a case number clear fields"
+                ],
+                "rows": 4
+              },
+              {
+                "cols": [
+                  "",
+                  "Enter a case number",
+                  "clear fields"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "Search by criteria"
+                ],
+                "rows": 8
+              }
+            ],
+            "pager": [],
+            "docket_word_hits": 1,
+            "body_len": 10101
+          },
+          "case_present": true
+        }
+      },
+      "result": "DETAIL_OK"
+    },
+    {
+      "case": "16-2025-CA-006061-AXXX-MA",
+      "tag": "162025CA006061AXXXMA",
+      "steps": {
+        "login_label": "Public Access",
+        "ucn_box_id": "c_UcnEntryBox_831b3d00_d17e_4a51_b41e_f35f5ee7005e",
+        "search": {
+          "final_url": "https://core.duvalclerk.com/CoreCms.aspx?mode=PublicAccess",
+          "size": 217158,
+          "captcha": {
+            "any_recaptcha": true,
+            "any_hcaptcha": false,
+            "v3_score_hint": false,
+            "v2_challenge_hint": false,
+            "sitekey": "",
+            "url_has_captcha": false,
+            "challenge_text": false
+          }
+        },
+        "detail": {
+          "docket_discovery": {
+            "frame_url": "https://core.duvalclerk.com/CoreCms.aspx?mode=PublicAccess",
+            "tables": [
+              {
+                "cols": [
+                  "General"
+                ],
+                "rows": 8
+              },
+              {
+                "cols": [
+                  "",
+                  "",
+                  ""
+                ],
+                "rows": 3
+              },
+              {
+                "cols": [
+                  "Enter a case number clear fields"
+                ],
+                "rows": 4
+              },
+              {
+                "cols": [
+                  "",
+                  "Enter a case number",
+                  "clear fields"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "Search by criteria"
+                ],
+                "rows": 8
+              },
+              {
+                "cols": [
+                  "Department",
+                  "Circuit Civil",
+                  "Division",
+                  "FC-F"
+                ],
+                "rows": 4
+              },
+              {
+                "cols": [
+                  "Name / DOB / DL / ID #",
+                  "Party Type Race / Sex",
+                  "Address"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "Attorney",
+                  "Address",
+                  "For Parties"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "Date",
+                  "Description",
+                  "Assessed",
+                  "Paid",
+                  "Balance"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "Date",
+                  "Time",
+                  "Type",
+                  "Location",
+                  "Courtroom",
+                  "Cancelled"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "Line / Document",
+                  "Count",
+                  "Effective Entered",
+                  "Description",
+                  "Pages",
+                  "Image"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "CORE User Login"
+                ],
+                "rows": 4
+              },
+              {
+                "cols": [
+                  "Email Address:",
+                  ""
+                ],
+                "rows": 3
+              },
+              {
+                "cols": [
+                  "CORE - Required Captcha Challenge"
+                ],
+                "rows": 3
+              },
+              {
+                "cols": [
+                  ""
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "CORE User Agreement Acceptance"
+                ],
+                "rows": 6
+              },
+              {
+                "cols": [
+                  "",
+                  "Loading CORE public access, please wait...",
+                  ""
+                ],
+                "rows": 3
+              },
+              {
+                "cols": [
+                  "Enter a case number clear fields"
+                ],
+                "rows": 4
+              },
+              {
+                "cols": [
+                  "",
+                  "Enter a case number",
+                  "clear fields"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "Search by criteria"
+                ],
+                "rows": 8
+              }
+            ],
+            "pager": [],
+            "docket_word_hits": 1,
+            "body_len": 9433
+          },
+          "case_present": true
+        }
+      },
+      "result": "DETAIL_OK"
+    },
+    {
+      "case": "16-2025-CA-004483-AXXX-MA",
+      "tag": "162025CA004483AXXXMA",
+      "steps": {
+        "login_label": "Public Access",
+        "ucn_box_id": "c_UcnEntryBox_461bff56_9b4e_4f63_8db2_1d2523eac262",
+        "search": {
+          "final_url": "https://core.duvalclerk.com/CoreCms.aspx?mode=PublicAccess",
+          "size": 306084,
+          "captcha": {
+            "any_recaptcha": true,
+            "any_hcaptcha": false,
+            "v3_score_hint": false,
+            "v2_challenge_hint": false,
+            "sitekey": "",
+            "url_has_captcha": false,
+            "challenge_text": false
+          }
+        },
+        "detail": {
+          "docket_discovery": {
+            "frame_url": "https://core.duvalclerk.com/CoreCms.aspx?mode=PublicAccess",
+            "tables": [
+              {
+                "cols": [
+                  "General"
+                ],
+                "rows": 8
+              },
+              {
+                "cols": [
+                  "",
+                  "",
+                  ""
+                ],
+                "rows": 3
+              },
+              {
+                "cols": [
+                  "Enter a case number clear fields"
+                ],
+                "rows": 4
+              },
+              {
+                "cols": [
+                  "",
+                  "Enter a case number",
+                  "clear fields"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "Search by criteria"
+                ],
+                "rows": 8
+              },
+              {
+                "cols": [
+                  "Department",
+                  "Circuit Civil",
+                  "Division",
+                  "FC-C"
+                ],
+                "rows": 4
+              },
+              {
+                "cols": [
+                  "Name / DOB / DL / ID #",
+                  "Party Type Race / Sex",
+                  "Address"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "Attorney",
+                  "Address",
+                  "For Parties"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "Date",
+                  "Description",
+                  "Assessed",
+                  "Paid",
+                  "Balance"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "Date",
+                  "Time",
+                  "Type",
+                  "Location",
+                  "Courtroom",
+                  "Cancelled"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "Line / Document",
+                  "Count",
+                  "Effective Entered",
+                  "Description",
+                  "Pages",
+                  "Image"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "CORE User Login"
+                ],
+                "rows": 4
+              },
+              {
+                "cols": [
+                  "Email Address:",
+                  ""
+                ],
+                "rows": 3
+              },
+              {
+                "cols": [
+                  "CORE - Required Captcha Challenge"
+                ],
+                "rows": 3
+              },
+              {
+                "cols": [
+                  ""
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "CORE User Agreement Acceptance"
+                ],
+                "rows": 6
+              },
+              {
+                "cols": [
+                  "",
+                  "Loading CORE public access, please wait...",
+                  ""
+                ],
+                "rows": 3
+              },
+              {
+                "cols": [
+                  "Enter a case number clear fields"
+                ],
+                "rows": 4
+              },
+              {
+                "cols": [
+                  "",
+                  "Enter a case number",
+                  "clear fields"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "Search by criteria"
+                ],
+                "rows": 8
+              }
+            ],
+            "pager": [],
+            "docket_word_hits": 1,
+            "body_len": 14697
+          },
+          "case_present": true
+        }
+      },
+      "result": "DETAIL_OK"
+    },
+    {
+      "case": "16-2025-CA-005105-AXXX-MA",
+      "tag": "162025CA005105AXXXMA",
+      "steps": {
+        "login_label": "Public Access",
+        "ucn_box_id": "c_UcnEntryBox_ea86a116_31e0_4a7b_81fc_1101389c0623",
+        "search": {
+          "final_url": "https://core.duvalclerk.com/CoreCms.aspx?mode=PublicAccess",
+          "size": 240772,
+          "captcha": {
+            "any_recaptcha": true,
+            "any_hcaptcha": false,
+            "v3_score_hint": false,
+            "v2_challenge_hint": false,
+            "sitekey": "",
+            "url_has_captcha": false,
+            "challenge_text": false
+          }
+        },
+        "detail": {
+          "docket_discovery": {
+            "frame_url": "https://core.duvalclerk.com/CoreCms.aspx?mode=PublicAccess",
+            "tables": [
+              {
+                "cols": [
+                  "General"
+                ],
+                "rows": 8
+              },
+              {
+                "cols": [
+                  "",
+                  "",
+                  ""
+                ],
+                "rows": 3
+              },
+              {
+                "cols": [
+                  "Enter a case number clear fields"
+                ],
+                "rows": 4
+              },
+              {
+                "cols": [
+                  "",
+                  "Enter a case number",
+                  "clear fields"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "Search by criteria"
+                ],
+                "rows": 8
+              },
+              {
+                "cols": [
+                  "Department",
+                  "Circuit Civil",
+                  "Division",
+                  "FC-C"
+                ],
+                "rows": 4
+              },
+              {
+                "cols": [
+                  "Name / DOB / DL / ID #",
+                  "Party Type Race / Sex",
+                  "Address"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "Attorney",
+                  "Address",
+                  "For Parties"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "Date",
+                  "Description",
+                  "Assessed",
+                  "Paid",
+                  "Balance"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "Line / Document",
+                  "Count",
+                  "Effective Entered",
+                  "Description",
+                  "Pages",
+                  "Image"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "CORE User Login"
+                ],
+                "rows": 4
+              },
+              {
+                "cols": [
+                  "Email Address:",
+                  ""
+                ],
+                "rows": 3
+              },
+              {
+                "cols": [
+                  "CORE - Required Captcha Challenge"
+                ],
+                "rows": 3
+              },
+              {
+                "cols": [
+                  ""
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "CORE User Agreement Acceptance"
+                ],
+                "rows": 6
+              },
+              {
+                "cols": [
+                  "",
+                  "Loading CORE public access, please wait...",
+                  ""
+                ],
+                "rows": 3
+              },
+              {
+                "cols": [
+                  "Enter a case number clear fields"
+                ],
+                "rows": 4
+              },
+              {
+                "cols": [
+                  "",
+                  "Enter a case number",
+                  "clear fields"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "Search by criteria"
+                ],
+                "rows": 8
+              },
+              {
+                "cols": [
+                  "Department",
+                  "Circuit Civil",
+                  "Division",
+                  "FC-C"
+                ],
+                "rows": 4
+              }
+            ],
+            "pager": [],
+            "docket_word_hits": 1,
+            "body_len": 10786
+          },
+          "case_present": true
+        }
+      },
+      "result": "DETAIL_OK"
+    },
+    {
+      "case": "16-2025-CA-005932-AXXX-MA",
+      "tag": "162025CA005932AXXXMA",
+      "steps": {
+        "login_label": "Public Access",
+        "ucn_box_id": "c_UcnEntryBox_4b921ee8_9dc2_4c4e_82a8_f59c1f3ffaa6",
+        "search": {
+          "final_url": "https://core.duvalclerk.com/CoreCms.aspx?mode=PublicAccess",
+          "size": 248282,
+          "captcha": {
+            "any_recaptcha": true,
+            "any_hcaptcha": false,
+            "v3_score_hint": false,
+            "v2_challenge_hint": false,
+            "sitekey": "",
+            "url_has_captcha": false,
+            "challenge_text": false
+          }
+        },
+        "detail": {
+          "docket_discovery": {
+            "frame_url": "https://core.duvalclerk.com/CoreCms.aspx?mode=PublicAccess",
+            "tables": [
+              {
+                "cols": [
+                  "General"
+                ],
+                "rows": 8
+              },
+              {
+                "cols": [
+                  "",
+                  "",
+                  ""
+                ],
+                "rows": 3
+              },
+              {
+                "cols": [
+                  "Enter a case number clear fields"
+                ],
+                "rows": 4
+              },
+              {
+                "cols": [
+                  "",
+                  "Enter a case number",
+                  "clear fields"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "Search by criteria"
+                ],
+                "rows": 8
+              },
+              {
+                "cols": [
+                  "Department",
+                  "Circuit Civil",
+                  "Division",
+                  "FC-F"
+                ],
+                "rows": 4
+              },
+              {
+                "cols": [
+                  "Name / DOB / DL / ID #",
+                  "Party Type Race / Sex",
+                  "Address"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "Attorney",
+                  "Address",
+                  "For Parties"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "Date",
+                  "Description",
+                  "Assessed",
+                  "Paid",
+                  "Balance"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "Date",
+                  "Time",
+                  "Type",
+                  "Location",
+                  "Courtroom",
+                  "Cancelled"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "Line / Document",
+                  "Count",
+                  "Effective Entered",
+                  "Description",
+                  "Pages",
+                  "Image"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "CORE User Login"
+                ],
+                "rows": 4
+              },
+              {
+                "cols": [
+                  "Email Address:",
+                  ""
+                ],
+                "rows": 3
+              },
+              {
+                "cols": [
+                  "CORE - Required Captcha Challenge"
+                ],
+                "rows": 3
+              },
+              {
+                "cols": [
+                  ""
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "CORE User Agreement Acceptance"
+                ],
+                "rows": 6
+              },
+              {
+                "cols": [
+                  "",
+                  "Loading CORE public access, please wait...",
+                  ""
+                ],
+                "rows": 3
+              },
+              {
+                "cols": [
+                  "Enter a case number clear fields"
+                ],
+                "rows": 4
+              },
+              {
+                "cols": [
+                  "",
+                  "Enter a case number",
+                  "clear fields"
+                ],
+                "rows": 1
+              },
+              {
+                "cols": [
+                  "Search by criteria"
+                ],
+                "rows": 8
+              }
+            ],
+            "pager": [],
+            "docket_word_hits": 1,
+            "body_len": 11546
+          },
+          "case_present": true
+        }
+      },
+      "result": "DETAIL_OK"
+    }
+  ],
+  "landing_result": {
+    "nav_error": "",
+    "final_url": "https://core.duvalclerk.com/CoreCms.aspx?mode=PublicAccess",
+    "html_size": 34454,
+    "captcha": {
+      "any_recaptcha": true,
+      "any_hcaptcha": false,
+      "v3_score_hint": false,
+      "v2_challenge_hint": false,
+      "sitekey": "",
+      "url_has_captcha": false,
+      "challenge_text": false
+    },
+    "characterize": {
+      "title": "CORE - Clerk Online Resource ePortal",
+      "url": "https://core.duvalclerk.com/CoreCms.aspx?mode=PublicAccess",
+      "framework": {
+        "has_viewstate": true,
+        "viewstate_len": 240,
+        "has_eventvalidation": false,
+        "has_aspnet_form": true,
+        "react_root": false,
+        "angular": false,
+        "script_srcs": [
+          "https://www.gstatic.com/recaptcha/releases/MerVUtRoajKEbP7pLiGXkL28/recaptcha__en.js",
+          "https://core.duvalclerk.com/Scripts/jquery-1.12.4.js",
+          "https://core.duvalclerk.com/WebResource.axd?d=OTrQclT3wGons1aXykK7RFHnZnQ9Pr-IIAexezPgLhVyOMuQx2hKvI58x_qhT73ydzufcx3Ik1E60f3xDYjb5jwEtWk1&t=638901397900000000",
+          "https://core.duvalclerk.com/ScriptResource.axd?d=HIfIZc7KZCfIyBXYBwASfqrAtasJrkxo1tAX9fHeWjYtrx1Smhc92tugIkLNAXyIwgjrT3Mz4giwpm1j7MllYLtEoQkDjvzQ2b0bLL2SeBp0m1j5ugn_b_MMDrt1uIhq5zopCA2&t=f2cd5c5",
+          "https://core.duvalclerk.com/ScriptResource.axd?d=I0IAufiBQu8prxcBpjjz_WcHbqAVGZxjK44pWJJV5pTqAT4gq9Ohf6X0mBLNzeqOeZFnC9nWlG7F_29_qMGkUkKCMivnTfUcpRDV91XCId5sHdUNwbFeWXr97IW5d_j5MCwekA2&t=f2cd5c5",
+          "https://core.duvalclerk.com/ScriptResource.axd?d=XM7HusndKVmvtL-bQnzOfPaWdXoy4qIzRnWbL_juzN5LmMm-67bVMPJGgQ0pKIBWXWNTj8O0RoK4otMDXrMZcBjzorFaQau6flR194pAbzORnId_s1kFHggKxkOJNvo9OREtIoo_4C18UZz0AVsbFD0JMB6FC-NW-vpV0F9X8KGAI8rF0&t=fffffffffc8759a5",
+          "https://core.duvalclerk.com/ScriptResource.axd?d=Xpq1_-_iiAru4LiEfa4EwJ4qlQA4uHzxvjqPa2jx6eaGvgQK-Hs85jIHBREFdtvCY0R2qXoglomy0ftFdtIrI4ASGM0VloKxSLCmDjF3bKoQiN_b1xqmvSQ4ixshdE916CIIErfd1Sz9L5Dn7KoXMTgVBym21dum7ub-orwqL2dDsNP_0&t=fffffffffc8759a5",
+          "https://core.duvalclerk.com/ScriptResource.axd?d=vUB7CqaUwmmh8rJK0Dq37xFb9rXYDHbeMKZ1NEJD2ehBH-nGzL2vpg2yPrxndm-YVOsoSXWm8Sn84RJKh7YP_Kkvov9NJ16ZPObbDdNCutWrIDIAUD1EYSyICC2rREXS73aUClwL3QLnSOPtUyPQW_URSd5gsCwFMRro9GMMN_BvjLAP0&t=fffffffffc8759a5",
+          "https://core.duvalclerk.com/ScriptResource.axd?d=iBpDuyrp81YrC9J1rn71GHUxEpJhYG0ULEcwv2li7IkEHRDFsD8BoT5A4Cm6NLWDXOSe_g_0Ou6juJVOOr7tEEzlq42l7ldOilKcy7pZTz0oeZBegNdHXe79t-zsgOtEYQWbyJNpFhc88tpKSxtvhFL9XLs1&t=fffffffffc8759a5",
+          "https://core.duvalclerk.com/ScriptResource.axd?d=TG6AOAUU7HX-MYc4yKYScfhLCpwn_Iyogs5ecyD7nPwLvEaGMJtmOqsYgmoKQa1MzAzuw8lqXtCzlt-Huu80ajJ55pspV_wHrQNRVCvguKIfRBGlkFOTdVSlzvq1GJfnMGOFeEGxb5ZTfYu5xyUeXtpPfXY1&t=fffffffffc8759a5",
+          "https://core.duvalclerk.com/ScriptResource.axd?d=DvNauD2Ba5OaMR0O4gwGqwDPumQgAeSISSbyBB-ZjQYemgWIIKiWJecPAsFLUnh4ZdvtfTpiiuyoXxsupaXhMKGvwfvFNJ5JeQA4i5OEF6hLBv5jKCU61og4rwLKp7LRldRI0Wv46iiqyRhkmLCa7L3VK3OdwmB1vhRx4hSV6R_lHjp80&t=fffffffffc8759a5",
+          "https://core.duvalclerk.com/ScriptResource.axd?d=QqAxHqoP4utry-QH46TJKh__wllyr1lSReF2LUjgZHheNB6jHmR4nsZU_-nBbrcBr7KaFjegzBwahEVl2aQAdkF_6Byq5JBtEPKLCACPpA8sXLfw5S51NLYF_k346S4vY7_n35nexcG-SQx2iDTjUnAUVXs1&t=fffffffffc8759a5",
+          "https://core.duvalclerk.com/ScriptResource.axd?d=g8cwLKJLV1Q4lr-rybTX4vmcAcdS9aJjNPmUBx4J-iqbgEd6wsK496eYHFDyksM8R8P5uDUlFndF2wEVAEVw0cqLQvaQ0TMk2vzDdHj9Pyaihea9gRf91HslALt06S-t6_AxjM2R2pupEB3llGpC3Jx7U9gwdxGVqLAV9080ghrOIYPC0&t=fffffffffc8759a5",
+          "https://core.duvalclerk.com/ScriptResource.axd?d=SxahWgDk5ArvYEhAuqM-l4CEoyD1EtyedszWvi6yyTdp7AE3jpg8NviXCHuVOqqTkhGf-uaOvnsMeYHVW6Z1082ftnX-SIUovigAyy5Fw2S9nbCeFLN1YbWKGxhxgZWtAkblyrM0LIAaFzt3uNV9SpiGj8XfzsVuXHIzw9k1N2S3Fku10&t=fffffffffc8759a5",
+          "https://core.duvalclerk.com/ScriptResource.axd?d=5ZZB7PN4dlA7poW2_bb15FvwEA2gwxBuw3oDsLgZa0Pk4nscuaTv3NQc2dmw18DmqzwX9kbWPOqLU525cTAkqrarQoZBZr8Whhb9a53yqpOxUSSfCWFqRA51uIRMOpU09f4yi6moGL0wm25oar8Mgqa4kNXopOB6gzXl-V7hYNKC7Ri50&t=fffffffffc8759a5",
+          "https://core.duvalclerk.com/ScriptResource.axd?d=AslkBzEbvFUjiPKNdhlP4Kzb8RhyDYP_isMvRWCFVXADHMrDCJJ2xUG8AO38Tr35x-7pq-VN-hGUjuPTmcZYcUIHuEnAnYsyRH8Oa5XvQt-FkEm4P7W90o0I4nLUl_GgL0d4QcexhHL51N78Ah7b5a4ODuKcQtj3ifVB0T-CRAN36x0W0&t=fffffffffc8759a5",
+          "https://core.duvalclerk.com/ScriptResource.axd?d=0N9JXQYJZ-S8zvfn9h7YfWqf8CUGxJJRlhaxGS40Q_bsT6xyeiq7KsY0OmICNE6__nVz024KKaDER92vWhkPRTGZIqofR3EHMmOVqDlurJrYBHibRXSVYkehHs8oxqndOJn9vmXKjT08a4rH3uyKf7iWrbDnIAy1aILvay_xL3WRc2XS0&t=fffffffffc8759a5",
+          "https://core.duvalclerk.com/ScriptResource.axd?d=8zb8OHexG8p77dF8Bnswdm_DdaQznVib0CErhXPX_r42zjlZfHe2KIZIA7yxLrK-5FVfMEUmfDlEmSeNiEmo2AOe-Tkv3jiLUcY7qm0TGwwm9IqAHKGQjWiNoiFcFLd1fESuHg2&t=f2cd5c5",
+          "https://core.duvalclerk.com/ScriptResource.axd?d=D0pJTcH3XzqlQB5vSfBK5mXER0_62hvkmu80LKa6wuxv8kBHBnm5kM9xwb4cx2MqfW2EMrhjx0p_EvFmWV-7Q--LjckCEKkQQmy5CGGUczW96YZpe4IETo-v-g7PH9KvFl6y3w2&t=f2cd5c5",
+          "https://core.duvalclerk.com/ScriptResource.axd?d=DxXW8EP2gTJuNUiGAWQoWsskC89bR4AMpbOp9BoQqo7R1aPTPuxi-0nJBY8Y5Egc6sNfjKuhuxpi4_ufxmoBJ4G2BAGTrc5vPWcDCN01Yh8oIJ9cdpqcSVfTlgb_jy1fi3GyHNvbD7tkYTzGlK418g77Yy41&t=f2cd5c5",
+          "https://core.duvalclerk.com/ScriptResource.axd?d=eyUqhRHYyyywYxTbjmXrNstyF_xDyJUQZYSesOsDyctKiAqcoCJyzE0fPAkz1xai6T5ZTF6eWql80x3xSw05Enr-lXRBMGQGamCFh4zBsNT2dRE4h5YWR2ynAi081G7kh8SH8A2&t=f2cd5c5",
+          "https://core.duvalclerk.com/ScriptResource.axd?d=VjiAk5XpYx-WOSgd5f_dfKauILIchD_KrbYU7KGaMV-Drtb-Jrw82VN1qE4oWNctkEdf3NLIWjeX2t5W7phYw6_0V9dXkPuluAZ7N_tz_DX4mfx14gkjmvjU4c1Kk1MMJjgm52ZVAYDlmTvRFKlwbJpyGlE1&t=f2cd5c5",
+          "https://core.duvalclerk.com/ScriptResource.axd?d=qZQ_yKWmF79T4DUuLHTkx-WfZlXXdLpDcv3cHiucmw0GUC4U8lHXOvNpQ_YsZfWDB18kA5EJjI-4mOzoEAtTGwxxYC1hLWepQfBPC78GcaRBpQ2h2vp0VtEDFTgQFi4d5uACT3-bs7dZKmJmMf7LUVvC10U1&t=f2cd5c5",
+          "https://core.duvalclerk.com/ScriptResource.axd?d=RDgGHDQ80W0t2b1zl8rCTISd5oNTGcQl7P3whzEfdPd6H8Hro5JK_EW8Mdo3w8cx1eZ29QMllH53XwCYwyYNOs1IQW00K4ergor7HcP5wm8sKpWey2LwlJoSeaLhxHrK7_9hRpq-b4HOX1_QymPQHzUtcFI1&t=f2cd5c5",
+          "https://core.duvalclerk.com/ScriptResource.axd?d=nXb4LZnoxYg4v03RVibsRJq2tlm_XQudFgiZtEF62YMRp9ODxFKlXjSNEgeZAqxpb7tk9ENflfOUcO60KgZ1KfL5Y69I8gV9c7y7yK1SnwBk1jjZsqD5Tlu81-uc9JWyj5XoFdd-fjUy7Q6zhm7M25sJZVE1&t=f2cd5c5"
+        ]
+      },
+      "forms": [
+        {
+          "id": "form1",
+          "name": "",
+          "action": "https://core.duvalclerk.com/CoreCms.aspx?mode=PublicAccess",
+          "method": "post"
+        }
+      ],
+      "inputs": [
+        {
+          "id": "__EVENTTARGET",
+          "name": "__EVENTTARGET",
+          "type": "hidden",
+          "placeholder": "",
+          "aria": "",
+          "val": ""
+        },
+        {
+          "id": "__EVENTARGUMENT",
+          "name": "__EVENTARGUMENT",
+          "type": "hidden",
+          "placeholder": "",
+          "aria": "",
+          "val": ""
+        },
+        {
+          "id": "__VIEWSTATE",
+          "name": "__VIEWSTATE",
+          "type": "hidden",
+          "placeholder": "",
+          "aria": "",
+          "val": "/wEPDwUKLTcxMTM0OTA2Ng9kFgJmD2"
+        },
+        {
+          "id": "__VIEWSTATEGENERATOR",
+          "name": "__VIEWSTATEGENERATOR",
+          "type": "hidden",
+          "placeholder": "",
+          "aria": "",
+          "val": "E939F1CF"
+        },
+        {
+          "id": "ContentPlaceHolder1_WebTab1_clientState",
+          "name": "ContentPlaceHolder1_WebTab1_clientState",
+          "type": "hidden",
+          "placeholder": "",
+          "aria": "",
+          "val": ""
+        },
+        {
+          "id": "ContentPlaceHolder1_WebTab1.i",
+          "name": "ContentPlaceHolder1_WebTab1.i",
+          "type": "text",
+          "placeholder": "",
+          "aria": "",
+          "val": "1:-1:0"
+        },
+        {
+          "id": "FreeParking",
+          "name": "",
+          "type": "text",
+          "placeholder": "",
+          "aria": "",
+          "val": ""
+        },
+        {
+          "id": "c_UsernameTextBox",
+          "name": "ctl00$c_UsernameTextBox",
+          "type": "text",
+          "placeholder": "",
+          "aria": "",
+          "val": ""
+        },
+        {
+          "id": "c_PasswordTextBox",
+          "name": "ctl00$c_PasswordTextBox",
+          "type": "password",
+          "placeholder": "",
+          "aria": "",
+          "val": ""
+        },
+        {
+          "id": "c_LoginIsPublicComputerCheckBox",
+          "name": "",
+          "type": "checkbox",
+          "placeholder": "",
+          "aria": "",
+          "val": "on"
+        },
+        {
+          "id": "c_RememberMeCheckBox",
+          "name": "",
+          "type": "checkbox",
+          "placeholder": "",
+          "aria": "",
+          "val": "on"
+        },
+        {
+          "id": "",
+          "name": "",
+          "type": "submit",
+          "placeholder": "",
+          "aria": "",
+          "val": "Login to CORE"
+        },
+        {
+          "id": "c_AgreementAcceptUsername",
+          "name": "ctl00$c_AgreementAcceptUsername",
+          "type": "text",
+          "placeholder": "",
+          "aria": "",
+          "val": ""
+        },
+        {
+          "id": "c_AgreementAcceptPassword",
+          "name": "ctl00$c_AgreementAcceptPassword",
+          "type": "password",
+          "placeholder": "",
+          "aria": "",
+          "val": ""
+        },
+        {
+          "id": "",
+          "name": "",
+          "type": "button",
+          "placeholder": "",
+          "aria": "",
+          "val": "Accept ALL agreements"
+        },
+        {
+          "id": "c_ProgressWindow1_c_ShowLoadingPopupButton",
+          "name": "ctl00$c_ProgressWindow1$c_ShowLoadingPopupButton",
+          "type": "submit",
+          "placeholder": "",
+          "aria": "",
+          "val": ""
+        },
+        {
+          "id": "c_SessionToken",
+          "name": "ctl00$c_SessionToken",
+          "type": "hidden",
+          "placeholder": "",
+          "aria": "",
+          "val": "00000000-0000-0000-0000-000000"
+        }
+      ],
+      "selects": [],
+      "buttons": [
+        {
+          "tag": "A",
+          "id": "",
+          "text": "Close all tabs",
+          "onclick": "javascript:closeAllTabs();",
+          "href": "#"
+        },
+        {
+          "tag": "INPUT",
+          "id": "",
+          "text": "Login to CORE",
+          "onclick": "javascript: attemptLogin(); return false;",
+          "href": ""
+        },
+        {
+          "tag": "INPUT",
+          "id": "",
+          "text": "Accept ALL agreements",
+          "onclick": "javascript: doAcceptAgreements(); return false;",
+          "href": ""
+        },
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "text": "OK",
+          "onclick": "javascript: completeVorRequest(); return false;",
+          "href": ""
+        },
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "text": "Cancel",
+          "onclick": "javascript: closeAllDialogs(); return false;",
+          "href": ""
+        },
+        {
+          "tag": "INPUT",
+          "id": "c_ProgressWindow1_c_ShowLoadingPopupButton",
+          "text": "",
+          "onclick": "",
+          "href": ""
+        }
+      ],
+      "links": [
+        {
+          "text": "Return to Homepage",
+          "href": "http://www.duvalclerk.com/"
+        },
+        {
+          "text": "Close all tabs",
+          "href": "#"
+        },
+        {
+          "text": "New Account",
+          "href": "CreateAccount.aspx"
+        },
+        {
+          "text": "Reset Password",
+          "href": "ResetPassword.aspx"
+        }
+      ],
+      "body_text_head": "CORE - Clerk Online Resource ePortal Return to Homepage Site Navigation General Welcome Page Accessibility Court Records Case Search Account Overview Logout Close all tabs Please wait Preparing a new search window, please wait User Name: Public Access Login Status: Public Access"
+    }
+  },
+  "case_search": {
+    "login_status": "Public Access",
+    "frame_count": 1,
+    "frames": [
+      {
+        "url": "https://core.duvalclerk.com/CoreCms.aspx?mode=PublicAccess",
+        "name": "",
+        "characterize": {
+          "inputs": [
+            {
+              "id": "__EVENTTARGET",
+              "name": "__EVENTTARGET",
+              "type": "hidden",
+              "placeholder": "",
+              "aria": ""
+            },
+            {
+              "id": "__EVENTARGUMENT",
+              "name": "__EVENTARGUMENT",
+              "type": "hidden",
+              "placeholder": "",
+              "aria": ""
+            },
+            {
+              "id": "__VIEWSTATE",
+              "name": "__VIEWSTATE",
+              "type": "hidden",
+              "placeholder": "",
+              "aria": ""
+            },
+            {
+              "id": "__VIEWSTATEGENERATOR",
+              "name": "__VIEWSTATEGENERATOR",
+              "type": "hidden",
+              "placeholder": "",
+              "aria": ""
+            },
+            {
+              "id": "ContentPlaceHolder1_WebTab1_clientState",
+              "name": "ContentPlaceHolder1_WebTab1_clientState",
+              "type": "hidden",
+              "placeholder": "",
+              "aria": ""
+            },
+            {
+              "id": "ContentPlaceHolder1_WebTab1.i",
+              "name": "ContentPlaceHolder1_WebTab1.i",
+              "type": "text",
+              "placeholder": "",
+              "aria": ""
+            },
+            {
+              "id": "c_UcnEntryBox_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "name": "c_UcnEntryBox_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "type": "text",
+              "placeholder": "",
+              "aria": ""
+            },
+            {
+              "id": "c_SubmitCaseLookupButton_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "name": "c_SubmitCaseLookupButton_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "type": "button",
+              "placeholder": "",
+              "aria": ""
+            },
+            {
+              "id": "c_UcnYearTextBox_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "name": "c_UcnYearTextBox_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "type": "text",
+              "placeholder": "",
+              "aria": ""
+            },
+            {
+              "id": "c_UcnSequenceTextBox_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "name": "c_UcnSequenceTextBox_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "type": "text",
+              "placeholder": "",
+              "aria": ""
+            },
+            {
+              "id": "c_UcnPartyTextBox_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "name": "c_UcnPartyTextBox_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "type": "text",
+              "placeholder": "",
+              "aria": ""
+            },
+            {
+              "id": "c_LastNameTextBox_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "name": "c_LastNameTextBox_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "type": "text",
+              "placeholder": "",
+              "aria": ""
+            },
+            {
+              "id": "c_FirstNameTextBox_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "name": "c_FirstNameTextBox_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "type": "text",
+              "placeholder": "",
+              "aria": ""
+            },
+            {
+              "id": "c_MiddleNameTextBox_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "name": "c_MiddleNameTextBox_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "type": "text",
+              "placeholder": "",
+              "aria": ""
+            },
+            {
+              "id": "c_CitationNumberTextBox_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "name": "c_CitationNumberTextBox_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "type": "text",
+              "placeholder": "",
+              "aria": ""
+            },
+            {
+              "id": "c_BeginSearchButton1_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "name": "c_BeginSearchButton1_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "type": "button",
+              "placeholder": "",
+              "aria": ""
+            },
+            {
+              "id": "c_PartyTypeTextBox_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "name": "c_PartyTypeTextBox_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "type": "text",
+              "placeholder": "",
+              "aria": ""
+            },
+            {
+              "id": "FreeParking",
+              "name": "",
+              "type": "text",
+              "placeholder": "",
+              "aria": ""
+            },
+            {
+              "id": "c_UsernameTextBox",
+              "name": "ctl00$c_UsernameTextBox",
+              "type": "text",
+              "placeholder": "",
+              "aria": ""
+            },
+            {
+              "id": "c_PasswordTextBox",
+              "name": "ctl00$c_PasswordTextBox",
+              "type": "password",
+              "placeholder": "",
+              "aria": ""
+            },
+            {
+              "id": "c_LoginIsPublicComputerCheckBox",
+              "name": "",
+              "type": "checkbox",
+              "placeholder": "",
+              "aria": ""
+            },
+            {
+              "id": "c_RememberMeCheckBox",
+              "name": "",
+              "type": "checkbox",
+              "placeholder": "",
+              "aria": ""
+            },
+            {
+              "id": "",
+              "name": "",
+              "type": "submit",
+              "placeholder": "",
+              "aria": ""
+            },
+            {
+              "id": "c_AgreementAcceptUsername",
+              "name": "ctl00$c_AgreementAcceptUsername",
+              "type": "text",
+              "placeholder": "",
+              "aria": ""
+            },
+            {
+              "id": "c_AgreementAcceptPassword",
+              "name": "ctl00$c_AgreementAcceptPassword",
+              "type": "password",
+              "placeholder": "",
+              "aria": ""
+            },
+            {
+              "id": "",
+              "name": "",
+              "type": "button",
+              "placeholder": "",
+              "aria": ""
+            },
+            {
+              "id": "c_ProgressWindow1_c_ShowLoadingPopupButton",
+              "name": "ctl00$c_ProgressWindow1$c_ShowLoadingPopupButton",
+              "type": "submit",
+              "placeholder": "",
+              "aria": ""
+            },
+            {
+              "id": "c_SessionToken",
+              "name": "ctl00$c_SessionToken",
+              "type": "hidden",
+              "placeholder": "",
+              "aria": ""
+            },
+            {
+              "id": "c_UcnEntryBox_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "name": "c_UcnEntryBox_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "type": "text",
+              "placeholder": "",
+              "aria": ""
+            },
+            {
+              "id": "c_SubmitCaseLookupButton_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "name": "c_SubmitCaseLookupButton_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "type": "button",
+              "placeholder": "",
+              "aria": ""
+            },
+            {
+              "id": "c_UcnYearTextBox_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "name": "c_UcnYearTextBox_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "type": "text",
+              "placeholder": "",
+              "aria": ""
+            },
+            {
+              "id": "c_UcnSequenceTextBox_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "name": "c_UcnSequenceTextBox_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "type": "text",
+              "placeholder": "",
+              "aria": ""
+            },
+            {
+              "id": "c_UcnPartyTextBox_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "name": "c_UcnPartyTextBox_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "type": "text",
+              "placeholder": "",
+              "aria": ""
+            },
+            {
+              "id": "c_LastNameTextBox_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "name": "c_LastNameTextBox_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "type": "text",
+              "placeholder": "",
+              "aria": ""
+            },
+            {
+              "id": "c_FirstNameTextBox_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "name": "c_FirstNameTextBox_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "type": "text",
+              "placeholder": "",
+              "aria": ""
+            },
+            {
+              "id": "c_MiddleNameTextBox_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "name": "c_MiddleNameTextBox_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "type": "text",
+              "placeholder": "",
+              "aria": ""
+            },
+            {
+              "id": "c_CitationNumberTextBox_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "name": "c_CitationNumberTextBox_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "type": "text",
+              "placeholder": "",
+              "aria": ""
+            },
+            {
+              "id": "c_BeginSearchButton1_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "name": "c_BeginSearchButton1_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "type": "button",
+              "placeholder": "",
+              "aria": ""
+            },
+            {
+              "id": "c_PartyTypeTextBox_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "name": "c_PartyTypeTextBox_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "type": "text",
+              "placeholder": "",
+              "aria": ""
+            }
+          ],
+          "selects": [
+            {
+              "id": "c_CourtTypeDropDownList_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "name": "c_CourtTypeDropDownList_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "opts": [
+                "NoSelection:<select a court type>",
+                "Appeals:Appeals",
+                "1D:- 1D",
+                "AP:- AP",
+                "SC:- SC",
+                "Circuit Civil:Circuit Civil",
+                "AO:- AO",
+                "CA:- CA",
+                "County Civil:County Civil",
+                "CC:- CC"
+              ]
+            },
+            {
+              "id": "c_CaseTypeDropDownList_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "name": "c_CaseTypeDropDownList_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "opts": [
+                "NoSelection:<select a case type>",
+                "548:Administrative Order",
+                "424,426:Administrative Support",
+                "310,311,312,487,610:Adoption",
+                "262:Adult Protective Service",
+                "455:Antitrust/Trade Regulati",
+                "556:Appointments And Designa",
+                "336,337:Attachment",
+                "240,241,242,590,591,592:Auto Negligence Case",
+                "259,675:Baker Act"
+              ]
+            },
+            {
+              "id": "c_NameSearchOptionsDropDownList_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "name": "c_NameSearchOptionsDropDownList_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "opts": [
+                "BasicFull:Basic/full-text",
+                "PhoneticFull:Phonetic/full-text (defa",
+                "BasicBeginsWith:Basic/begins-with"
+              ]
+            },
+            {
+              "id": "c_SortOrderDropDownList_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "name": "c_SortOrderDropDownList_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "opts": [
+                "NoSelection:<no sort order>",
+                "LastName:Last Name",
+                "FirstName:First Name",
+                "MiddleName:Middle Name",
+                "DOB:Date of Birth"
+              ]
+            },
+            {
+              "id": "c_CourtTypeDropDownList_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "name": "c_CourtTypeDropDownList_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "opts": [
+                "NoSelection:<select a court type>",
+                "Appeals:Appeals",
+                "1D:- 1D",
+                "AP:- AP",
+                "SC:- SC",
+                "Circuit Civil:Circuit Civil",
+                "AO:- AO",
+                "CA:- CA",
+                "County Civil:County Civil",
+                "CC:- CC"
+              ]
+            },
+            {
+              "id": "c_CaseTypeDropDownList_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "name": "c_CaseTypeDropDownList_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "opts": [
+                "NoSelection:<select a case type>",
+                "548:Administrative Order",
+                "424,426:Administrative Support",
+                "310,311,312,487,610:Adoption",
+                "262:Adult Protective Service",
+                "455:Antitrust/Trade Regulati",
+                "556:Appointments And Designa",
+                "336,337:Attachment",
+                "240,241,242,590,591,592:Auto Negligence Case",
+                "259,675:Baker Act"
+              ]
+            },
+            {
+              "id": "c_NameSearchOptionsDropDownList_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "name": "c_NameSearchOptionsDropDownList_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "opts": [
+                "BasicFull:Basic/full-text",
+                "PhoneticFull:Phonetic/full-text (defa",
+                "BasicBeginsWith:Basic/begins-with"
+              ]
+            },
+            {
+              "id": "c_SortOrderDropDownList_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "name": "c_SortOrderDropDownList_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "opts": [
+                "NoSelection:<no sort order>",
+                "LastName:Last Name",
+                "FirstName:First Name",
+                "MiddleName:Middle Name",
+                "DOB:Date of Birth"
+              ]
+            }
+          ],
+          "buttons": [
+            {
+              "tag": "A",
+              "id": "",
+              "text": "Close all tabs",
+              "onclick": "javascript:closeAllTabs();"
+            },
+            {
+              "tag": "INPUT",
+              "id": "c_SubmitCaseLookupButton_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "text": "Open Case",
+              "onclick": "javascript:getCaseTabByUcnBoxId(\"c_UcnEntryBox_d97f85ab_5c88_4f53_b96a_4832aac08059\");"
+            },
+            {
+              "tag": "INPUT",
+              "id": "c_BeginSearchButton1_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "text": "Begin Search",
+              "onclick": "javascript:getCaseSearch(\"d97f85ab_5c88_4f53_b96a_4832aac08059\", true);return false;__doPo"
+            },
+            {
+              "tag": "INPUT",
+              "id": "",
+              "text": "Login to CORE",
+              "onclick": "javascript: attemptLogin(); return false;"
+            },
+            {
+              "tag": "INPUT",
+              "id": "",
+              "text": "Accept ALL agreements",
+              "onclick": "javascript: doAcceptAgreements(); return false;"
+            },
+            {
+              "tag": "BUTTON",
+              "id": "",
+              "text": "OK",
+              "onclick": "javascript: completeVorRequest(); return false;"
+            },
+            {
+              "tag": "BUTTON",
+              "id": "",
+              "text": "Cancel",
+              "onclick": "javascript: closeAllDialogs(); return false;"
+            },
+            {
+              "tag": "INPUT",
+              "id": "c_ProgressWindow1_c_ShowLoadingPopupButton",
+              "text": "",
+              "onclick": ""
+            },
+            {
+              "tag": "INPUT",
+              "id": "c_SubmitCaseLookupButton_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "text": "Open Case",
+              "onclick": "javascript:getCaseTabByUcnBoxId(\"c_UcnEntryBox_d97f85ab_5c88_4f53_b96a_4832aac08059\");"
+            },
+            {
+              "tag": "INPUT",
+              "id": "c_BeginSearchButton1_d97f85ab_5c88_4f53_b96a_4832aac08059",
+              "text": "Begin Search",
+              "onclick": "javascript:getCaseSearch(\"d97f85ab_5c88_4f53_b96a_4832aac08059\", true);return false;__doPo"
+            }
+          ],
+          "body_head": "CORE - Clerk Online Resource ePortal Return to Homepage Site Navigation General Welcome Page Accessibility Court Records Case Search Account Overview Logout Close all tabs Please wait Case Search Enter a case number clear fields Case Number Entry Will open case number Please enter a valid uniform ca"
+        }
+      }
+    ]
+  },
+  "netlog_interesting": [
+    "GET https://core.duvalclerk.com/internal/CoreWebSvc.asmx/jsdebug",
+    "GET https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit",
+    "GET https://www.gstatic.com/recaptcha/releases/MerVUtRoajKEbP7pLiGXkL28/recaptcha__en.js",
+    "POST https://core.duvalclerk.com/internal/CoreWebSvc.asmx/PublicLogin",
+    "POST https://core.duvalclerk.com/internal/CoreWebSvc.asmx/PublicLogin",
+    "POST https://core.duvalclerk.com/internal/CoreWebSvc.asmx/GetNewSearchTab"
+  ]
+}
