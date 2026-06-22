@@ -250,7 +250,7 @@ async def run_county(county_id: str, headless: bool, only_case: str | None = Non
 # after the false-kill fix). Hamilton + Franklin remain Cloudflare-blocked and
 # excluded (PR-fallback). Add to this set ONLY after a scraper proves itself on
 # real run data.
-WORKING_DOCKET_COUNTIES = ["cuyahoga-oh", "montgomery-oh", "summit-oh", "miami-dade-fl", "broward-fl"]
+WORKING_DOCKET_COUNTIES = ["cuyahoga-oh", "montgomery-oh", "summit-oh", "miami-dade-fl", "broward-fl", "duval-fl"]
 
 
 DEFAULT_PARALLEL_DOCKETS = 3
