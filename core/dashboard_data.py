@@ -275,6 +275,11 @@ def export_dashboard_data():
             "state":            l.state,
             "case_number":      l.case_number,
             "address":          l.address,
+            # Docket-extracted defendant homeowner (Miami-Dade / Broward / Duval
+            # owner fixes). The loader copies docket owner_name onto the lead when
+            # the auction scrape left it blank; surface it so the deliverable shows
+            # the homeowner, not just PR's post-auction owner (pr_owner_name).
+            "owner_name":       getattr(l, "owner_name", ""),
             "parcel_id":        l.parcel_id,
             "auction_type":     l.auction_type,
             "opening_bid":      l.opening_bid,
