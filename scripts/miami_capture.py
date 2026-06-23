@@ -12,8 +12,10 @@ log shows the kill path firing on the real claim/sale-issue/bankruptcy cases.
 Saves to data/samples/miami_dade/cases/<tag>.html.
 Usage: python scripts/miami_capture.py "2024-020538-CA-01,2025-000672-CA-01,..."
 """
-import sys, re, asyncio
+import sys, os, re, asyncio
 from pathlib import Path
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from core.dockets.base import DocketResult
 from core.dockets.miami_dade import MiamiDadeDocketScraper
