@@ -1,0 +1,67 @@
+name: Lee Investigate
+
+# THROWAWAY investigation workflow for the Lee PR-first build. Manual-dispatch
+# only. NOT part of the daily pipeline; the cron (daily-refresh.yml) is untouched.
+# Two independent probes:
+#   pr_loans : DISCOVERY of the itemized junior-lien API shape (LoanPosition /
+#              LoanType / Amount / DocumentID) the Card boolean can't give.
+#              Purchase=0 (free); may burn exports only if escalated by hand.
+#   portal   : characterize matrix.leeclerk.org (vendor/CAPTCHA/headless) — for
+#              the FUTURE delayed-docket layer; does NOT gate the PR build.
+# Artifacts only — commits nothing. Safe to delete once Lee is signed off.
+
+on:
+  workflow_dispatch:
+    inputs:
+      probe:
+        description: 'pr_loans = discover itemized-lien API shape; portal = characterize matrix.leeclerk.org; both'
+        required: false
+        default: 'both'
+        type: choice
+        options: [pr_loans, portal, both]
+      radarid:
+        description: 'RadarID for the pr_loans probe (default = the live Lee P7BF6453, 318 SE 46TH LN)'
+        required: false
+        default: 'P7BF6453'
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Install Playwright Chromium
+        if: github.event.inputs.probe == 'portal' || github.event.inputs.probe == 'both'
+        run: python -m playwright install --with-deps chromium
+
+      - name: PR loans discovery probe (Purchase=0, free)
+        if: github.event.inputs.probe == 'pr_loans' || github.event.inputs.probe == 'both'
+        env:
+          PROPERTYRADAR_TOKEN: ${{ secrets.PROPERTYRADAR_TOKEN }}
+        run: python -m core.enrichment.propertyradar --probe-loans "${{ github.event.inputs.radarid }}"
+
+      - name: Lee portal characterization probe (headless, datacenter IP)
+        if: github.event.inputs.probe == 'portal' || github.event.inputs.probe == 'both'
+        run: python scripts/lee_portal_probe.py
+
+      - name: Upload investigation artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lee-investigation
+          path: data/samples/lee/ci/
+          if-no-files-found: ignore
+          retention-days: 7

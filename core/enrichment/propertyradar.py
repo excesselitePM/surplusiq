@@ -651,6 +651,14 @@ def main():
                              "GET /properties/{RadarID} (full Card fieldset). "
                              "Runs every step in one Actions run so we don't "
                              "iterate. Forces --dry-run.")
+    parser.add_argument("--probe-loans", type=str, default=None, metavar="RADARID",
+                        help="DISCOVERY probe for itemized junior-lien data (Lee "
+                             "PR-first build). Hits the loan/lien sub-resources of "
+                             "GET /v1/properties/{RadarID} to learn the real shape "
+                             "of LoanPosition/LoanType/Amount/DocumentID — the "
+                             "fields the Card boolean PropertyHasOpenLiens can't "
+                             "give. Tries Purchase=0 first (free); dumps full bodies. "
+                             "Use the live Lee RadarID 'P7BF6453' (318 SE 46TH LN).")
     args = parser.parse_args()
 
     if not PR_API_TOKEN:
@@ -777,6 +785,39 @@ def main():
             print(f"  ← {gresp.status_code}  body[:2500]={(gresp.text or '')[:2500]!r}")
         except Exception as e:
             print(f"  ← EXCEPTION {type(e).__name__}: {e}")
+        return
+
+    # ─── Discovery probe: itemized junior-lien data (Lee PR-first) ─────────
+    if args.probe_loans:
+        radarid = args.probe_loans.strip()
+        print(f"🧪 PROBE-LOANS radarid={radarid!r}")
+        print("   Goal: find the real itemized-lien shape (LoanPosition / LoanType /")
+        print("   Amount / DocumentID) the Card boolean PropertyHasOpenLiens lacks.")
+        client = PropertyRadarClient(token=PR_API_TOKEN, dry_run=True)
+
+        # Candidate endpoints, Purchase=0 first (free). Each printed in full so
+        # the build maps against REAL keys, never a guessed schema.
+        candidates = [
+            ("GET", f"/properties/{radarid}/loans",      {"Purchase": 0}),
+            ("GET", f"/properties/{radarid}/liens",      {"Purchase": 0}),
+            ("GET", f"/properties/{radarid}/involuntaryliens", {"Purchase": 0}),
+            ("GET", f"/properties/{radarid}/persons",    {"Purchase": 0}),
+            ("GET", f"/properties/{radarid}/documents",  {"Purchase": 0}),
+        ]
+        for method, path, params in candidates:
+            url = f"{PR_API_BASE}{path}"
+            print()
+            print(f"─── {method} {path}  params={json.dumps(params)} ───")
+            try:
+                resp = client.session.get(url, params=params, timeout=30)
+                body = (resp.text or "")[:3000]
+                print(f"  ← {resp.status_code}  body[:3000]={body!r}")
+            except Exception as e:
+                print(f"  ← EXCEPTION {type(e).__name__}: {e}")
+        print()
+        print("─── NOTE: any endpoint returning 200 with loan/lien rows above is the")
+        print("    real source. If all return empty under Purchase=0, re-run the")
+        print("    winning endpoint with Purchase=1 (burns exports) to see payloads.")
         return
 
     # ─── Probe mode: GET /v1/properties/{RadarID} ─────────────────────────
