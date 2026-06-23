@@ -161,6 +161,48 @@ def main():
         {"Owner": "ACME CAPITAL LLC", "isListedForSale": 0}, docket_owner="JOHNSON, MARY")
     check("mismatch → suspect", suspect is True, "; ".join(reasons)[:80])
 
+    # ── 11. WIRE-IN: dashboard verdict application (kill filters out, caution stays) ──
+    print("\n11. WIRE-IN _apply_lee_lien_verdict — kill → classification 'killed' (FP-14 drops)")
+    from core.dashboard_data import _apply_lee_lien_verdict
+    killed_payload = {
+        "county_id": "lee-fl", "case_number": "SYN-KILL",
+        "classification": "", "money_status": "apparent_surplus",
+        "lee_lien_classification": "killed", "lee_lien_is_hard_kill": True,
+        "lee_lien_amount": 60000, "lee_lien_source": "second_position",
+        "lee_lien_reason": "itemized second-position lien $60,000 exceeds surplus",
+    }
+    _apply_lee_lien_verdict(killed_payload)
+    check("kill → classification 'killed'", killed_payload["classification"] == "killed")
+    check("kill → money_status 'no_surplus'", killed_payload["money_status"] == "no_surplus")
+    check("kill → reason cites the lien amount",
+          "60,000" in killed_payload.get("classification_reason", ""))
+    # FP-14 filter semantics: a 'killed' classification is dropped from the deliverable.
+    check("kill would be FILTERED OUT by FP-14",
+          (killed_payload.get("classification") or "").lower() == "killed")
+
+    print("\n12. WIRE-IN — lien_risk stays VISIBLE with a caution flag")
+    caution_payload = {
+        "county_id": "lee-fl", "case_number": "SYN-CAUTION",
+        "classification": "", "money_status": "apparent_surplus",
+        "lee_lien_classification": "lien_risk", "lee_lien_is_hard_kill": False,
+        "lee_lien_amount": 30378, "lee_lien_reason": "owner-timing suspect",
+    }
+    _apply_lee_lien_verdict(caution_payload)
+    check("caution → NOT killed (stays visible)", caution_payload["classification"] != "killed")
+    check("caution → lee_lien_caution flag set", caution_payload.get("lee_lien_caution") is True)
+
+    print("\n13. WIRE-IN — a 'killed' classification WITHOUT hard_kill does NOT filter out")
+    soft = {"county_id": "lee-fl", "classification": "", "money_status": "apparent_surplus",
+            "lee_lien_classification": "lien_risk", "lee_lien_is_hard_kill": False,
+            "lee_lien_amount": 60000}
+    _apply_lee_lien_verdict(soft)
+    check("anti-fab: lien_risk (even big amount) is NOT a kill", soft["classification"] != "killed")
+
+    print("\n14. WIRE-IN — non-Lee payload untouched")
+    other = {"county_id": "summit-oh", "classification": "green", "money_status": "apparent_surplus"}
+    _apply_lee_lien_verdict(other)
+    check("non-Lee payload untouched", other["classification"] == "green")
+
     # ── result ──
     passed = sum(_checks)
     total = len(_checks)

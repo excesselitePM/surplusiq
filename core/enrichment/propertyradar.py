@@ -50,6 +50,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from core.loader import load_all_leads, Lead
+from core.enrichment.lee_liens import classify_lien_surplus, LEE_LIEN_FIELDS
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -116,6 +117,15 @@ class EnrichedLead:
     enrichment_status: str = "pending"   # pending / matched / no_match / error
     enrichment_notes: str = ""
     enriched_at: Optional[str] = None
+
+    # Lee PR-first lien-consumes-surplus verdict (Lee only; see core/enrichment/lee_liens)
+    lee_lien_classification: str = ""    # killed | lien_risk | clean | pursuable | ""
+    lee_lien_is_hard_kill: bool = False
+    lee_lien_amount: float = 0.0
+    lee_lien_source: str = ""            # second_position | total_loan_balance | implied_avm_equity | none
+    lee_owner_timing_suspect: bool = False
+    lee_lien_reason: str = ""
+    lee_lien_flags: list = field(default_factory=list)
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -193,7 +203,8 @@ class PropertyRadarClient:
             self.errors += 1
             return {"error": f"json decode: {e}", "body": (resp.text or "")[:500]}
 
-    def search_by_address(self, street: str, city: str, state: str, zipcode: str = "") -> dict:
+    def search_by_address(self, street: str, city: str, state: str, zipcode: str = "",
+                          fields: str = "Card") -> dict:
         """Verified three-step PR lookup chain (Purchase=1 chain verified
         2026-05-26 against RadarID PBD4D8F5 / 1253 MCINTOSH AVE):
 
@@ -309,7 +320,7 @@ class PropertyRadarClient:
         try:
             full_resp = self.session.get(
                 f"{PR_API_BASE}/properties/{radarid}",
-                params={"Fields": "Card", "Purchase": purchase_flag},
+                params={"Fields": fields, "Purchase": purchase_flag},
                 timeout=30,
             )
             time.sleep(REQUEST_DELAY_SEC)
@@ -495,6 +506,23 @@ def map_pr_record_to_enriched(lead: Lead, pr_record: dict, match_count: int) -> 
     return derive_intelligence(e)
 
 
+def _attach_lee_lien_verdict(e, pr_record: dict, lead) -> None:
+    """Run the Lee PR-first lien-consumes-surplus classifier and stamp its verdict
+    onto the EnrichedLead. Lee has no docket layer (PR-first), so docket_owner is
+    None — the owner-timing guard leans on isListedForSale / company-owner. The
+    surplus compared against is the FL apparent surplus (sale − opening_bid)."""
+    surplus = lead.gross_surplus if lead.gross_surplus else (
+        (lead.final_sale_price or 0) - (lead.opening_bid or 0))
+    v = classify_lien_surplus(pr_record, surplus, docket_owner=None)
+    e.lee_lien_classification = v.classification
+    e.lee_lien_is_hard_kill = v.is_hard_kill
+    e.lee_lien_amount = v.lien_amount
+    e.lee_lien_source = v.lien_source
+    e.lee_owner_timing_suspect = v.owner_timing_suspect
+    e.lee_lien_reason = v.reasons[-1] if v.reasons else ""
+    e.lee_lien_flags = list(v.flags)
+
+
 def enrich_leads(
     leads: list,
     client: PropertyRadarClient,
@@ -522,8 +550,14 @@ def enrich_leads(
             enriched_results.append(map_pr_record_to_enriched(lead, {}, 0))
             continue
 
+        # Lee is PR-FIRST: its lien gate needs the targeted loan/lien fields, NOT
+        # the Card preset (Card omits TotalLoanBalance/SecondAmount, and
+        # 'Card,<extra>' 400s on the 50-field cap — proven run 28053764053).
+        is_lee = (lead.county_id or "").lower().startswith("lee")
+        fields = ",".join(LEE_LIEN_FIELDS) if is_lee else "Card"
+
         # Hit the API
-        result = client.search_by_address(street, city, state, zipcode)
+        result = client.search_by_address(street, city, state, zipcode, fields=fields)
 
         if "error" in result:
             e = map_pr_record_to_enriched(lead, {}, 0)
@@ -543,6 +577,8 @@ def enrich_leads(
                 if not client.dry_run:
                     client.credits_burned += 1
                 e = map_pr_record_to_enriched(lead, results_list[0], count)
+                if is_lee:
+                    _attach_lee_lien_verdict(e, results_list[0], lead)
             else:
                 client.misses += 1
                 e = map_pr_record_to_enriched(lead, {}, count)

@@ -94,6 +94,10 @@ def _apply_pr_to_payload(payload_lead: dict, pr_record: dict) -> dict:
         "pr_sqft", "pr_bedrooms", "pr_bathrooms",
         "real_surplus_estimate", "debt_coverage_ratio", "is_clean_surplus",
         "enrichment_status",
+        # Lee PR-first lien-consumes-surplus verdict (Lee only)
+        "lee_lien_classification", "lee_lien_is_hard_kill", "lee_lien_amount",
+        "lee_lien_source", "lee_owner_timing_suspect", "lee_lien_reason",
+        "lee_lien_flags",
     ]
     for field in pr_fields:
         if field in pr_record:
@@ -203,6 +207,39 @@ def _reassign_status_after_pr(payload: dict) -> None:
         payload["money_status"] = "apparent_surplus"
 
 
+def _apply_lee_lien_verdict(payload: dict) -> None:
+    """Apply the Lee PR-first lien-consumes-surplus verdict to a payload.
+
+      killed     → set classification='killed' so the FP-14 filter drops the lead
+                   out of the deliverable (same kill rule as the docket counties),
+                   citing the itemized lien amount in classification_reason for the
+                   audit log.
+      lien_risk  → stays VISIBLE; attach a caution flag + reason for the dashboard.
+      clean/other→ no change (the lien gate found nothing that consumes surplus).
+
+    Lee-only and PR-gated: leads without a lee_lien_classification are untouched.
+    Anti-fabrication is enforced upstream — only a real itemized SecondAmount >
+    surplus with trustworthy owner data produces is_hard_kill (=> killed here)."""
+    cls = (payload.get("lee_lien_classification") or "").strip().lower()
+    if not cls:
+        return
+    amt = float(payload.get("lee_lien_amount") or 0)
+    reason = payload.get("lee_lien_reason") or ""
+
+    if cls == "killed" and payload.get("lee_lien_is_hard_kill"):
+        payload["classification"] = "killed"
+        payload["lead_quality"]   = "killed"
+        payload["money_status"]   = "no_surplus"
+        payload["evidence_level"] = "pr_lien_consumes_surplus"
+        payload["classification_reason"] = (
+            f"PR lien check: itemized second-position lien ${amt:,.0f} exceeds "
+            f"apparent surplus — surplus consumed (Lee PR-first kill)")
+    elif cls == "lien_risk":
+        payload["lee_lien_caution"] = True
+        if reason:
+            payload["lee_lien_caution_reason"] = reason
+
+
 def export_dashboard_data():
     docs_data = PROJECT_ROOT / "docs" / "data"
     docs_data.mkdir(parents=True, exist_ok=True)
@@ -295,6 +332,10 @@ def export_dashboard_data():
                 # model on the merged payload so a PR-matched auction-only lead
                 # is correctly re-tagged property_enriched / estimated_surplus.
                 _reassign_status_after_pr(payload)
+                # Lee PR-first lien gate: a confirmed lien-consumes-surplus is a
+                # KILL (filtered out by FP-14 below); lien_risk stays visible as a
+                # caution. Runs after the status model so the kill overrides tier.
+                _apply_lee_lien_verdict(payload)
 
         # docket match count: any real docket classification
         if (payload.get("classification") or "").strip().lower() in DOCKET_VERIFIED_CLASSIFICATIONS:
