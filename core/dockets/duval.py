@@ -115,6 +115,43 @@ _PARTY_TYPE_RE = re.compile(
     r"guardian.*|trustee|intervenor|other.*)$", re.I)
 _THIRD_PARTY_RE = re.compile(r"3rd party|third party", re.I)
 
+# ── Owner (defendant-homeowner) extraction (ported from Miami-Dade) ──────────
+# The surplus belongs to the foreclosed DEFENDANT HOMEOWNER. Extract a party typed
+# EXACTLY "Defendant" (NOT a 3rd-party / third-party-defendant surplus claimant,
+# NOT plaintiff), individual only — bias to BLANK over wrong (never the plaintiff).
+_CORP_MARKER = re.compile(
+    r"\b(bank|mortgage|trust|funding|servicing|n\.?\s?a\.?|association|assn|"
+    r"condominium|condo|homeowners?|owners assoc|l\.?l\.?c|llc|inc\b|incorporated|"
+    r"corp|company|\bco\.|ltd|l\.?p\.?|partnership|holdings?|capital|\bfund\b|funds\b|"
+    r"department|united states|secretary|tax collector|clerk of|realty|properties|"
+    r"property owners|\bgroup\b|investments?|enterprises?|management|financial|"
+    r"lending|loans?|credit union)\b", re.I)
+_GENERIC_PARTY = re.compile(
+    r"unknow|tenant|any and all|all other|in possession|et al|john doe|jane doe|"
+    r"parties claiming|lienors|creditors|\bheirs?\b|devisees", re.I)
+
+
+def _is_individual_homeowner(name: str) -> bool:
+    n = _norm(name)
+    if len(n) < 3:
+        return False
+    # never let a surplus-recovery firm (or any 'surplus'-named entity) be the owner
+    if "surplus" in n.lower() or any(f in n.lower() for f in DUVAL_RECOVERY_FIRMS):
+        return False
+    return not (_GENERIC_PARTY.search(n) or _CORP_MARKER.search(n))
+
+
+def owner_from_parties(parties: list) -> str:
+    """The defendant homeowner: party type EXACTLY 'Defendant' — NOT '3rd Party'
+    or 'THIRD PARTY DEFENDANT' (surplus claimants), NOT Plaintiff — individual
+    only. First qualifying defendant; joint owners kept intact."""
+    for name, ptype in parties:
+        if ptype.strip().lower() != "defendant":     # exact: excludes 3rd/third-party
+            continue
+        if _is_individual_homeowner(name):
+            return name
+    return ""
+
 
 def parse_duval_case_number(raw: str) -> Optional[dict]:
     """Parse a Duval case number → {year, division, seq, entry, dashed}.
@@ -348,6 +385,9 @@ class DuvalDocketScraper(DocketScraper):
             for d, desc in sec["dockets"][:160]
         ]
         result.defendants = [n for n, t in sec["parties"] if "defendant" in t.lower()][:20]
+        # Owner = defendant homeowner (exact 'Defendant' type, individual; excludes
+        # plaintiff/corporate/HOA/purchaser AND 3rd-party surplus claimants).
+        result.owner_name = owner_from_parties(sec["parties"])
 
         claim_party = detect_surplus_party(sec["parties"])
         claim_fee = detect_surplus_fee(sec["fees"])
