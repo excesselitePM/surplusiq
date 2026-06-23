@@ -1,0 +1,52 @@
+name: Orange Investigate
+
+# THROWAWAY investigation workflow (Orange MyEClerk portal characterization +
+# CAPTCHA-from-CI check + docket vocab sampling). Manual-dispatch only. Not part
+# of the daily pipeline. Safe to delete once Orange investigation is signed off.
+# Artifacts only — commits nothing.
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'probe = case characterization; party = recovery-firm party-name search'
+        required: false
+        default: 'probe'
+        type: choice
+        options: [probe, party]
+      items:
+        description: 'Comma-separated case numbers (probe) or party-name terms (party). Empty = defaults.'
+        required: false
+        default: ''
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Install Playwright Chromium
+        run: python -m playwright install --with-deps chromium
+      - name: Run Orange investigation probe (headless, datacenter IP)
+        run: python scripts/orange_investigate.py "${{ github.event.inputs.mode }}" "${{ github.event.inputs.items }}"
+      - name: Upload investigation artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: orange-investigation
+          path: data/samples/orange/ci/
+          if-no-files-found: warn
+          retention-days: 7
