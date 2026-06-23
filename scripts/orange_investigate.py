@@ -146,8 +146,20 @@ async def _solve_v2_checkbox(page, rec):
     feasibility test. Returns (token, challenged)."""
     token, challenged = "", False
     try:
-        anchor = page.frame_locator("iframe[src*='api2/anchor']").locator("#recaptcha-anchor")
-        await anchor.click(timeout=8000)
+        # two recaptcha widgets exist (v3 invisible + v2 checkbox) — pick the
+        # VISIBLE anchor iframe (the v2 checkbox) by bounding box, click inside it.
+        clicked = False
+        for h in await page.query_selector_all("iframe[src*='api2/anchor']"):
+            bx = await h.bounding_box()
+            if bx and bx.get("height", 0) > 10:
+                fr = await h.content_frame()
+                if fr:
+                    await fr.click("#recaptcha-anchor", timeout=8000)
+                    clicked = True
+                    break
+        if not clicked:
+            rec["steps"]["v2_error"] = "no visible v2 anchor iframe"
+            return "", False
         # poll for token or a visible challenge (bframe) for ~12s
         for _ in range(24):
             token = await page.evaluate(
