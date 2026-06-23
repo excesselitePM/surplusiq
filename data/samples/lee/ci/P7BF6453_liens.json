@@ -1,0 +1,20 @@
+{
+  "case": "25-CA-003443",
+  "address": "318 SE 46TH LN, CAPE CORAL, FL 33904",
+  "auction_surplus": 33874.21,
+  "radarid": "P7BF6453",
+  "pr_record": {
+    "RadarID": "P7BF6453",
+    "isFreeAndClear": 0,
+    "Owner": "UPSTATE ENTERPRISES LLC",
+    "AVM": 154955,
+    "AssessedValue": 354890,
+    "TotalLoanBalance": 30378,
+    "AvailableEquity": 124577,
+    "NumberLoans": 1,
+    "LastTransferValue": 199000,
+    "isListedForSale": 1,
+    "PropertyHasOpenPersonLiens": 0,
+    "PropertyHasOpenLiens": 1
+  }
+}

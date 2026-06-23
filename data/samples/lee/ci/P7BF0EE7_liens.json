@@ -1,0 +1,20 @@
+{
+  "case": "25-CA-001366",
+  "address": "3350 NORTH KEY DR 603, NORTH FORT MYERS, FL 33903",
+  "auction_surplus": 49173.98,
+  "radarid": "P7BF0EE7",
+  "pr_record": {
+    "RadarID": "P7BF0EE7",
+    "isFreeAndClear": 1,
+    "Owner": "BUCK,JEFF",
+    "AVM": 207044,
+    "AssessedValue": 210354,
+    "TotalLoanBalance": 0,
+    "AvailableEquity": 207044,
+    "NumberLoans": 0,
+    "LastTransferValue": 157000,
+    "isListedForSale": 0,
+    "PropertyHasOpenPersonLiens": 0,
+    "PropertyHasOpenLiens": 0
+  }
+}

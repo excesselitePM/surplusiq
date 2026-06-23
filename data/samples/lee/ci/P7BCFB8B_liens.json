@@ -1,0 +1,20 @@
+{
+  "case": "25-CA-002348",
+  "address": "235 EUPHRATES AVE S, LEHIGH ACRES, FL 33974",
+  "auction_surplus": 172.01,
+  "radarid": "P7BCFB8B",
+  "pr_record": {
+    "RadarID": "P7BCFB8B",
+    "isFreeAndClear": 1,
+    "Owner": "ATECSA USA LLC",
+    "AVM": 4538,
+    "AssessedValue": 4538,
+    "TotalLoanBalance": 0,
+    "AvailableEquity": 4538,
+    "NumberLoans": 0,
+    "LastTransferValue": 23000,
+    "isListedForSale": 0,
+    "PropertyHasOpenPersonLiens": 0,
+    "PropertyHasOpenLiens": 0
+  }
+}
