@@ -14,11 +14,11 @@ on:
   workflow_dispatch:
     inputs:
       probe:
-        description: 'pr_loans = discover itemized-lien API shape; portal = characterize matrix.leeclerk.org; both'
+        description: 'pr_loans = discover itemized-lien API shape; portal = characterize matrix.leeclerk.org; capture = save 3 real Lee lien records for tests; both'
         required: false
         default: 'both'
         type: choice
-        options: [pr_loans, portal, both]
+        options: [pr_loans, portal, capture, both]
       radarid:
         description: 'RadarID for the pr_loans probe (default = the live Lee P7BF6453, 318 SE 46TH LN)'
         required: false
@@ -52,6 +52,12 @@ jobs:
         env:
           PROPERTYRADAR_TOKEN: ${{ secrets.PROPERTYRADAR_TOKEN }}
         run: python -m core.enrichment.propertyradar --probe-loans "${{ github.event.inputs.radarid }}"
+
+      - name: Capture real Lee lien ground-truth (Purchase=1)
+        if: github.event.inputs.probe == 'capture'
+        env:
+          PROPERTYRADAR_TOKEN: ${{ secrets.PROPERTYRADAR_TOKEN }}
+        run: python -m core.enrichment.propertyradar --capture-lee-liens
 
       - name: Lee portal characterization probe (headless, datacenter IP)
         if: github.event.inputs.probe == 'portal' || github.event.inputs.probe == 'both'

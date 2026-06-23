@@ -652,6 +652,14 @@ def main():
                              "GET /properties/{RadarID} (full Card fieldset). "
                              "Runs every step in one Actions run so we don't "
                              "iterate. Forces --dry-run.")
+    parser.add_argument("--capture-lee-liens", action="store_true",
+                        help="DISCOVERY+GROUND-TRUTH: for the 3 real Lee leads, run "
+                             "the address chain then GET the validated loan/lien "
+                             "fields (Purchase=1) and save each record to "
+                             "data/samples/lee/ci/<RadarID>_liens.json for the "
+                             "acceptance tests. Also confirms Fields='Card,<extra>' "
+                             "is accepted so production can pull liens in one GET. "
+                             "Burns ~3 exports.")
     parser.add_argument("--probe-loans", type=str, default=None, metavar="RADARID",
                         help="DISCOVERY probe for itemized junior-lien data (Lee "
                              "PR-first build). Hits the loan/lien sub-resources of "
@@ -679,6 +687,77 @@ def main():
     print("│  SurplusIQ — PropertyRadar Enrichment".ljust(71) + "│")
     print("└" + "─" * 70 + "┘")
     print()
+
+    # ─── Capture mode: real Lee lien ground-truth for the acceptance tests ─
+    if args.capture_lee_liens:
+        # The validated loan/lien fields (PHASE-A auto-prune proved these exist
+        # on this plan; OpenLienCount/InvoluntaryLien*/LienAmount/LienType do NOT).
+        LIEN_FIELDS = [
+            "RadarID", "Owner", "AVM", "AssessedValue", "AvailableEquity",
+            "TotalLoanBalance", "NumberLoans",
+            "FirstAmount", "FirstLoanType", "FirstDate",
+            "SecondAmount", "SecondLoanType", "SecondDate",
+            "PropertyHasOpenLiens", "PropertyHasOpenPersonLiens",
+            "isFreeAndClear", "isListedForSale", "LastTransferValue",
+        ]
+        # The 3 real Lee leads (street|city|state|zip|case|surplus) from today's
+        # auction feed — covers a range of surplus sizes for the 3 test cases.
+        LEE = [
+            ("318 SE 46TH LN", "CAPE CORAL", "FL", "33904", "25-CA-003443", 33874.21),
+            ("3350 NORTH KEY DR 603", "NORTH FORT MYERS", "FL", "33903", "25-CA-001366", 49173.98),
+            ("235 EUPHRATES AVE S", "LEHIGH ACRES", "FL", "33974", "25-CA-002348", 172.01),
+        ]
+        out = PROJECT_ROOT / "data" / "samples" / "lee" / "ci"
+        out.mkdir(parents=True, exist_ok=True)
+        client = PropertyRadarClient(token=PR_API_TOKEN, dry_run=True)
+
+        combo_checked = False
+        for street, city, state, zipc, case, surplus in LEE:
+            print(f"\n══════ {case}  {street}, {city} {zipc}  (auction surplus ${surplus:,.2f}) ══════")
+            sug_input = f"{street}, {city}, {state} {zipc}"
+            sresp = client.session.post(
+                f"{PR_API_BASE}/suggestions/SiteAddress",
+                params={"SuggestionInput": sug_input, "Limit": 5}, json={"Criteria": []}, timeout=30)
+            sj = sresp.json() if sresp.status_code == 200 else {}
+            sugs = sj.get("results", [])
+            if not sugs:
+                print(f"  ⛔ no suggestion match for {street!r}"); continue
+            crit = sugs[0].get("Criteria", [])
+            presp = client.session.post(
+                f"{PR_API_BASE}/properties",
+                params={"Fields": "RadarID", "Limit": 5, "Purchase": 0, "Start": 0},
+                json={"Criteria": crit}, timeout=30)
+            pres = (presp.json().get("results") or []) if presp.status_code == 200 else []
+            if not pres:
+                print(f"  ⛔ no RadarID for {street!r}"); continue
+            radarid = pres[0].get("RadarID")
+            print(f"  RadarID={radarid}")
+
+            # One-time: confirm Fields='Card,<extra>' is accepted (so production
+            # can get Card + liens in a single GET, no second export per lead).
+            if not combo_checked:
+                combo = "Card,TotalLoanBalance,NumberLoans,FirstAmount,SecondAmount,SecondLoanType"
+                cresp = client.session.get(
+                    f"{PR_API_BASE}/properties/{radarid}",
+                    params={"Fields": combo, "Purchase": 0}, timeout=30)
+                print(f"  [combo-check] Fields='Card,<extra>' Purchase=0 → {cresp.status_code} "
+                      f"{'ACCEPTED' if cresp.status_code==200 else (cresp.text or '')[:200]!r}")
+                combo_checked = True
+
+            gresp = client.session.get(
+                f"{PR_API_BASE}/properties/{radarid}",
+                params={"Fields": ",".join(LIEN_FIELDS), "Purchase": 1}, timeout=30)
+            rec = {}
+            if gresp.status_code == 200:
+                rj = gresp.json().get("results", [])
+                rec = rj[0] if rj else {}
+            print(f"  ← {gresp.status_code}  record={json.dumps(rec)}")
+            sample = {"case": case, "address": f"{street}, {city}, {state} {zipc}",
+                      "auction_surplus": surplus, "radarid": radarid, "pr_record": rec}
+            (out / f"{radarid}_liens.json").write_text(json.dumps(sample, indent=2), encoding="utf-8")
+            print(f"  saved → data/samples/lee/ci/{radarid}_liens.json")
+        print("\n✓ capture complete")
+        return
 
     # ─── Probe mode: end-to-end chain, Purchase=0 throughout ──────────────
     if args.probe_chain:
