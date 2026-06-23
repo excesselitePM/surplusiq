@@ -795,29 +795,55 @@ def main():
         print("   Amount / DocumentID) the Card boolean PropertyHasOpenLiens lacks.")
         client = PropertyRadarClient(token=PR_API_TOKEN, dry_run=True)
 
-        # Candidate endpoints, Purchase=0 first (free). Each printed in full so
-        # the build maps against REAL keys, never a guessed schema.
-        candidates = [
-            ("GET", f"/properties/{radarid}/loans",      {"Purchase": 0}),
-            ("GET", f"/properties/{radarid}/liens",      {"Purchase": 0}),
-            ("GET", f"/properties/{radarid}/involuntaryliens", {"Purchase": 0}),
-            ("GET", f"/properties/{radarid}/persons",    {"Purchase": 0}),
-            ("GET", f"/properties/{radarid}/documents",  {"Purchase": 0}),
+        # Iter-1 found the /loans /liens /documents SUB-RESOURCES all 404 on this
+        # plan (only /persons exists). The real PR pattern is explicit FIELD names
+        # on GET /properties/{RadarID}. Request the documented loan/lien fields by
+        # name and see which come back populated for this property. Purchase=1 so
+        # values (not just counts) are returned — 1 export, authorized.
+        loan_fields = [
+            "RadarID", "Owner", "AVM", "AssessedValue", "AvailableEquity",
+            "TotalLoanBalance", "NumberLoans", "EstimatedOpenLoansBalance",
+            "FirstAmount", "FirstLoanType", "FirstDate", "FirstPurpose",
+            "SecondAmount", "SecondLoanType",
+            "PropertyHasOpenLiens", "PropertyHasOpenPersonLiens",
+            "OpenLienCount", "OpenLienBalance", "InvoluntaryLienCount",
+            "isFreeAndClear", "isListedForSale", "LastTransferValue",
         ]
-        for method, path, params in candidates:
-            url = f"{PR_API_BASE}{path}"
-            print()
-            print(f"─── {method} {path}  params={json.dumps(params)} ───")
-            try:
-                resp = client.session.get(url, params=params, timeout=30)
-                body = (resp.text or "")[:3000]
-                print(f"  ← {resp.status_code}  body[:3000]={body!r}")
-            except Exception as e:
-                print(f"  ← EXCEPTION {type(e).__name__}: {e}")
+        gurl = f"{PR_API_BASE}/properties/{radarid}"
         print()
-        print("─── NOTE: any endpoint returning 200 with loan/lien rows above is the")
-        print("    real source. If all return empty under Purchase=0, re-run the")
-        print("    winning endpoint with Purchase=1 (burns exports) to see payloads.")
+        print("─── GET /properties/{RadarID} with explicit loan/lien Fields (Purchase=1) ───")
+        print(f"    Fields: {','.join(loan_fields)}")
+        # PR 400s on an unknown field and names it — so a 400 is itself a finding.
+        try:
+            gresp = client.session.get(
+                gurl, params={"Fields": ",".join(loan_fields), "Purchase": 1}, timeout=30)
+            print(f"  ← {gresp.status_code}  body[:3000]={(gresp.text or '')[:3000]!r}")
+            if gresp.status_code == 400:
+                print("  ⚠ 400 — an unknown field above is named in the body; retrying")
+                print("    with only the high-confidence subset.")
+                safe = ["RadarID", "AVM", "AvailableEquity", "TotalLoanBalance",
+                        "NumberLoans", "FirstAmount", "SecondAmount",
+                        "PropertyHasOpenLiens", "PropertyHasOpenPersonLiens"]
+                r2 = client.session.get(
+                    gurl, params={"Fields": ",".join(safe), "Purchase": 1}, timeout=30)
+                print(f"  ← retry {r2.status_code}  body[:2000]={(r2.text or '')[:2000]!r}")
+        except Exception as e:
+            print(f"  ← EXCEPTION {type(e).__name__}: {e}")
+
+        # /persons exists (200) — pull it Purchase=1 to see per-person lien detail
+        # (PersonHasOpenLiens, lien rows) vs the property-level flags.
+        purl = f"{PR_API_BASE}/properties/{radarid}/persons"
+        print()
+        print("─── GET /properties/{RadarID}/persons (Purchase=1) ───")
+        try:
+            presp = client.session.get(purl, params={"Purchase": 1}, timeout=30)
+            print(f"  ← {presp.status_code}  body[:3000]={(presp.text or '')[:3000]!r}")
+        except Exception as e:
+            print(f"  ← EXCEPTION {type(e).__name__}: {e}")
+        print()
+        print("─── NOTE: populated FirstAmount/SecondAmount/TotalLoanBalance = itemized")
+        print("    lien amounts ARE available → hard-kill path. All empty/absent with")
+        print("    only PropertyHasOpenLiens=1 = boolean-only → coarse-fallback path.")
         return
 
     # ─── Probe mode: GET /v1/properties/{RadarID} ─────────────────────────
