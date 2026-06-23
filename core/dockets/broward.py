@@ -220,6 +220,59 @@ def collect_party_and_purchaser_names(rows: list) -> tuple:
     return party, purchaser
 
 
+# ── Owner (defendant-homeowner) extraction ──────────────────────────────────
+# Broward stores parties as lowercase token sets (for matching); for the OWNER we
+# need the PROPER-CASED defendant name string. The docket text lists individuals
+# as "Defendant Last, First M" — the comma-after-surname structure cleanly admits
+# people and rejects multi-word corporates ("...Ministries Inc", "...Mortgage Llc")
+# which lack it. Joint owners concatenate ("Fedele, Michael Defendant Fedele,
+# Rae A.") → the pattern stops at the next role token, taking the first.
+# Trailing middle-initial(s) must be a STANDALONE letter (negative lookahead for a
+# following letter) — otherwise "Michael Defendant ..." captures a spurious "D"
+# from the next role token.
+_BROWARD_DEFENDANT_RE = re.compile(
+    r"\bdefendant\s+([A-Za-z][A-Za-z'’.\-]+,\s+[A-Za-z][A-Za-z'’.\-]+"
+    r"(?:\s+[A-Za-z](?![A-Za-z])\.?){0,2})",
+    re.I)
+_OWNER_CORP_MARKER = re.compile(
+    r"\b(bank|mortgage|trust|funding|servicing|n\.?\s?a\.?|association|assn|"
+    r"condominium|condo|homeowners?|l\.?l\.?c|llc|inc\b|incorporated|corp|company|"
+    r"\bco\.|ltd|l\.?p\.?|holdings?|capital|\bfund\b|funds\b|department|united states|"
+    r"ministries|church|realty|properties|\bgroup\b|investments?|enterprises?|"
+    r"management|financial|lending|loans?)\b", re.I)
+_OWNER_GENERIC = re.compile(
+    r"unknow|tenant|any and all|all other|in possession|et al|john doe|jane doe|"
+    r"\bdoe\b|parties claiming|lienors|creditors|\bheirs?\b|devisees", re.I)
+
+
+def collect_defendant_names(rows: list) -> list:
+    """Proper-cased 'Last, First' defendant names from the docket, in first-seen
+    order, de-duplicated."""
+    names, seen = [], set()
+    for r in rows:
+        ad = _norm(r.get("additional", ""))
+        for m in _BROWARD_DEFENDANT_RE.finditer(ad):
+            nm = m.group(1).strip().rstrip(",").strip()
+            key = nm.lower()
+            if key and key not in seen:
+                seen.add(key)
+                names.append(nm)
+    return names
+
+
+def owner_from_defendants(names: list) -> str:
+    """First INDIVIDUAL defendant homeowner — excludes corporate/HOA/generic and
+    any surplus-recovery firm. Bias to BLANK over a wrong (e.g. bank) name."""
+    for nm in names:
+        low = nm.lower()
+        if _OWNER_CORP_MARKER.search(nm) or _OWNER_GENERIC.search(nm):
+            continue
+        if "surplus" in low or any(f in low for f in KNOWN_RECOVERY_FIRMS):
+            continue
+        return nm
+    return ""
+
+
 def _is_known_firm(text: str) -> bool:
     """Specific, ground-truthed recovery-firm NAMES only (Eric's known-company
     list). Distinct from _is_recovery_firm — it does NOT match generic keywords.
@@ -336,6 +389,9 @@ class BrowardDocketScraper(DocketScraper):
         party_names, purchaser_names = collect_party_and_purchaser_names(rows)
         # Owner-completeness signal: did we recover at least one case party name?
         result.defendants = [" ".join(sorted(p)) for p in party_names][:20]
+        # Owner = proper-cased individual defendant homeowner (NOT the token sets
+        # above, NOT plaintiff/corporate/HOA/purchaser/surplus-firm).
+        result.owner_name = owner_from_defendants(collect_defendant_names(rows))
 
         # Sale confirmation (for the "Certificate of Sale found" valid-reason line).
         sale_confirmed = any(
