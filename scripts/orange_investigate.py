@@ -140,11 +140,48 @@ async def dump_and_char(page, label, summary, key):
     return html
 
 
+async def _solve_v2_checkbox(page, rec):
+    """Click the reCAPTCHA v2 'I'm not a robot' checkbox and report whether it
+    AUTO-RESOLVES headless (token populated, no image challenge) — the decisive
+    feasibility test. Returns (token, challenged)."""
+    token, challenged = "", False
+    try:
+        anchor = page.frame_locator("iframe[src*='api2/anchor']").locator("#recaptcha-anchor")
+        await anchor.click(timeout=8000)
+        # poll for token or a visible challenge (bframe) for ~12s
+        for _ in range(24):
+            token = await page.evaluate(
+                "() => { const t=document.querySelector('textarea[name=g-recaptcha-response]');"
+                " return t ? t.value : ''; }")
+            if token:
+                break
+            # detect an opened image-challenge bframe (size>0 / visible)
+            try:
+                bf = page.locator("iframe[src*='api2/bframe']")
+                if await bf.count() > 0 and await bf.first.is_visible():
+                    box = await bf.first.bounding_box()
+                    if box and box.get("height", 0) > 100:
+                        challenged = True
+            except Exception:
+                pass
+            await page.wait_for_timeout(500)
+    except Exception as e:
+        rec["steps"]["v2_error"] = str(e)[:120]
+    rec["steps"]["v2_token_len"] = len(token)
+    rec["steps"]["v2_challenged"] = challenged
+    return token, challenged
+
+
 async def probe_case(page, cn, rec):
-    # best-effort: find a case-number input on /Cases/Search, fill, submit
+    # reset to the search page each case (prior nav leaves us elsewhere)
+    try:
+        await page.goto(SEARCH, wait_until="domcontentloaded", timeout=45000)
+        await page.wait_for_load_state("networkidle", timeout=12000)
+    except Exception:
+        pass
     box = None
-    for sel in ["input[placeholder*='case' i]", "input[id*='Case' i]", "input[name*='Case' i]",
-                "input[id*='Number' i]", "input[type='text']:visible", "input[type='search']:visible"]:
+    for sel in ["input[id*='Case' i][type='text']", "input[name*='Case' i]",
+                "input[placeholder*='case' i]", "input[id*='Number' i]"]:
         loc = page.locator(sel).first
         try:
             if await loc.count() > 0 and await loc.is_visible():
@@ -154,10 +191,18 @@ async def probe_case(page, cn, rec):
     if not box:
         rec["result"] = "NO_SEARCH_BOX — see B_search inventory"; return
     await box.click(timeout=6000); await box.fill(cn)
-    try:
-        await box.press("Enter")
-    except Exception:
-        pass
+
+    # DECISIVE: does the v2 checkbox auto-resolve headless from the datacenter IP?
+    token, challenged = await _solve_v2_checkbox(page, rec)
+    if challenged and not token:
+        rec["result"] = "V2_CHALLENGE_WALL — image challenge popped, no token (headless blocked)"
+        await dump(page, f"C_captcha_{tag(cn)}")
+        return
+    if not token:
+        rec["result"] = "V2_NO_TOKEN — checkbox did not resolve (likely walled)"
+        await dump(page, f"C_captcha_{tag(cn)}")
+        return
+
     for bsel in ["button:has-text('Search')", "input[type=submit]", "button[type=submit]"]:
         b = page.locator(bsel).first
         if await b.count() > 0 and await b.is_visible():
