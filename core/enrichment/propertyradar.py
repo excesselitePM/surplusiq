@@ -33,6 +33,7 @@ Usage:
 
 from __future__ import annotations
 import os
+import re
 import sys
 import json
 import time
@@ -800,33 +801,48 @@ def main():
         # on GET /properties/{RadarID}. Request the documented loan/lien fields by
         # name and see which come back populated for this property. Purchase=1 so
         # values (not just counts) are returned — 1 export, authorized.
-        loan_fields = [
+        candidate_fields = [
             "RadarID", "Owner", "AVM", "AssessedValue", "AvailableEquity",
-            "TotalLoanBalance", "NumberLoans", "EstimatedOpenLoansBalance",
-            "FirstAmount", "FirstLoanType", "FirstDate", "FirstPurpose",
-            "SecondAmount", "SecondLoanType",
+            "TotalLoanBalance", "NumberLoans",
+            "FirstAmount", "FirstLoanType", "FirstDate", "FirstPurpose", "FirstRate",
+            "SecondAmount", "SecondLoanType", "SecondDate",
+            "ThirdAmount",
             "PropertyHasOpenLiens", "PropertyHasOpenPersonLiens",
             "OpenLienCount", "OpenLienBalance", "InvoluntaryLienCount",
+            "InvoluntaryLienBalance", "LienAmount", "LienType",
             "isFreeAndClear", "isListedForSale", "LastTransferValue",
         ]
         gurl = f"{PR_API_BASE}/properties/{radarid}"
+        # PHASE A — validate field NAMES for free (Purchase=0). PR 400s on the
+        # FIRST unknown field and names it; drop it and retry until 200. This
+        # tells us EXACTLY which loan/lien fields exist on this plan, no exports.
         print()
-        print("─── GET /properties/{RadarID} with explicit loan/lien Fields (Purchase=1) ───")
-        print(f"    Fields: {','.join(loan_fields)}")
-        # PR 400s on an unknown field and names it — so a 400 is itself a finding.
+        print("─── PHASE A: validate field names (Purchase=0, free, auto-prune) ───")
+        valid = list(candidate_fields)
+        rejected = []
+        for _ in range(len(candidate_fields)):
+            r = client.session.get(
+                gurl, params={"Fields": ",".join(valid), "Purchase": 0}, timeout=30)
+            if r.status_code != 400:
+                print(f"  ← {r.status_code} (names valid)  pruned={rejected}")
+                break
+            m = re.search(r"\[([A-Za-z0-9_]+)\] specified in Fields", r.text or "")
+            if not m or m.group(1) not in valid:
+                print(f"  ← 400 but couldn't parse bad field: {(r.text or '')[:300]!r}")
+                break
+            bad = m.group(1)
+            rejected.append(bad)
+            valid.remove(bad)
+        print(f"  VALID loan/lien fields on this plan: {valid}")
+        print(f"  REJECTED (not on plan): {rejected}")
+
+        # PHASE B — pull real VALUES for the validated set (Purchase=1, 1 export).
+        print()
+        print("─── PHASE B: real values for validated fields (Purchase=1) ───")
         try:
             gresp = client.session.get(
-                gurl, params={"Fields": ",".join(loan_fields), "Purchase": 1}, timeout=30)
+                gurl, params={"Fields": ",".join(valid), "Purchase": 1}, timeout=30)
             print(f"  ← {gresp.status_code}  body[:3000]={(gresp.text or '')[:3000]!r}")
-            if gresp.status_code == 400:
-                print("  ⚠ 400 — an unknown field above is named in the body; retrying")
-                print("    with only the high-confidence subset.")
-                safe = ["RadarID", "AVM", "AvailableEquity", "TotalLoanBalance",
-                        "NumberLoans", "FirstAmount", "SecondAmount",
-                        "PropertyHasOpenLiens", "PropertyHasOpenPersonLiens"]
-                r2 = client.session.get(
-                    gurl, params={"Fields": ",".join(safe), "Purchase": 1}, timeout=30)
-                print(f"  ← retry {r2.status_code}  body[:2000]={(r2.text or '')[:2000]!r}")
         except Exception as e:
             print(f"  ← EXCEPTION {type(e).__name__}: {e}")
 
