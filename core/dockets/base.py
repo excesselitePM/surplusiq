@@ -92,6 +92,11 @@ class DocketResult:
     plaintiff:           str = ""
     defendants:          list = field(default_factory=list)
     additional_parties:  list = field(default_factory=list)  # creditors beyond homeowner
+    owner_name:          str = ""   # the DEFENDANT HOMEOWNER (foreclosed party entitled
+                                    # to surplus). Set by county scrapers that extract it
+                                    # (e.g. Miami-Dade). Inert default → other counties
+                                    # unaffected; loader copies it to lead.owner_name only
+                                    # when present and the auction scrape left it blank.
 
     # Signals
     kill_signals:        list = field(default_factory=list)

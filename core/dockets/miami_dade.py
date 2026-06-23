@@ -47,6 +47,7 @@ Case-number formats actually present in the Miami-Dade auction data
 
 from __future__ import annotations
 import re
+import html as _htmllib
 import asyncio
 from datetime import datetime
 from pathlib import Path
@@ -55,6 +56,80 @@ from typing import Optional
 from playwright.async_api import async_playwright, Page, TimeoutError as PWTimeout
 
 from .base import DocketScraper, DocketResult, DocketEvent
+
+
+# ── Owner (defendant-homeowner) extraction ──────────────────────────────────
+# The surplus belongs to the DEFENDANT HOMEOWNER (the foreclosed party). In a
+# foreclosure the lender/HOA SUES the homeowner, so the bank/HOA is the PLAINTIFF
+# and the homeowner is the DEFENDANT. We extract the Defendant party ONLY, and
+# exclude corporate / lender / purchaser / generic parties — pulling the
+# plaintiff's name (a bank) into the owner column is worse than blank.
+#
+# Corporate / non-homeowner markers — a Defendant whose name hits these is NOT an
+# individual homeowner (junior-lienholder bank, HOA also named, an LLC purchaser,
+# a govt agency). Bias to BLANK over wrong: better no owner than the wrong party.
+_CORP_MARKER = re.compile(
+    r"\b(bank|mortgage|trust|funding|servicing|n\.?\s?a\.?|association|assn|"
+    r"condominium|condo|homeowners?|owners assoc|l\.?l\.?c|llc|inc\b|incorporated|"
+    r"corp|company|\bco\.|ltd|l\.?p\.?|partnership|holdings?|capital|\bfund\b|funds\b|"
+    r"department|united states|secretary|tax collector|clerk of|realty|properties|"
+    r"property owners|\bgroup\b|investments?|enterprises?|management|servicing|"
+    r"financial|lending|loans?|credit union|n\.a)\b", re.I)
+# Generic / non-real-party defendants (unknown heirs, tenants, John Doe, etc.).
+_GENERIC_PARTY = re.compile(
+    r"unknown|tenant|any and all|all other|in possession|et al|john doe|jane doe|"
+    r"parties claiming|lienors|creditors|whether dissolved|n/k/a|a/k/a unknown", re.I)
+
+
+def _clean_name(s: str) -> str:
+    return re.sub(r"\s+", " ", _htmllib.unescape(s or "")).strip().strip(",").strip()
+
+
+def _is_individual_homeowner(name: str) -> bool:
+    n = _clean_name(name)
+    if len(n) < 3:
+        return False
+    if _GENERIC_PARTY.search(n) or _CORP_MARKER.search(n):
+        return False
+    return True
+
+
+def extract_parties(html: str) -> list:
+    """Parse the React Parties table → [(party_description, party_name)] in DOM
+    order. Each card renders data-id="Party Description">TYPE and
+    data-id="Party Name">NAME (proven on real captured HTML)."""
+    descs = re.findall(r'data-id="Party Description"[^>]*>([^<]*)<', html)
+    names = re.findall(r'data-id="Party Name"[^>]*>([^<]*)<', html)
+    out = []
+    for d, n in zip(descs, names):
+        d, n = _clean_name(d), _clean_name(n)
+        if d and n:
+            out.append((d, n))
+    return out
+
+
+def owner_from_parties(parties: list) -> str:
+    """The defendant homeowner: party type EXACTLY 'Defendant' (not 'Third Party
+    Bidder' = purchaser, not 'Third Party Defendant' = claimant, not Plaintiff),
+    an individual (corporate/generic excluded). Joint owners ('PEREZ, PEDRO &
+    IVONNE') are one party-name field — kept intact. First qualifying defendant."""
+    for desc, name in parties:
+        if desc.strip().lower() != "defendant":
+            continue
+        if _is_individual_homeowner(name):
+            return name
+    return ""
+
+
+def owner_from_caption(case_title: str) -> str:
+    """FALLBACK ONLY (Parties section empty). The defendant follows 'vs' in the
+    caption; strip trailing 'et al'/'Local Case Number' junk and apply the same
+    corporate/generic exclusion (blank if the defendant side is a company)."""
+    m = re.search(r"\bvs\.?\s+(.+?)(?:\s+et al\b|\s+Local Case|$)", case_title or "", re.I)
+    if not m:
+        return ""
+    name = _clean_name(m.group(1))
+    return name if _is_individual_homeowner(name) else ""
 
 
 BASE_URL = "https://www2.miamidadeclerk.gov/ocs"
@@ -516,6 +591,17 @@ class MiamiDadeDocketScraper(DocketScraper):
         cap = re.search(r"([A-Z][A-Za-z .,&'-]{4,90}\bvs\.?\s+[A-Z][A-Za-z .,&'-]{3,90})", stripped)
         if cap:
             result.case_title = cap.group(1).strip()[:200]
+
+        # Owner = the DEFENDANT HOMEOWNER. PRIMARY source: the structured Parties
+        # table (explicit Defendant typing); caption-after-"vs" is FALLBACK only
+        # (messy / order not guaranteed). Never falls back to the plaintiff; if no
+        # individual defendant is found, owner_name stays blank (not fabricated).
+        parties = extract_parties(html)
+        result.defendants = [n for d, n in parties if d.strip().lower() == "defendant"][:20]
+        owner = owner_from_parties(parties)
+        if not owner:
+            owner = owner_from_caption(result.case_title)
+        result.owner_name = owner
 
         fd = re.search(r"Filing Date\s*:?\s*(\d{1,2}/\d{1,2}/\d{4})", stripped)
         if fd:

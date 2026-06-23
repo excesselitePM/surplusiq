@@ -146,6 +146,14 @@ def _apply_docket_to_lead(lead, docket: dict, county_id: str) -> None:
     lead.claim_filed           = bool(docket.get("claim_filed", False))
     lead.claim_type            = docket.get("claim_type", "") or ""
 
+    # Owner = defendant homeowner from the docket. Only counties that extract it
+    # set docket["owner_name"] (currently Miami-Dade); for others it's absent →
+    # no-op. Fill ONLY when the auction scrape left owner_name blank, and never
+    # overwrite a name the auction already provided.
+    docket_owner = (docket.get("owner_name", "") or "").strip()
+    if docket_owner and not (getattr(lead, "owner_name", "") or "").strip():
+        lead.owner_name = docket_owner
+
     # Docket prayer takes precedence over any state-specific default (FL
     # opening-bid math). No docket prayer ⇒ keep whatever _parse_lead set:
     # OH leads stay at None, FL leads keep their fl_opening_bid surplus.
