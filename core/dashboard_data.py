@@ -181,30 +181,42 @@ def _reassign_status_after_pr(payload: dict) -> None:
                          stays attached as INTEL FIELDS on the lead.
 
       This NEVER upgrades a lead to confirmed_surplus — PR cannot confirm
-      surplus (spec Part 4). Leads already docket-classified are left
-      untouched.
+      surplus (spec Part 4).
+
+      Docket-classified green/yellow leads are ALSO re-tiered here (regression
+      fix): the loader can't see PR's loan balance, so it leaves them provisional-
+      apparent; this function is the sole place estimated_surplus is granted, and
+      only on a matched PR record with TLB > 0. owner_name presence never counts.
     """
     classification = (payload.get("classification") or "").strip().lower()
 
-    # Docket-classified leads (positive OR negative) keep the loader's verdict.
-    if classification in _POSITIVE_CLASSIFICATIONS or classification in _NEGATIVE_CLASSIFICATIONS:
+    # Killed/red are final — PR never changes a reviewed-negative verdict.
+    if classification in _NEGATIVE_CLASSIFICATIONS:
         return
-
+    # Confirmed (passed the proof-of-surplus gate) is never downgraded by PR.
+    if (payload.get("money_status") or "").strip().lower() == "confirmed_surplus":
+        return
     if not payload.get("pr_match"):
         return
 
+    # estimated_surplus REQUIRES real PR refinement: a matched record with a
+    # non-zero loan balance (FP-8). TLB == 0 (PR data lag on fresh foreclosures)
+    # stays apparent; the PR intel fields remain attached either way.
     tlb = float(payload.get("pr_total_loan_balance") or 0)
+    refined = tlb > 0
+
+    if classification in _POSITIVE_CLASSIFICATIONS:
+        # Docket-validated green/yellow without proof: keep the docket research/
+        # evidence fields; set ONLY the money tier.
+        payload["money_status"] = "estimated_surplus" if refined else "apparent_surplus"
+        return
+
+    # No docket classification: PR-enriched lead.
     payload["research_status"] = "property_enriched"
     payload["evidence_level"]  = "property_enriched"
     payload["lead_quality"]    = "unknown"
     payload["pipeline_ready"]  = False
-    if tlb > 0:
-        # Real arithmetic refinement — PR's TLB lets us subtract debt.
-        payload["money_status"] = "estimated_surplus"
-    else:
-        # PR match but no debt data; auction math is what we have. PR
-        # intel (owner / lien flags / tax delinquency) stays in the payload.
-        payload["money_status"] = "apparent_surplus"
+    payload["money_status"]    = "estimated_surplus" if refined else "apparent_surplus"
 
 
 def _apply_lee_lien_verdict(payload: dict) -> None:

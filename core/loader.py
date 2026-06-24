@@ -472,7 +472,15 @@ def assign_status_fields(lead) -> None:
     """
     classification = (lead.classification or "").strip().lower()
     has_docket = bool(classification) or lead.prayer_amount > 0 or bool(lead.docket_url)
-    has_pr     = bool(getattr(lead, "enriched", False)) or bool(getattr(lead, "owner_name", ""))
+    # has_pr = ACTUAL PropertyRadar refinement, NOT owner_name presence. The
+    # owner-name fix populates owner_name on every FL docket lead; treating that
+    # as "PR-enriched" flipped 11 docket leads to estimated_surplus with no real
+    # PR data and inflated the Estimated headline ~$900K. PR's real refinement
+    # (a non-zero loan balance) isn't known until the dashboard merges PR data,
+    # so the loader stays provisional-apparent here and dashboard_data's
+    # _reassign_status_after_pr is the SOLE authority that promotes to
+    # estimated_surplus — and only when pr_match AND pr_total_loan_balance > 0.
+    has_pr     = bool(getattr(lead, "enriched", False))
 
     # ---- lead_quality: mirrors docket classification, else unknown ----
     if classification in _POSITIVE_CLASSIFICATIONS or classification in _NEGATIVE_CLASSIFICATIONS:
