@@ -705,9 +705,14 @@
     const ds = l.debt_source || '';
     const hasRealDebt = ds.startsWith('docket_prayer')
                      || ds.startsWith('pdf_extract:')
-                     || ds === 'fl_opening_bid';     // FL opening = real judgment
-    if (state === 'OH' && !hasRealDebt) {
-      return '<span class="surplus-pending" title="Surplus pending manual docket verification — OH opening bid is the statutory 2/3-appraised value, NOT real debt. Use the Clerk Docket link to verify the actual judgment amount.">—</span>';
+                     || ds === 'prayer_field'          // Cuyahoga structured prayer
+                     || ds === 'fl_opening_bid'        // FL opening = real judgment
+                     || ds === 'oh_tax_minimum_bid';   // OH tax (RC 5721) = real debt
+    // Backend is authoritative: OH-mortgage leads with no usable docket debt are
+    // tagged real_surplus_source='oh_unverified' (best_real_surplus=null). Never
+    // show the 2/3-appraised opening-bid number for those — render unverified.
+    if (l.real_surplus_source === 'oh_unverified' || (state === 'OH' && !hasRealDebt)) {
+      return '<span class="surplus-pending" title="Docket debt not available — unverified. OH opening bid is the statutory 2/3-appraised value, NOT real debt. Use the Clerk Docket link to verify the actual judgment amount.">—</span>';
     }
     const apparent = l.gross_surplus || 0;
     const best = (l.best_real_surplus !== undefined && l.best_real_surplus !== null)

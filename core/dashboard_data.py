@@ -130,12 +130,18 @@ def _surplus_for_payload(payload_lead: dict) -> tuple:
     prayer = float(payload_lead.get("prayer_amount") or 0)
     ts = payload_lead.get("true_surplus")
     debt_src = payload_lead.get("debt_source") or ""
+    state = (payload_lead.get("state") or "").upper()
+    # A docket-extracted prayer is "usable" only with a recognized real-debt
+    # source AND a plausible (≥ $10K) amount AND a positive surplus. NOTE
+    # 'prayer_field' (Cuyahoga's structured prayer) is now recognized — it was
+    # the gap that hid Cuyahoga's real true_surplus behind opening-bid math.
     has_real_docket_debt = (
         prayer >= 10000.0
         and ts is not None
         and ts > 0
         and (debt_src.startswith("docket_prayer")
-             or debt_src.startswith("pdf_extract:"))
+             or debt_src.startswith("pdf_extract:")
+             or debt_src == "prayer_field")
     )
     if has_real_docket_debt:
         return (float(ts), money_status if money_status in
@@ -145,6 +151,21 @@ def _surplus_for_payload(payload_lead: dict) -> tuple:
     if money_status == "confirmed_surplus":
         ts = payload_lead.get("true_surplus")
         return (float(ts) if ts is not None else 0.0, "confirmed_surplus")
+
+    # OH TAX (RC 5721): opening_bid IS the Minimum Bid = real tax debt, so
+    # true_surplus = sale − opening is valid (set in _parse_lead with
+    # debt_source='oh_tax_minimum_bid'). Display it as apparent surplus.
+    if debt_src == "oh_tax_minimum_bid" and ts is not None and ts > 0:
+        return (float(ts), "apparent_surplus")
+
+    # OH MORTGAGE without usable docket debt → UNVERIFIED. The opening bid is the
+    # statutory 2/3-appraised value, NOT real debt, so it must NEVER stand in as a
+    # surplus figure (Eric's rule). Return None so the number can't pollute the
+    # sort, the KPI totals, or the surplus floor; the dashboard renders "—" and a
+    # manual-verify docket link. Covers no-docket counties (Franklin/Hamilton) and
+    # sub-$10K / implausible-prayer cases. FL is never OH → unaffected.
+    if state == "OH":
+        return (None, "oh_unverified")
 
     if money_status == "estimated_surplus":
         # PR-refined surplus only when TLB > $0 — the same FP-8 rule that
@@ -437,12 +458,20 @@ def export_dashboard_data():
     # not occupy dashboard real estate. Eric's standard: filter, don't
     # silently drop — count is logged AND audit fields in summary.json
     # preserve the pre-filter total.
+    # OH-mortgage-unverified leads (real_surplus_source='oh_unverified',
+    # best_real_surplus=None) have NO known surplus figure — they must be EXEMPT
+    # from the floor (you can't floor-filter an unknown number; dropping them
+    # would re-hide exactly the leads Eric wants surfaced for manual verify).
     MIN_DISPLAY_SURPLUS = 5000.0
     pre_floor = len(leads_payload)
-    below_floor = [p for p in leads_payload
-                   if (p.get("best_real_surplus") or 0) < MIN_DISPLAY_SURPLUS]
-    leads_payload = [p for p in leads_payload
-                     if (p.get("best_real_surplus") or 0) >= MIN_DISPLAY_SURPLUS]
+
+    def _below_floor(p):
+        if p.get("real_surplus_source") == "oh_unverified":
+            return False
+        return (p.get("best_real_surplus") or 0) < MIN_DISPLAY_SURPLUS
+
+    below_floor = [p for p in leads_payload if _below_floor(p)]
+    leads_payload = [p for p in leads_payload if not _below_floor(p)]
     floor_removed = pre_floor - len(leads_payload)
     print(f"   ✓ Filtered {floor_removed} sub-${MIN_DISPLAY_SURPLUS:,.0f} leads out of dashboard (FP-18 floor)")
     if below_floor:
@@ -465,26 +494,35 @@ def export_dashboard_data():
     def _bucket(p):
         return (p.get("money_status") or "unknown").strip().lower()
 
-    confirmed = [p for p in leads_payload if _bucket(p) == "confirmed_surplus"]
-    estimated = [p for p in leads_payload if _bucket(p) == "estimated_surplus"]
-    apparent  = [p for p in leads_payload if _bucket(p) == "apparent_surplus"]
+    # OH-mortgage-UNVERIFIED leads (no known surplus, best_real_surplus=None) stay
+    # VISIBLE in the list but must NOT inflate the real-surplus KPI count/total —
+    # they're tracked in their own 'unverified' bucket for the headline.
+    def _unverified(p):
+        return p.get("real_surplus_source") == "oh_unverified"
+
+    confirmed = [p for p in leads_payload if _bucket(p) == "confirmed_surplus" and not _unverified(p)]
+    estimated = [p for p in leads_payload if _bucket(p) == "estimated_surplus" and not _unverified(p)]
+    apparent  = [p for p in leads_payload if _bucket(p) == "apparent_surplus" and not _unverified(p)]
+    unverified = [p for p in leads_payload if _unverified(p)]
     killed    = [p for p in leads_payload if (p.get("lead_quality") or "") == "killed"]
     red       = [p for p in leads_payload if (p.get("lead_quality") or "") == "red"]
     docket_verified_positive = [p for p in leads_payload if p.get("docket_verified_positive")]
 
-    confirmed_total = sum(p.get("best_real_surplus", 0) for p in confirmed)
-    estimated_total = sum(p.get("best_real_surplus", 0) for p in estimated)
-    apparent_total  = sum(p.get("best_real_surplus", 0) for p in apparent)
-    docket_verified_positive_total = sum(p.get("best_real_surplus", 0) for p in docket_verified_positive)
+    # `or 0` guards: OH-mortgage-unverified leads carry best_real_surplus=None
+    # (unknown surplus) and must contribute 0 to any total, never crash the sum.
+    confirmed_total = sum((p.get("best_real_surplus") or 0) for p in confirmed)
+    estimated_total = sum((p.get("best_real_surplus") or 0) for p in estimated)
+    apparent_total  = sum((p.get("best_real_surplus") or 0) for p in apparent)
+    docket_verified_positive_total = sum((p.get("best_real_surplus") or 0) for p in docket_verified_positive)
 
     def _top5(bucket_list):
-        s = sorted(bucket_list, key=lambda p: p.get("best_real_surplus", 0), reverse=True)
+        s = sorted(bucket_list, key=lambda p: (p.get("best_real_surplus") or 0), reverse=True)
         return [{
             "county":      p.get("county_name", ""),
             "state":       p.get("state", ""),
             "case_number": p.get("case_number", ""),
             "address":     p.get("address", ""),
-            "surplus":     p.get("best_real_surplus", 0),
+            "surplus":     p.get("best_real_surplus") or 0,
             "money_status": p.get("money_status", "unknown"),
             "evidence_level": p.get("evidence_level", "unknown"),
         } for p in s[:5]]
@@ -522,6 +560,9 @@ def export_dashboard_data():
         "confirmed_surplus_count":  len(confirmed),
         "estimated_surplus_count":  len(estimated),
         "apparent_surplus_count":   len(apparent),
+        # OH-mortgage leads with a real overbid but no docket debt: shown for
+        # manual verify, NOT counted as real-surplus leads (best_real_surplus null).
+        "unverified_count":         len(unverified),
         "killed_count":             len(killed),
         "red_count":                len(red),
         "pipeline_ready_count":     sum(1 for p in leads_payload if p.get("pipeline_ready")),

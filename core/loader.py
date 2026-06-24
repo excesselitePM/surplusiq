@@ -106,6 +106,20 @@ def _normalize_case_for_lookup(case_number: str) -> str:
     return re.sub(r"\s*\([^)]*\)\s*$", "", case_number).strip().upper()
 
 
+def is_oh_tax_case(case_number: str) -> bool:
+    """True if an OH case is a TAX foreclosure (RC Chapter 5721), where the
+    opening bid IS the statutory Minimum Bid = real tax debt (so opening-bid
+    surplus math is valid). FALSE for OH MORTGAGE foreclosures, where the
+    opening bid is the 2/3-appraised value and is NOT real debt.
+
+    Detector: Ohio tax/delinquent-land cases carry the 'CVG' designator
+    (e.g. Summit '2025CVG01728'); mortgage cases are plain 'CV2025...'.
+    Conservative by design — an unrecognized tax marker falls through to
+    'mortgage', which shows the lead as debt-unverified (safe) rather than
+    crediting a fake opening-bid surplus."""
+    return "CVG" in (case_number or "").upper()
+
+
 def _apply_docket_to_lead(lead, docket: dict, county_id: str) -> None:
     """
     Merge a docket result onto a Lead in place.
@@ -360,9 +374,17 @@ def _parse_lead(record: dict, county_id: str, source_file: str) -> Optional[Lead
     # but is NOT "verified" — confirmation still requires a docket kill-
     # signal check + proof fields per assign_status_fields. A FL lead with
     # debt_source="fl_opening_bid" and no docket data sits in apparent_surplus.
+    # OH TAX (RC 5721): opening_bid IS the statutory Minimum Bid = real tax debt,
+    # so opening-bid surplus math is valid (kept). OH MORTGAGE: opening_bid is the
+    # 2/3-appraised value, NOT debt — true_surplus stays None until a docket prayer
+    # is found; the fake opening-bid number is NEVER used for OH-mortgage surplus.
+    _case_no = (record.get("case_number") or "").strip()
     if state == "FL" and final > 0 and opening > 0:
         initial_true_surplus = round(final - opening, 2)
         initial_debt_source = "fl_opening_bid"
+    elif state == "OH" and is_oh_tax_case(_case_no) and final > 0 and opening > 0:
+        initial_true_surplus = round(final - opening, 2)
+        initial_debt_source = "oh_tax_minimum_bid"
     else:
         initial_true_surplus = None
         initial_debt_source = ""
@@ -620,13 +642,40 @@ def load_all_leads(
                         if ts > 0:
                             _docket_rescue = True
 
+                # OH-MORTGAGE-UNVERIFIED: an OH mortgage lead with no usable docket
+                # prayer. Its gross_surplus is sale − 2/3-appraised opening bid =
+                # a FAKE number, so we can't filter on its MAGNITUDE. OH tax
+                # (oh_tax_minimum_bid) and docket-rescued leads are excluded.
+                _oh_mortgage_unverified = (
+                    lead.state == "OH"
+                    and lead.debt_source != "oh_tax_minimum_bid"
+                    and not _docket_rescue
+                )
+                # REAL-OVERBID gate (Option 2): surface an OH-mortgage-unverified
+                # lead only when the sale meaningfully exceeds the 2/3-appraised
+                # opening — sale ≥ the implied appraised value (1.5× the opening)
+                # AND an absolute overbid ≥ min_surplus. Selling above appraised
+                # value is the clearest no-docket signal of genuine surplus that
+                # plausibly survives unknown real debt. Sold-at/near-2/3-minimum
+                # leads (no real overbid) stay FILTERED — near-zero surplus odds.
+                _oh_real_overbid = (
+                    lead.opening_bid > 0
+                    and lead.final_sale_price >= 1.5 * lead.opening_bid
+                    and (lead.final_sale_price - lead.opening_bid) >= min_surplus
+                )
+
                 # Filter 1: 3rd party (skipped when docket-rescued)
                 if require_third_party and not lead.is_third_party and not _docket_rescue:
                     stats[county_id]["not_3rd_party"] += 1
                     continue
 
-                # Filter 2: minimum surplus (skipped when docket-rescued)
-                if lead.gross_surplus < min_surplus and not _docket_rescue:
+                # Filter 2: minimum surplus.
+                if _oh_mortgage_unverified:
+                    # Gate on a REAL overbid, not the fake 2/3-opening gross_surplus.
+                    if not _oh_real_overbid:
+                        stats[county_id]["below_min"] += 1
+                        continue
+                elif lead.gross_surplus < min_surplus and not _docket_rescue:
                     stats[county_id]["below_min"] += 1
                     continue
 
