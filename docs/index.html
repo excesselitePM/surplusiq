@@ -618,7 +618,7 @@
             <th data-sort="final_sale_price" class="numeric">Sale Price</th>
             <th data-sort="opening_bid" class="numeric">Opening Bid</th>
             <th data-sort="sale_datetime">Sold At</th>
-            <th data-sort="pr_owner_name">Owner</th>
+            <th data-sort="owner_name">Owner</th>
             <th data-sort="evidence_level">Evidence Level</th>
             <th>Source</th>
             <th>Clerk Docket</th>
@@ -1039,7 +1039,7 @@
         <td class="numeric">${fmtMoney(l.final_sale_price)}</td>
         <td class="numeric">${fmtMoney(l.opening_bid)}</td>
         <td>${l.sale_datetime || fmtDate(l.sale_date)}</td>
-        <td>${l.pr_owner_name ? `<span class="owner-name">${l.pr_owner_name}</span>` : '<span style="color:var(--text-muted)">—</span>'}</td>
+        <td>${(l.owner_name || l.pr_owner_name) ? `<span class="owner-name">${l.owner_name || l.pr_owner_name}</span>` : '<span style="color:var(--text-muted)">—</span>'}</td>
         <td>${renderEvidenceBadge(l)}</td>
         <td>${l.source_url ? `<a href="${l.source_url}" target="_blank" rel="noopener" class="src-link" onclick='sqCopyAndToast(${caseArg})'>View</a>` : '—'}</td>
         <td>${clerkCell}</td>
@@ -1112,7 +1112,7 @@
       ["Sale Price",           l => Math.round(l.final_sale_price || 0)],
       ["Opening Bid",          l => Math.round(l.opening_bid || 0)],
       ["Sold At",              l => l.sale_datetime || l.sale_date || ""],
-      ["Owner",                l => l.pr_owner_name || ""],
+      ["Owner",                l => l.owner_name || l.pr_owner_name || ""],
       ["Evidence Level",       l => l.evidence_level || ""],
       ["Auction Source URL",   l => l.source_url || ""],
       ["Clerk Docket URL",     l => l.clerk_manual_search_url || ""],
