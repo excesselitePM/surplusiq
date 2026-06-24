@@ -1,27 +1,27 @@
 {
-  "generated_at": "2026-06-23T21:28:26",
-  "total_leads": 24,
-  "total_leads_pre_filter": 34,
+  "generated_at": "2026-06-24T02:23:33",
+  "total_leads": 22,
+  "total_leads_pre_filter": 32,
   "killed_filtered_count": 9,
   "below_floor_filtered_count": 1,
   "min_display_surplus": 5000.0,
   "confirmed_surplus_total": 0,
-  "estimated_surplus_total": 929125.4,
-  "apparent_surplus_total": 1018762.79,
+  "estimated_surplus_total": 0,
+  "apparent_surplus_total": 1674539.78,
   "docket_verified_positive_count": 3,
   "docket_verified_positive_total": 159869.82,
   "confirmed_surplus_count": 0,
-  "estimated_surplus_count": 12,
-  "apparent_surplus_count": 12,
+  "estimated_surplus_count": 0,
+  "apparent_surplus_count": 22,
   "killed_count": 0,
   "red_count": 0,
   "pipeline_ready_count": 0,
-  "pr_matched_count": 14,
-  "docket_matched_count": 27,
+  "pr_matched_count": 0,
+  "docket_matched_count": 25,
   "by_state": {
     "FL": {
-      "leads": 20,
-      "surplus": 1481009.67
+      "leads": 18,
+      "surplus": 1220654.8699999996
     },
     "OH": {
       "leads": 14,
@@ -33,8 +33,8 @@
       "county_id": "miami-dade-fl",
       "county_name": "Miami-Dade",
       "state": "FL",
-      "leads": 8,
-      "surplus": 839200.1000000001,
+      "leads": 7,
+      "surplus": 608549.0800000001,
       "top_lead": 249361.09999999998
     },
     {
@@ -73,8 +73,8 @@
       "county_id": "duval-fl",
       "county_name": "Duval",
       "state": "FL",
-      "leads": 4,
-      "surplus": 224172.77,
+      "leads": 3,
+      "surplus": 194468.99,
       "top_lead": 134387.47
     },
     {
@@ -95,59 +95,13 @@
     }
   ],
   "by_score": {
-    "A+": 8,
+    "A+": 7,
     "A": 7,
-    "B": 9,
+    "B": 8,
     "C": 8
   },
   "top_5_confirmed_leads": [],
-  "top_5_estimated_leads": [
-    {
-      "county": "Miami-Dade",
-      "state": "FL",
-      "case_number": "2025-095651-CC-25",
-      "address": "",
-      "surplus": 230651.02,
-      "money_status": "estimated_surplus",
-      "evidence_level": "docket_reviewed"
-    },
-    {
-      "county": "Broward",
-      "state": "FL",
-      "case_number": "CACE-24-010802",
-      "address": "8719 SOUTHAMPTON DR",
-      "surplus": 154387.93,
-      "money_status": "estimated_surplus",
-      "evidence_level": "docket_reviewed"
-    },
-    {
-      "county": "Miami-Dade",
-      "state": "FL",
-      "case_number": "2016-012537-CA-01",
-      "address": "12078 SW 249 ST",
-      "surplus": 144430.37,
-      "money_status": "estimated_surplus",
-      "evidence_level": "docket_reviewed"
-    },
-    {
-      "county": "Duval",
-      "state": "FL",
-      "case_number": "16-2025-CA-006229-AXXX-MA",
-      "address": "12752 W BURNING TREE LN",
-      "surplus": 134387.47,
-      "money_status": "estimated_surplus",
-      "evidence_level": "docket_reviewed"
-    },
-    {
-      "county": "Duval",
-      "state": "FL",
-      "case_number": "16-2025-CA-006213-AXXX-MA",
-      "address": "5604 CRUZ RD",
-      "surplus": 62438.0,
-      "money_status": "estimated_surplus",
-      "evidence_level": "docket_reviewed"
-    }
-  ],
+  "top_5_estimated_leads": [],
   "top_5_apparent_leads": [
     {
       "county": "Hamilton",
@@ -168,31 +122,31 @@
       "evidence_level": "auction_only"
     },
     {
-      "county": "Cuyahoga",
-      "state": "OH",
-      "case_number": "CV25115432 (63452)",
-      "address": "",
-      "surplus": 95253.0,
-      "money_status": "apparent_surplus",
-      "evidence_level": "docket_reviewed"
-    },
-    {
-      "county": "Cuyahoga",
-      "state": "OH",
-      "case_number": "CV23974510 (63475)",
-      "address": "2300 W 14 ST",
-      "surplus": 75578.85,
-      "money_status": "apparent_surplus",
-      "evidence_level": "docket_reviewed"
-    },
-    {
-      "county": "Orange",
+      "county": "Broward",
       "state": "FL",
-      "case_number": "2024-CA-009320-O",
-      "address": "3058 BRANDYWINE DR",
-      "surplus": 58722.15000000002,
+      "case_number": "CACE-24-010802",
+      "address": "8719 SOUTHAMPTON DR",
+      "surplus": 154387.93,
       "money_status": "apparent_surplus",
-      "evidence_level": "auction_only"
+      "evidence_level": "docket_reviewed"
+    },
+    {
+      "county": "Miami-Dade",
+      "state": "FL",
+      "case_number": "2016-012537-CA-01",
+      "address": "12078 SW 249 ST",
+      "surplus": 144430.37,
+      "money_status": "apparent_surplus",
+      "evidence_level": "docket_reviewed"
+    },
+    {
+      "county": "Duval",
+      "state": "FL",
+      "case_number": "16-2025-CA-006229-AXXX-MA",
+      "address": "12752 W BURNING TREE LN",
+      "surplus": 134387.47,
+      "money_status": "apparent_surplus",
+      "evidence_level": "docket_reviewed"
     }
   ],
   "coverage": {
