@@ -10,6 +10,10 @@ Usage: python scripts/summit_pull_judgments.py CV2024125264,CV2025052012,...
 """
 import sys
 import asyncio
+from pathlib import Path
+
+# Run-as-script: put the repo root on sys.path so `core` imports resolve.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from core.dockets.summit import SummitDocketScraper
 
