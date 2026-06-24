@@ -635,7 +635,13 @@ def load_all_leads(
                 if _docket_preview:
                     prayer = float(_docket_preview.get("prayer_amount") or 0)
                     cls = (_docket_preview.get("classification") or "").lower()
-                    if (prayer > 0
+                    # Prayer-plausibility floor ($10K): a sub-$10K prayer is
+                    # court-cost/fee noise, NOT a real judgment — it must NOT
+                    # docket-rescue a lead (Cuyahoga floors this at scrape time;
+                    # this enforces the same rule for already-committed Summit/
+                    # Montgomery PDF-extracted prayers). Such a lead falls through
+                    # to the OH-no-debt path + the 1.5× overbid gate.
+                    if (prayer >= 10000.0
                             and cls in (_POSITIVE_CLASSIFICATIONS | {"red"})
                             and cls != "killed"):
                         ts = float(lead.final_sale_price or 0) - prayer

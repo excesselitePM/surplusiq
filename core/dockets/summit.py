@@ -667,6 +667,23 @@ class SummitDocketScraper(DocketScraper):
                     print(f"      ⚠ PDF row={idx}: not a raw PDF (head: {head[:120]!r})")
                     continue
                 amount, snippet = extract_debt_from_pdf_bytes(pdf_bytes)
+                # Prayer-plausibility floor — mirror Cuyahoga's MIN_PLAUSIBLE_PRAYER
+                # ($10K, core/dockets/cuyahoga.py). A sub-$10K "judgment" figure is
+                # court-cost / filing-fee / ancillary noise, NOT a real foreclosure
+                # judgment principal (those run $50K–$300K+). Reject it and keep
+                # scanning the remaining candidates; if none qualify, prayer stays
+                # $0 and the lead falls through to the OH-no-debt path (the 1.5×
+                # overbid gate). Anti-fabrication: prefer "unknown" over fee-noise.
+                MIN_PLAUSIBLE_PRAYER = 10000.0
+                if amount and amount < MIN_PLAUSIBLE_PRAYER:
+                    print(f"      ⚠ rejected pdf_extract=${amount:,.2f} row={idx} as implausible "
+                          f"for a foreclosure judgment (floor ${MIN_PLAUSIBLE_PRAYER:,.0f}); "
+                          f"treating as not-found")
+                    result.classification_reason = (
+                        f"pdf_extract=${amount:,.2f} rejected as below ${MIN_PLAUSIBLE_PRAYER:,.0f} "
+                        f"foreclosure-judgment plausibility floor"
+                    )
+                    continue
                 if amount:
                     result.prayer_amount = amount
                     result.debt_source = f"pdf_extract:docket_row_{idx}:judgment"
