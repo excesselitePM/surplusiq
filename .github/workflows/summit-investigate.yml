@@ -17,10 +17,10 @@ name: Summit Investigate
 on:
   workflow_dispatch:
     inputs:
-      prefixes:
-        description: 'Comma-separated 8-char Summit case prefixes (CV+YYYY+MM) to scrape'
+      cases:
+        description: 'Comma-separated EXACT Summit case numbers (direct scrape, bypasses raw-file load)'
         required: false
-        default: 'CV202412,CV202505,CV201906'
+        default: 'CV2024125264,CV2025052012,CV2025115614,CV2025105047'
         type: string
 
 permissions:
@@ -47,14 +47,11 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y xvfb
-      - name: Scrape Summit judgment PDFs per prefix
+      - name: Scrape Summit judgment PDFs by exact case number
         run: |
-          IFS=',' read -ra PREFIXES <<< "${{ github.event.inputs.prefixes }}"
-          for p in "${PREFIXES[@]}"; do
-            echo "=================== SUMMIT --case $p ==================="
-            xvfb-run -a --server-args="-screen 0 1280x900x24" \
-              python -m core.dockets.enrich summit-oh --case "$p" || echo "::warning::prefix $p had issues"
-          done
+          xvfb-run -a --server-args="-screen 0 1280x900x24" \
+            python scripts/summit_pull_judgments.py "${{ github.event.inputs.cases }}" \
+            || echo "::warning::summit judgment pull had issues"
       - name: Upload Summit judgment diagnostics (PDFs + extracted text)
         if: always()
         uses: actions/upload-artifact@v4
