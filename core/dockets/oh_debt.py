@@ -202,20 +202,48 @@ def parse_cuyahoga_mortgage_debt(full_text: str) -> OHMortgageDebt:
         return r
 
     norm = _norm(full_text)
-    m = re.search(
-        r"(?:Judgment\s+is\s+rendered\s+in\s+favor\s+of|amount\s+due\s+on\s+the\s+Note\s+is)"
-        r"[^$]{0,220}?\$\s*([\d,]+\.\d{2})\s*,?\s*plus\s+interest",
+
+    # INTEREST-BEARING principal — two real phrasings:
+    #   (a) explicit "interest bearing principal balance (in the amount) of $X" —
+    #       used when the decree itemizes a split total up front, e.g.
+    #       "total sum of $T, which consists of an interest bearing principal
+    #        balance of $X and a non-interest bearing deferred balance of $Y"
+    #       (CV24108223). Here three $-figures precede "plus interest", so the
+    #       (b) anchor cannot reach $X — match the labelled figure directly.
+    #       The (?<!non[- ]) lookbehind is REQUIRED: without it this also matches
+    #       the "NON-interest-bearing principal balance of $Y" in CV19923457.
+    #   (b) "Judgment is rendered ... $X plus interest" / "amount due on the Note
+    #       is $X plus interest" — the matched $X is the interest-bearing sum
+    #       (CV19923457, CV24106082, CV25115432, CV25110566).
+    interest_bearing = 0.0
+    base_end = 0
+    mib = re.search(
+        r"(?<!non[- ])interest[- ]bearing\s+principal\s+balance"
+        r"(?:\s+in\s+the\s+amount)?\s+of\s+\$\s*([\d,]+\.\d{2})",
         norm, re.I,
     )
-    if not m:
+    if mib:
+        interest_bearing = _money(mib.group(1))
+        base_end = mib.end()
+    else:
+        m = re.search(
+            r"(?:Judgment\s+is\s+rendered\s+in\s+favor\s+of|amount\s+due\s+on\s+the\s+Note\s+is)"
+            r"[^$]{0,220}?\$\s*([\d,]+\.\d{2})\s*,?\s*plus\s+interest",
+            norm, re.I,
+        )
+        if m:
+            interest_bearing = _money(m.group(1))
+            base_end = m.end()
+
+    if interest_bearing <= 0:
         r.verdict = "unknown"
         r.notes.append("Cuyahoga principal anchor not matched "
-                       "(no 'Judgment rendered ... $X plus interest')")
+                       "(no 'interest-bearing principal balance of $X' nor "
+                       "'Judgment rendered ... $X plus interest')")
         return r
-    interest_bearing = _money(m.group(1))
 
     # Rate + from-date — accept per annum / per year / bare; earliest of multi-period.
-    window = norm[m.end():m.end() + 320]
+    window = norm[base_end:base_end + 360]
     rate_hits = []
     for rm in re.finditer(
             r"([\d.]+)\s*(?:%|percent)\s*(?:per\s+(?:annum|year)\s+)?from\s+"
@@ -238,7 +266,8 @@ def parse_cuyahoga_mortgage_debt(full_text: str) -> OHMortgageDebt:
 
     non_interest = 0.0
     ms = re.search(
-        r"(?:non-interest-bearing\s+principal\s+balance|deferred\s+principal\s+amount)"
+        r"(?:non[- ]interest[- ]bearing\s+(?:principal\s+balance|deferred\s+balance|"
+        r"deferred\s+principal\s+(?:balance|amount))|deferred\s+principal\s+amount)"
         r"\s+of\s+\$\s*([\d,]+\.\d{2})", norm, re.I)
     if ms:
         non_interest = _money(ms.group(1))

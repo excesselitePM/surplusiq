@@ -39,6 +39,7 @@ CASES = [
     ("CV25110566", date(2026, 6, 15),  41700.0, "surplus", "CV25110566 ('per year' rate)"),
     ("CV25111605", date(2026, 6, 22), 103100.0, "killed",  "CV25111605 (multi-period rate)"),
     ("CV24106082", date(2026, 6, 22), 163100.0, "killed",  "CV24106082 (deferred split-balance)"),
+    ("CV24108223", date(2026, 6, 22), 103100.0, "killed",  "CV24108223 (itemized total/interest-bearing/deferred split)"),
 ]
 
 
@@ -77,6 +78,17 @@ def main():
           and res["CV25111605"].interest_from_date == date(2024, 8, 1))
     check("CV24106082: deferred split-balance ($95,595.98 non-interest-bearing)",
           abs(res["CV24106082"].principal - res["CV24106082"].interest_base - 95595.98) < 1)
+    # CV24108223: itemized "total $105,920.06 = interest-bearing $81,664.90 +
+    # non-interest-bearing deferred $24,255.16". Base must be the $81,664.90
+    # (NOT the $105,920.06 total, NOT the $24,255.16 deferred), and the explicit
+    # interest-bearing anchor must NOT have grabbed a "non-interest-bearing" figure.
+    c = res["CV24108223"]
+    check("CV24108223: itemized split — base=$81,664.90 (interest-bearing only)",
+          abs(c.interest_base - 81664.90) < 1, f"base=${c.interest_base:,.2f}")
+    check("CV24108223: total principal = $105,920.06 (interest-bearing + deferred)",
+          abs(c.principal - 105920.06) < 1, f"total=${c.principal:,.2f}")
+    check("CV24108223: 2.875% rate parsed (interest computable)",
+          abs((c.interest_rate or 0) - 0.02875) < 1e-6, f"rate={c.interest_rate}")
     check("CV25115432: genuine surplus survives (> buffer, confident)",
           res["CV25115432"].verdict == "surplus" and res["CV25115432"].surplus > res["CV25115432"].buffer)
 
