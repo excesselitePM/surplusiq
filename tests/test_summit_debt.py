@@ -44,6 +44,11 @@ CASES = [
     ("CV2025052012", date(2026, 5, 15), 258100.0, "surplus",        "Revere"),
     ("CV2019062134", date(2026, 6, 12), 107300.0, "flag_uncertain", "Royal County Down"),
     ("CV2025105047", date(2026, 6, 2),  188700.0, "tax_decree",     "Canton (tax)"),
+    # Live-scrape regression case: "due and owing to the Plaintiff, on the Note,
+    # the principal balance of $X" + "2.99 percent" phrasing the original anchor
+    # missed. Interest from April 2022 (~4.2yr) → another FALSE-POSITIVE the old
+    # max() extractor shipped as +$34,300; conservative debt ≥ sale → KILLED.
+    ("CV2025020638", date(2026, 6, 12), 193100.0, "killed",         "CV2025020638 (anchor variant)"),
 ]
 
 

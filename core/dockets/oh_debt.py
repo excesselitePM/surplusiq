@@ -113,9 +113,15 @@ def parse_oh_mortgage_debt(full_text: str) -> OHMortgageDebt:
 
     # 1) PRINCIPAL — anchor on the real sentence, NOT max()-near-keyword. The first
     #    dollar figure after "due [to/the] Plaintiff ... on the [promissory] Note".
+    # Tolerant of the real phrasing variants seen across decrees:
+    #   "due Plaintiff on the promissory note $X"
+    #   "due to Plaintiff on the Note principal in the amount of $X"
+    #   "due the Plaintiff, on the promissory note ... the sum of $X"
+    #   "due and owing to the Plaintiff, on the Note, the principal balance of $X"
+    # [^$] stops at the FIRST dollar figure after "on the Note" = the principal.
     m = re.search(
-        r"due\s+(?:to\s+|the\s+)?Plaintiff\b.{0,80}?on\s+the\s+(?:promissory\s+)?Note\b"
-        r"[^$]{0,300}?" + _MONEY,
+        r"due\b[^$]{0,60}?Plaintiff\b[^$]{0,160}?on\s+the\s+(?:promissory\s+)?Note\b"
+        r"[^$]{0,160}?" + _MONEY,
         norm, re.I,
     )
     if not m:
@@ -130,8 +136,9 @@ def parse_oh_mortgage_debt(full_text: str) -> OHMortgageDebt:
     #    window right after the principal (avoids grabbing a JUNIOR lien's rate,
     #    e.g. Royal County Down's condo 8% which sits far later in the decree).
     window = norm[principal_end:principal_end + 300]
+    # Accept both "4.075%" and "2.99000 percent" — decrees use either.
     m_rate = re.search(
-        r"([\d.]+)\s*%\s*per\s+annum\s+from\s+([A-Z][a-z]+\.?\s+\d{1,2},?\s+\d{4})",
+        r"([\d.]+)\s*(?:%|percent)\s*per\s+annum\s+from\s+([A-Z][a-z]+\.?\s+\d{1,2},?\s+\d{4})",
         window, re.I,
     )
     if m_rate:
