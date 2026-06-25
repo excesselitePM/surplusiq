@@ -617,14 +617,18 @@ def load_all_leads(
                     continue
 
                 # FP-11 docket-rescue: a lead with real docket-extracted
-                # positive true_surplus must NEVER be dropped by the
-                # auction-side third-party / min-gross-surplus filters.
-                # Those filters use sale - opening_bid, which for OH is
-                # arithmetic on the fake 2/3-appraised value — meaningless
-                # without the docket. Once the docket reveals a real prayer
-                # amount and the math clears positively, the lead is
-                # actionable regardless of who won the bid or how much the
-                # auction-side gross surplus computes to.
+                # positive true_surplus must NOT be dropped by the
+                # auction-side min-gross-surplus filter (Filter 2). That
+                # filter uses sale − opening_bid, which for OH is arithmetic
+                # on the fake 2/3-appraised value — meaningless without the
+                # docket. Once the docket reveals a real prayer amount and
+                # the math clears positively, the lead clears Filter 2.
+                #
+                # Docket-rescue does NOT bypass Filter 1 (third-party).
+                # sold_to='Plaintiff' means the plaintiff took the property
+                # back — no recoverable surplus exists for the homeowner
+                # regardless of what the docket prayer math shows. Per SOP
+                # step 11: plaintiff-won = KILL, no exception.
                 #
                 # We rescue green/yellow AND red leads (red = "competing
                 # filers / additional creditors" per Eric — risky but
@@ -670,8 +674,11 @@ def load_all_leads(
                     and (lead.final_sale_price - lead.opening_bid) >= min_surplus
                 )
 
-                # Filter 1: 3rd party (skipped when docket-rescued)
-                if require_third_party and not lead.is_third_party and not _docket_rescue:
+                # Filter 1: 3rd party. Docket-rescue does NOT bypass this —
+                # sold_to='Plaintiff' kills the lead at this gate regardless
+                # of docket prayer math (SOP step 11: plaintiff-won = no
+                # recoverable surplus). Rescue only applies to Filter 2.
+                if require_third_party and not lead.is_third_party:
                     stats[county_id]["not_3rd_party"] += 1
                     continue
 
