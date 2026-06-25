@@ -226,9 +226,19 @@ def parse_cuyahoga_mortgage_debt(full_text: str) -> OHMortgageDebt:
         interest_bearing = _money(mib.group(1))
         base_end = mib.end()
     else:
+        # The interest-bearing principal is invariably stated as
+        # "(in the) sum of $X plus [regular|default] interest" /
+        # "unpaid principal amount of $X plus interest" /
+        # "principal balance of $X plus interest" — regardless of the lead-in verb
+        # (judgment is rendered / Judgment in Foreclosure is rendered / Plaintiff is
+        # GRANTED a judgment against / amount due on the Note is the sum of …). Anchor
+        # on the invariant "<noun> of $X plus interest" and take the FIRST occurrence
+        # (the plaintiff's principal precedes any junior distribution). The "plus
+        # interest" terminal is the discriminator that excludes costs (e.g. a $710
+        # judicial-report fee has no "plus interest").
         m = re.search(
-            r"(?:Judgment\s+is\s+rendered\s+in\s+favor\s+of|amount\s+due\s+on\s+the\s+Note\s+is)"
-            r"[^$]{0,220}?\$\s*([\d,]+\.\d{2})\s*,?\s*plus\s+interest",
+            r"(?:sum\s+of|unpaid\s+principal\s+amount\s+of|principal\s+balance\s+of)"
+            r"\s+\$\s*([\d,]+\.\d{2})\s*,?\s*plus\s+(?:regular\s+|default\s+)?interest",
             norm, re.I,
         )
         if m:
@@ -246,7 +256,7 @@ def parse_cuyahoga_mortgage_debt(full_text: str) -> OHMortgageDebt:
     window = norm[base_end:base_end + 360]
     rate_hits = []
     for rm in re.finditer(
-            r"([\d.]+)\s*(?:%|percent)\s*(?:per\s+(?:annum|year)\s+)?from\s+"
+            r"([\d.]+)\s*(?:%|percent)\s*(?:per\s+(?:annum|year)\s*,?\s*)?from\s+"
             r"([A-Z][a-z]+\.?\s*\d{1,2},?\s*\d{4})",
             window, re.I):
         d = _parse_decree_date(rm.group(2))

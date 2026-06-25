@@ -40,6 +40,8 @@ CASES = [
     ("CV25111605", date(2026, 6, 22), 103100.0, "killed",  "CV25111605 (multi-period rate)"),
     ("CV24106082", date(2026, 6, 22), 163100.0, "killed",  "CV24106082 (deferred split-balance)"),
     ("CV24108223", date(2026, 6, 22), 103100.0, "killed",  "CV24108223 (itemized total/interest-bearing/deferred split)"),
+    ("CV24106266", date(2026, 6, 15), 109200.0, "killed",  "CV24106266 ('GRANTED a judgment' + 'plus regular interest')"),
+    ("CV25117671", date(2026, 6, 15), 132300.0, "killed",  "CV25117671 ('Judgment in Foreclosure is rendered')"),
 ]
 
 
@@ -89,6 +91,17 @@ def main():
           abs(c.principal - 105920.06) < 1, f"total=${c.principal:,.2f}")
     check("CV24108223: 2.875% rate parsed (interest computable)",
           abs((c.interest_rate or 0) - 0.02875) < 1e-6, f"rate={c.interest_rate}")
+    # CV24106266: "Plaintiff is GRANTED a judgment against … in the sum of
+    # $129,871.15 plus regular interest" — generic anchor must grab $129,871.15
+    # despite the non-standard lead-in verb. Principal alone kills it.
+    check("CV24106266: 'sum of $X plus regular interest' principal = $129,871.15",
+          abs(res["CV24106266"].interest_base - 129871.15) < 1,
+          f"base=${res['CV24106266'].interest_base:,.2f}")
+    # CV25117671: "Judgment IN FORECLOSURE is rendered …" — single clean 2.625% rate.
+    check("CV25117671: principal $116,793.75 + 2.625% rate parsed",
+          abs(res["CV25117671"].interest_base - 116793.75) < 1
+          and abs((res["CV25117671"].interest_rate or 0) - 0.02625) < 1e-6,
+          f"base=${res['CV25117671'].interest_base:,.2f} rate={res['CV25117671'].interest_rate}")
     check("CV25115432: genuine surplus survives (> buffer, confident)",
           res["CV25115432"].verdict == "surplus" and res["CV25115432"].surplus > res["CV25115432"].buffer)
 
