@@ -423,14 +423,14 @@ class CuyahogaDocketScraper(DocketScraper):
             print(f"      ⚠ decree row scan failed: {e}")
             return
 
-        want = re.compile(r"decree of foreclosure|judgment entry adopting|"
-                          r"adopting (the )?magistrate.?s decision|magistrate.?s decision|"
-                          r"final judgment entry", re.I)
-        # Skip non-decree procedural rows (hearings/notices/orders of sale) AND
-        # released/vacated entries — these are not the judgment decree.
-        skip = re.compile(r"satisf|vacat|release|dismiss|withdraw|denied|continu|"
-                          r"hearing|called for|scheduled|notice|praecipe|writ|order of sale",
-                          re.I)
+        want = re.compile(r"judgment entry|decree of foreclosure|adopting (the )?magistrate|"
+                          r"magistrate.?s decision|final judgment|order .*foreclosure", re.I)
+        # Keep this NARROW. Do NOT add "notice"/"hearing"/"order of sale" — the
+        # CIV.R. 58(B) service clause ("serve ... notice of this judgment") appears
+        # in EVERY final judgment entry, so those terms would exclude the real
+        # decree (proven: a refined skip broke all 3 live mortgage leads). Noise is
+        # suppressed by the mortgage-signal gate on the UNPARSED diagnostic instead.
+        skip = re.compile(r"satisf|vacat|release|dismiss|withdraw|denied|continu", re.I)
         cands = [r for r in rows if want.search(r["t"]) and not skip.search(r["t"])]
         print(f"      → decree candidates: {len(cands)}")
 
