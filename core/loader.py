@@ -1,12 +1,14 @@
 """
-SurplusIQ — Unified Data Loader (v2 — 14-day cutoff enforced)
+SurplusIQ — Unified Data Loader (v2 — 28-day cutoff enforced)
 
 Consolidates raw scraped data from all 10 counties into a single clean dataset
 ready for Excel export, dashboard rendering, and PropertyRadar enrichment.
 
 CHANGES IN v2:
-  • Hard 14-day window: any lead with sale_date older than (today - 14 days)
+  • Hard 28-day window: any lead with sale_date older than (today - 28 days)
     is dropped before reaching the dashboard / Excel / enrichment.
+    (Widened from 14 days so leads persist long enough for late-filed kill
+    signals — claims, vacate motions — to be caught by re-verification.)
   • If sale_date can't be parsed, the lead is dropped as well.
   • Console output reports how many were dropped and why, so we can verify
     the filter is doing what we expect each time.
@@ -14,7 +16,7 @@ CHANGES IN v2:
 Usage:
     from core.loader import load_all_leads, get_summary
 
-    leads = load_all_leads()                    # all qualifying leads (last 14 days)
+    leads = load_all_leads()                    # all qualifying leads (last 28 days)
     leads = load_all_leads(min_surplus=25000)   # higher surplus threshold
     leads = load_all_leads(window_days=7)       # tighter date window
     summary = get_summary(leads)                # county totals
@@ -556,7 +558,7 @@ def load_all_leads(
     min_surplus: float = 10_000,
     require_third_party: bool = True,
     counties: Optional[list[str]] = None,
-    window_days: int = 14,
+    window_days: int = 28,
     verbose: bool = True,
 ) -> list[Lead]:
     """
@@ -572,7 +574,8 @@ def load_all_leads(
         min_surplus: Minimum gross surplus required to qualify (default $10K)
         require_third_party: Only include 3rd party bidder wins (default True)
         counties: Optional list of county_ids to include (default: all 10)
-        window_days: Maximum age of sale_date in days (default 14)
+        window_days: Maximum age of sale_date in days (default 28 — wide enough
+                     for late-filed kill signals to be caught by re-verification)
         verbose: Print summary of what was filtered out
 
     Returns:
@@ -806,7 +809,7 @@ if __name__ == "__main__":
     import sys
 
     print("=" * 70)
-    print("  SurplusIQ — Data Loader Verification (v2 with 14-day cutoff)")
+    print("  SurplusIQ — Data Loader Verification (v2 with 28-day cutoff)")
     print("=" * 70)
     print(f"\n📂 Reading from: {RAW_DIR}\n")
 
@@ -846,5 +849,5 @@ if __name__ == "__main__":
             print(f"       {l['address'][:60]}")
 
     print("\n" + "=" * 70)
-    print("  ✓ Data loader v2 operational. 14-day cutoff enforced.")
+    print("  ✓ Data loader v2 operational. 28-day cutoff enforced.")
     print("=" * 70)
