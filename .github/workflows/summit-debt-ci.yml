@@ -1,0 +1,31 @@
+name: Summit Debt CI
+
+# THROWAWAY CI check for the OH-mortgage conservative debt extractor. Manual
+# dispatch; runs the pure acceptance test (+ the rest of the suite) on Actions.
+# No scraper, no network, no cron. Remove after the build is signed off.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+      - run: pip install -r requirements.txt
+      - name: Summit debt acceptance + full suite
+        run: |
+          python -m tests.test_summit_debt
+          python -m tests.test_verification
+          python -m tests.test_lee_liens
+          python -m tests.test_broward_docket
+          python -m tests.test_duval_docket
+          python -m tests.test_miami_dade_docket
