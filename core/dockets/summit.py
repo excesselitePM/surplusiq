@@ -714,6 +714,21 @@ class SummitDocketScraper(DocketScraper):
                       f"fee-noise / not a judgment; skipping")
                 result.classification_reason = (
                     f"OH-mortgage principal ${parsed.principal:,.2f} below $10K plausibility floor")
+                # DIAGNOSTIC: a fetched judgment PDF whose principal we could NOT
+                # parse is a possible anchor-coverage GAP (a real decree variant the
+                # parser missed) — save the text so the anchor can be broadened.
+                # principal==0 = anchor miss (vs a true small fee-noise figure).
+                if parsed.principal == 0.0:
+                    try:
+                        safe_case = re.sub(r"[^A-Za-z0-9_-]+", "_", result.case_number)
+                        ts = datetime.now().strftime("%H%M%S")
+                        diag = Path("data/diagnostics/summit-oh")
+                        diag.mkdir(parents=True, exist_ok=True)
+                        (diag / f"{ts}-{safe_case}-row{idx}-UNPARSED.txt").write_text(
+                            full_text, encoding="utf-8")
+                        print(f"      📝 saved UNPARSED decree text (anchor miss) for review")
+                    except Exception:
+                        pass
                 return False
 
             # Store the components — enrich.run_county computes the conservative
