@@ -20,13 +20,47 @@ Usage:
 
 from __future__ import annotations
 import json
-from datetime import datetime
+import re as _re
+from datetime import datetime, date, timedelta
 from pathlib import Path
 
 from core.loader import (
     load_all_leads, get_summary, PROJECT_ROOT,
     _POSITIVE_CLASSIFICATIONS, _NEGATIVE_CLASSIFICATIONS,
+    _load_docket_data, _normalize_case_for_lookup,
 )
+
+
+_RAW_DIR = PROJECT_ROOT / "data" / "raw"
+
+
+def _load_latest_raw_auction() -> dict:
+    """Return {(county_id, normalized_case_number): record} from latest raw JSONL per county."""
+    county_latest: dict[str, Path] = {}
+    for f in sorted(_RAW_DIR.glob("*.jsonl")):
+        prefix = _re.sub(r"_\d{4}-\d{2}-\d{2}\.jsonl$", "", f.name)
+        county_latest[prefix] = f  # sorted order → later date wins
+    lookup = {}
+    for county_id, fpath in county_latest.items():
+        try:
+            with open(fpath) as fh:
+                for line in fh:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    try:
+                        d = json.loads(line)
+                    except Exception:
+                        continue
+                    cid = d.get("county_id") or county_id
+                    case = d.get("case_number", "")
+                    if not case:
+                        continue
+                    norm = _normalize_case_for_lookup(case)
+                    lookup[(cid, norm)] = d
+        except Exception:
+            continue
+    return lookup
 
 
 # Classifications that count as "docket-verified" — explicit allowlist.
@@ -546,6 +580,58 @@ def export_dashboard_data():
                 killed_entries.append(_killed_entry(p_stub, "sold_to_plaintiff"))
     except Exception as _e:
         print(f"   ⚠ killed_leads: plaintiff reload failed: {_e}")
+
+    # (c) docket-killed leads filtered BEFORE reaching leads_payload
+    # (OH real-overbid gate drops leads whose docket says killed but whose
+    # sale didn't clear 1.5× opening bid — these never enter leads_payload
+    # so _killed_audit misses them entirely). CV19923457 is the prototype:
+    # conservative debt kills it but it also fails the overbid gate, so
+    # path (a) never sees it.
+    try:
+        _raw_lkp = _load_latest_raw_auction()
+        _all_dockets = _load_docket_data()
+        _seen = {(e["county_id"], _normalize_case_for_lookup(e["case_number"]))
+                 for e in killed_entries if e.get("case_number")}
+        _cutoff = date.today() - timedelta(days=28)
+        for (cid, norm), docket in _all_dockets.items():
+            if (docket.get("classification") or "").lower() != "killed":
+                continue
+            if (cid, norm) in _seen:
+                continue
+            raw = _raw_lkp.get((cid, norm))
+            if not raw:
+                continue
+            gross = float(raw.get("gross_surplus") or 0)
+            if gross < 10_000:
+                continue
+            sd = raw.get("auction_date") or raw.get("sale_date") or ""
+            if sd:
+                try:
+                    if date.fromisoformat(sd[:10]) < _cutoff:
+                        continue
+                except Exception:
+                    pass
+            cc = COUNTY_BY_ID.get(cid)
+            p_stub = {
+                "county_id":            cid,
+                "county_name":          (cc.county_name if cc else cid),
+                "state":                (cc.state if cc else ""),
+                "case_number":          docket.get("case_number", ""),
+                "address":              raw.get("address", ""),
+                "sale_date":            sd,
+                "sold_to":              raw.get("sold_to", ""),
+                "gross_surplus":        gross,
+                "kill_signals":         list(docket.get("kill_signals") or []),
+                "classification_reason": docket.get("classification_reason") or "",
+                "docket_url":           docket.get("case_url") or "",
+                "source_url":           raw.get("source_url", ""),
+            }
+            killed_entries.append(_killed_entry(p_stub, "docket_signal"))
+            _seen.add((cid, norm))
+            print(f"      📋 docket-only kill: {cid} {docket.get('case_number','')} "
+                  f"(former ${gross:,.0f})")
+    except Exception as _e:
+        print(f"   ⚠ killed_leads: docket-only path failed: {_e}")
 
     # Sort: largest former surplus first (most dramatic kills at top)
     killed_entries.sort(key=lambda k: k["former_surplus"], reverse=True)
