@@ -465,6 +465,95 @@ def export_dashboard_data():
               f"[{p.get('docket_evidence_level') or p.get('evidence_level') or '?'}] "
               f"— {p.get('classification_reason','(no reason)')}")
 
+    # ── Build killed_leads.json — shown on dashboard as proof-of-work ──
+    # Combine two sources of kills:
+    #   (a) Docket-killed: passed through the pipeline, classified 'killed'
+    #       by a docket signal (vacate, bankruptcy, claim, conservative debt).
+    #   (b) Plaintiff-killed: dropped at Filter 1 (sold_to='Plaintiff') before
+    #       docket processing. Load separately with require_third_party=False
+    #       and tag them.
+    # Only include leads with a meaningful former apparent surplus (≥$10K) —
+    # the demonstration value is "real money that was there, then killed."
+    _KILL_LABEL = {
+        "motion_to_vacate":   "Sale vacated",
+        "sale_vacated":       "Sale vacated",
+        "bankruptcy":         "Bankruptcy filed",
+        "already_disbursed":  "Funds already disbursed",
+        "owner_filed_claim":  "Owner filed claim",
+        "escheated":          "Funds escheated",
+        "surplus_claim_filed":"Surplus claim filed",
+        "surplus_firm_appearance": "Surplus claim filed",
+        "sale_issue":         "Sale cancelled/vacated",
+        "sale_issue_found":   "Sale cancelled/vacated",
+        "sold_to_plaintiff":  "Sold to plaintiff",
+    }
+
+    def _killed_entry(p, kill_source):
+        signals = p.get("kill_signals") or []
+        primary_signal = signals[0] if signals else kill_source
+        label = _KILL_LABEL.get(primary_signal) or _KILL_LABEL.get(kill_source) or "Killed"
+        former = float(p.get("gross_surplus") or 0)
+        reason = p.get("classification_reason") or ""
+        # For OH debt-kills the classification_reason IS the detail.
+        if "conservative debt" in reason or "true surplus only" in reason:
+            label = "Debt exceeds sale"
+        return {
+            "county_id":            p.get("county_id", ""),
+            "county_name":          p.get("county_name", ""),
+            "state":                p.get("state", ""),
+            "case_number":          p.get("case_number", ""),
+            "address":              p.get("address", ""),
+            "sale_date":            p.get("sale_date", ""),
+            "sold_to":              p.get("sold_to", ""),
+            "former_surplus":       former,
+            "kill_label":           label,
+            "kill_signals":         signals,
+            "kill_detail":          reason[:180],
+            "docket_url":           p.get("docket_url", ""),
+            "source_url":           p.get("source_url", ""),
+        }
+
+    killed_entries = []
+    # (a) docket-killed
+    for p in _killed_audit:
+        former = float(p.get("gross_surplus") or 0)
+        if former >= 10_000:
+            killed_entries.append(_killed_entry(p, "docket_signal"))
+
+    # (b) plaintiff-killed: reload without third-party filter, grab Plaintiff wins
+    try:
+        all_leads_incl_plaintiff = load_all_leads(require_third_party=False)
+        for l in all_leads_incl_plaintiff:
+            if (l.sold_to or "").lower().startswith("plaintiff") and l.gross_surplus >= 10_000:
+                cc = COUNTY_BY_ID.get(l.county_id)
+                p_stub = {
+                    "county_id":   l.county_id,
+                    "county_name": l.county_name,
+                    "state":       l.state,
+                    "case_number": l.case_number,
+                    "address":     l.address,
+                    "sale_date":   l.sale_date,
+                    "sold_to":     l.sold_to,
+                    "gross_surplus": l.gross_surplus,
+                    "kill_signals":  ["sold_to_plaintiff"],
+                    "classification_reason": (
+                        f"Sold to plaintiff — no recoverable surplus for homeowner "
+                        f"(SOP step 11). Apparent surplus was ${l.gross_surplus:,.0f}."
+                    ),
+                    "docket_url":  getattr(l, "docket_url", ""),
+                    "source_url":  getattr(l, "source_url", ""),
+                }
+                killed_entries.append(_killed_entry(p_stub, "sold_to_plaintiff"))
+    except Exception as _e:
+        print(f"   ⚠ killed_leads: plaintiff reload failed: {_e}")
+
+    # Sort: largest former surplus first (most dramatic kills at top)
+    killed_entries.sort(key=lambda k: k["former_surplus"], reverse=True)
+    killed_file = docs_data / "killed_leads.json"
+    with open(killed_file, "w") as f:
+        json.dump(killed_entries, f, indent=2)
+    print(f"   ✓ Wrote {killed_file.relative_to(PROJECT_ROOT)} ({len(killed_entries)} killed leads with ≥$10K former surplus)")
+
     # ── FP-18 Item 2: $5K min-surplus floor safety net ────────────────
     # After the display-bug fix lifts docket-checked leads to their real
     # true_surplus, a near-zero number should be exceptionally rare. But
@@ -558,6 +647,7 @@ def export_dashboard_data():
         "total_leads":            len(leads_payload),               # visible
         "total_leads_pre_filter": summary["total_leads"],            # raw scraped
         "killed_filtered_count":  killed_removed,                    # FP-14
+        "killed_shown_count":     len(killed_entries),               # in killed_leads.json
         "below_floor_filtered_count": floor_removed,                  # FP-18
         "min_display_surplus":    MIN_DISPLAY_SURPLUS,                # FP-18 threshold
 

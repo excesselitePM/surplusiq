@@ -412,6 +412,88 @@
   }
 
   /* ─── Footer ──────────────────────────────────────────── */
+  /* ─── Killed Leads Section ─────────────────────────────── */
+  .kills-section {
+    margin: 32px auto;
+    max-width: 1400px;
+    padding: 0 16px;
+  }
+  .kills-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: rgba(180, 40, 40, 0.08);
+    border: 1px solid rgba(180, 40, 40, 0.25);
+    border-radius: 8px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .kills-header:hover { background: rgba(180, 40, 40, 0.13); }
+  .kills-toggle-icon { color: #c0392b; font-size: 11px; transition: transform 0.2s; }
+  .kills-title { font-weight: 700; font-size: 14px; color: #c0392b; }
+  .kills-subtitle { font-size: 13px; color: var(--text-muted); }
+  .kills-count {
+    margin-left: auto;
+    background: rgba(180, 40, 40, 0.15);
+    color: #c0392b;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 12px;
+  }
+  .kills-body {
+    margin-top: 8px;
+    border: 1px solid rgba(180, 40, 40, 0.18);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .kills-note {
+    margin: 12px 16px;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+  .kills-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  .kills-table thead th {
+    background: rgba(180, 40, 40, 0.07);
+    padding: 8px 12px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid rgba(180, 40, 40, 0.15);
+  }
+  .kills-table tbody tr {
+    border-bottom: 1px solid var(--border);
+    opacity: 0.75;
+  }
+  .kills-table tbody tr:last-child { border-bottom: none; }
+  .kills-table td { padding: 8px 12px; vertical-align: top; color: var(--text-muted); }
+  .kill-former-surplus {
+    text-decoration: line-through;
+    color: #c0392b;
+    font-weight: 600;
+    opacity: 0.7;
+  }
+  .kill-reason-badge {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    background: rgba(180, 40, 40, 0.12);
+    color: #c0392b;
+    white-space: nowrap;
+  }
+  .kill-detail { font-size: 11px; color: var(--text-muted); max-width: 280px; }
+
   .footer {
     text-align: center;
     color: var(--text-muted);
@@ -627,6 +709,43 @@
         </thead>
         <tbody id="leads-body">
           <tr><td colspan="16" class="loading">Loading leads…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── KILLED LEADS SECTION ──────────────────────────────────── -->
+  <!-- Proof-of-work: leads that had real apparent surplus and were  -->
+  <!-- killed by a verified signal. Not actionable — demonstration  -->
+  <!-- that the verification layer actually fires.                   -->
+  <section class="kills-section" id="kills-section" style="display:none">
+    <div class="kills-header" onclick="toggleKills()">
+      <span class="kills-toggle-icon" id="kills-toggle-icon">▶</span>
+      <span class="kills-title">❌ Killed Leads</span>
+      <span class="kills-subtitle" id="kills-subtitle"> — leads with verified surplus that were disqualified</span>
+      <span class="kills-count" id="kills-count"></span>
+    </div>
+    <div class="kills-body" id="kills-body" style="display:none">
+      <p class="kills-note">
+        These leads had apparent surplus but were disqualified by a verified signal (sale vacated, bankruptcy,
+        surplus claim filed, sold to plaintiff, debt exceeds sale). They are <strong>not actionable</strong>.
+        Shown here so you can see the verification layer working.
+      </p>
+      <table class="kills-table">
+        <thead>
+          <tr>
+            <th>County</th>
+            <th>Case</th>
+            <th>Address</th>
+            <th>Sale Date</th>
+            <th>Former Surplus</th>
+            <th>Kill Reason</th>
+            <th>Detail</th>
+            <th>Docket</th>
+          </tr>
+        </thead>
+        <tbody id="kills-body-rows">
+          <tr><td colspan="8" style="text-align:center;color:#888">Loading…</td></tr>
         </tbody>
       </table>
     </div>
@@ -863,6 +982,48 @@
       $("leads-body").innerHTML =
         `<tr><td colspan="15"><div class="error">Failed to load lead data: ${err.message}</div></td></tr>`;
     }
+    // Killed leads load independently — failure is non-fatal
+    try {
+      const killedResp = await fetch("data/killed_leads.json");
+      if (killedResp.ok) {
+        const killed = await killedResp.json();
+        renderKilledSection(killed);
+      }
+    } catch (_e) { /* killed_leads.json not yet generated — hide section */ }
+  }
+
+  // ─── Killed Leads Section ─────────────────────────────
+  function toggleKills() {
+    const body = $("kills-body");
+    const icon = $("kills-toggle-icon");
+    const open = body.style.display !== "none";
+    body.style.display = open ? "none" : "block";
+    icon.style.transform = open ? "" : "rotate(90deg)";
+  }
+
+  function renderKilledSection(killed) {
+    if (!killed || !killed.length) return;
+    $("kills-section").style.display = "";
+    $("kills-count").textContent = `${killed.length} lead${killed.length !== 1 ? "s" : ""}`;
+
+    const rows = killed.map(k => {
+      const former = k.former_surplus ? `$${Math.round(k.former_surplus).toLocaleString()}` : "—";
+      const docketLink = k.docket_url
+        ? `<a href="${k.docket_url}" target="_blank" rel="noopener" style="color:#888">Docket ↗</a>`
+        : (k.source_url ? `<a href="${k.source_url}" target="_blank" rel="noopener" style="color:#888">Source ↗</a>` : "—");
+      const detail = (k.kill_detail || "").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      return `<tr>
+        <td>${k.county_name || k.county_id}</td>
+        <td style="font-family:monospace;font-size:11px">${k.case_number || "—"}</td>
+        <td style="max-width:160px;font-size:11px">${k.address || "—"}</td>
+        <td style="white-space:nowrap">${k.sale_date || "—"}</td>
+        <td><span class="kill-former-surplus">${former}</span></td>
+        <td><span class="kill-reason-badge">${k.kill_label || "Killed"}</span></td>
+        <td class="kill-detail">${detail}</td>
+        <td>${docketLink}</td>
+      </tr>`;
+    }).join("");
+    $("kills-body-rows").innerHTML = rows;
   }
 
   // ─── Render ───────────────────────────────────────────
