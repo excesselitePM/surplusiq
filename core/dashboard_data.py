@@ -141,8 +141,11 @@ def _surplus_for_payload(payload_lead: dict) -> tuple:
         and ts > 0
         and (debt_src.startswith("docket_prayer")
              or debt_src.startswith("pdf_extract:")
-             or debt_src == "prayer_field"
-             or debt_src == "oh_mortgage_computed")   # Summit conservative debt
+             or debt_src == "oh_mortgage_computed")   # Summit/Cuyahoga conservative debt
+        # NB: 'prayer_field' (Cuyahoga complaint prayer) is NO LONGER "real debt" —
+        # it's principal-only (no interest/costs), so it now flags uncertain (below).
+        # When a decree IS parsed, the scraper sets debt_source='oh_mortgage_decree'
+        # → enrich → 'oh_mortgage_computed', which IS real debt.
     )
     if has_real_docket_debt:
         return (float(ts), money_status if money_status in
@@ -163,7 +166,11 @@ def _surplus_for_payload(payload_lead: dict) -> tuple:
     # parseable interest rate, or no sale date) — a real surplus may exist but we
     # can't state it confidently, so show it like the OH-no-debt unverified
     # treatment ("— surplus uncertain, manual review"), NOT a confident green.
-    if debt_src == "oh_mortgage_uncertain":
+    # 'oh_mortgage_uncertain' = decree computed but no rate (old decree) or no sale
+    # date. 'prayer_field' = Cuyahoga complaint prayer (principal only, decree not
+    # parseable) — both are a real principal but an INCOMPLETE debt, so neither may
+    # show a confident green surplus: render "— surplus uncertain, manual review".
+    if debt_src in ("oh_mortgage_uncertain", "prayer_field"):
         return (None, "oh_uncertain")
 
     # OH MORTGAGE without usable docket debt → UNVERIFIED. The opening bid is the

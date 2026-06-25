@@ -36,13 +36,16 @@ they still file under CIVIL case type for the search.
 
 from __future__ import annotations
 import re
+import io
 import asyncio
+from pathlib import Path
 from datetime import datetime, date
 from typing import Optional
 
 from playwright.async_api import async_playwright, Page, TimeoutError as PWTimeout
 
 from .base import DocketScraper, DocketResult, DocketEvent
+from .oh_debt import parse_cuyahoga_mortgage_debt, components_dict
 
 
 BASE_URL = "https://cpdocket.cp.cuyahogacounty.gov"
@@ -398,6 +401,88 @@ class CuyahogaDocketScraper(DocketScraper):
         if events:
             sorted_events = sorted(events, key=lambda e: e.filing_date, reverse=True)
             result.last_activity_date = sorted_events[0].filing_date
+
+        # Conservative-debt: fetch the judgment-decree document and parse it. On
+        # success this STORES debt components (enrich computes the sale-date math)
+        # and supersedes the prayer_field principal-only figure. On failure the
+        # prayer_field set in _scrape_summary_page remains as the fallback.
+        await self._fetch_decree_and_parse(page, result)
+
+    async def _fetch_decree_and_parse(self, page: Page, result: DocketResult) -> None:
+        """Find the judgment-decree document on the docket page (DisplayImageList.aspx
+        link — proven reachable), fetch it, and run parse_cuyahoga_mortgage_debt. The
+        decree carries the principal + rate + from-date + split-balance oh_debt needs;
+        the prayer_field (complaint prayer, principal-only) is the fallback."""
+        try:
+            rows = await page.evaluate(r"""() =>
+                Array.from(document.querySelectorAll('table tr')).map(tr => ({
+                    t:(tr.innerText||'').replace(/\s+/g,' ').trim(),
+                    a:Array.from(tr.querySelectorAll('a[href]')).map(x=>x.getAttribute('href'))
+                })).filter(r => r.t && r.a.length)""")
+        except Exception as e:
+            print(f"      ⚠ decree row scan failed: {e}")
+            return
+
+        want = re.compile(r"judgment entry|decree of foreclosure|adopting (the )?magistrate|"
+                          r"magistrate.?s decision|final judgment|order .*foreclosure", re.I)
+        skip = re.compile(r"satisf|vacat|release|dismiss|withdraw|denied|continu", re.I)
+        cands = [r for r in rows if want.search(r["t"]) and not skip.search(r["t"])]
+        print(f"      → decree candidates: {len(cands)}")
+
+        req = page.context.request
+        diag = Path("data/diagnostics/cuyahoga-oh")
+        for r in cands[:6]:
+            href = r["a"][0]
+            url = href if href.startswith("http") else f"{BASE_URL}/{href.lstrip('/')}"
+            try:
+                resp = await req.get(url, timeout=20000)
+                body = await resp.body()
+                if not body or body[:4] != b"%PDF":
+                    continue
+                import pdfplumber
+                text = ""
+                with pdfplumber.open(io.BytesIO(body)) as pdf:
+                    for pg in pdf.pages[:15]:
+                        text += (pg.extract_text() or "") + "\n"
+                parsed = parse_cuyahoga_mortgage_debt(text)
+                if parsed.is_tax_decree:
+                    print(f"      ⏭ [{r['t'][:40]}] is a tax decree — skipping")
+                    continue
+                if parsed.principal < 10000.0:
+                    if parsed.principal == 0.0:
+                        # Anchor miss on a real decree → surface loudly + save text.
+                        print(f"      ⚠ ANCHOR MISS (principal $0) on [{r['t'][:45]}] — "
+                              f"saving UNPARSED for review")
+                        try:
+                            diag.mkdir(parents=True, exist_ok=True)
+                            sc = re.sub(r"[^A-Za-z0-9_-]+", "_", result.case_number)
+                            ts = datetime.now().strftime("%H%M%S")
+                            (diag / f"{ts}-{sc}-UNPARSED.txt").write_text(text, encoding="utf-8")
+                        except Exception:
+                            pass
+                    continue
+                result.debt_components = components_dict(parsed)
+                result.prayer_amount = 0.0          # computed in enrich; supersedes prayer_field
+                result.debt_source = "oh_mortgage_decree"
+                print(f"      ✅ Cuyahoga decree [{r['t'][:40]}]: principal "
+                      f"${parsed.principal:,.2f}  base ${parsed.interest_base:,.2f}  rate="
+                      f"{(str(round(parsed.interest_rate*100,3))+'%') if parsed.interest_rate else 'none'}")
+                for n in parsed.notes:
+                    print(f"         · {n}")
+                try:
+                    diag.mkdir(parents=True, exist_ok=True)
+                    sc = re.sub(r"[^A-Za-z0-9_-]+", "_", result.case_number)
+                    ts = datetime.now().strftime("%H%M%S")
+                    (diag / f"{ts}-{sc}-decree.txt").write_text(text, encoding="utf-8")
+                except Exception:
+                    pass
+                return
+            except Exception as e:
+                print(f"      ⚠ decree fetch [{r['t'][:30]}] failed: {type(e).__name__}: {e}")
+
+        if result.debt_source != "oh_mortgage_decree":
+            print(f"      → no parseable decree; keeping prayer_field "
+                  f"${result.prayer_amount:,.2f} as fallback (flagged uncertain downstream)")
 
     # ─── Step 6: Scrape Parties sub-page for defendants ───
     async def _scrape_parties_page(self, page: Page, result: DocketResult) -> None:

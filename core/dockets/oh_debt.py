@@ -72,7 +72,9 @@ def is_oh_tax_decree(full_text: str) -> bool:
 
 
 def _parse_decree_date(s: str) -> Optional[date]:
-    s = s.replace(",", "").strip()
+    # Replace comma with SPACE (not ""), so "March 1,2024" (no space after comma)
+    # becomes "March 1 2024", not "March 12024"; then collapse runs of whitespace.
+    s = re.sub(r"\s+", " ", s.replace(",", " ")).strip()
     for fmt in ("%B %d %Y", "%b %d %Y"):
         try:
             return datetime.strptime(s, fmt).date()
@@ -173,6 +175,88 @@ def parse_oh_mortgage_debt(full_text: str) -> OHMortgageDebt:
     if not r.has_computable_interest:
         r.notes.append("no computable interest rate/date ('with interest' only — "
                        "old decree); accrued interest = 0, debt may be understated")
+    return r
+
+
+def parse_cuyahoga_mortgage_debt(full_text: str) -> OHMortgageDebt:
+    """Cuyahoga judgment-decree parser. Phrasing differs from Summit (verified on 5
+    real decrees), so it needs its own anchors but feeds the SAME OHMortgageDebt
+    components → shared compute_debt:
+
+      PRINCIPAL: "Judgment is rendered in favor of Plaintiff ... in the sum of $X" /
+                 "... unpaid principal amount of $X" / "amount due on the Note is the
+                 sum of $X" — all end at "plus interest".
+      RATE/DATE: "X% per annum from DATE" / "X% per year from DATE" / bare
+                 "X% from DATE". Multi-period decrees state two rates → use the
+                 EARLIEST date (longest accrual = most conservative interest).
+      SPLIT-BALANCE (critical): the matched $X is the INTEREST-BEARING sum; a
+                 separate "non-interest-bearing principal balance of $Y" / "deferred
+                 principal amount of $Y" is non-interest-bearing. total_principal =
+                 X + Y; interest accrues on X ONLY (NOT the full principal).
+    """
+    r = OHMortgageDebt()
+    if is_oh_tax_decree(full_text):
+        r.is_tax_decree = True
+        r.verdict = "tax_decree"
+        r.notes.append("RC 5721 / delinquent-land tax decree — mortgage logic skipped")
+        return r
+
+    norm = _norm(full_text)
+    m = re.search(
+        r"(?:Judgment\s+is\s+rendered\s+in\s+favor\s+of|amount\s+due\s+on\s+the\s+Note\s+is)"
+        r"[^$]{0,220}?\$\s*([\d,]+\.\d{2})\s*,?\s*plus\s+interest",
+        norm, re.I,
+    )
+    if not m:
+        r.verdict = "unknown"
+        r.notes.append("Cuyahoga principal anchor not matched "
+                       "(no 'Judgment rendered ... $X plus interest')")
+        return r
+    interest_bearing = _money(m.group(1))
+
+    # Rate + from-date — accept per annum / per year / bare; earliest of multi-period.
+    window = norm[m.end():m.end() + 320]
+    rate_hits = []
+    for rm in re.finditer(
+            r"([\d.]+)\s*(?:%|percent)\s*(?:per\s+(?:annum|year)\s+)?from\s+"
+            r"([A-Z][a-z]+\.?\s*\d{1,2},?\s*\d{4})",
+            window, re.I):
+        d = _parse_decree_date(rm.group(2))
+        try:
+            rate = float(rm.group(1)) / 100.0
+        except ValueError:
+            rate = None
+        if d and rate:
+            rate_hits.append((d, rate))
+    if rate_hits:
+        rate_hits.sort(key=lambda x: x[0])
+        r.interest_from_date, r.interest_rate = rate_hits[0]
+        r.has_computable_interest = True
+        if len(rate_hits) > 1:
+            r.notes.append(f"multi-period rate — using earliest {r.interest_from_date} "
+                           f"@ {r.interest_rate*100:.3f}% (conservative)")
+
+    non_interest = 0.0
+    ms = re.search(
+        r"(?:non-interest-bearing\s+principal\s+balance|deferred\s+principal\s+amount)"
+        r"\s+of\s+\$\s*([\d,]+\.\d{2})", norm, re.I)
+    if ms:
+        non_interest = _money(ms.group(1))
+        r.notes.append(f"split-balance: interest accrues on ${interest_bearing:,.2f}; "
+                       f"non-interest-bearing ${non_interest:,.2f} (interest does NOT)")
+
+    r.interest_base = interest_bearing
+    r.principal = round(interest_bearing + non_interest, 2)
+
+    for jm in re.finditer(r"for\s+a\s+total\s+amount\s+of\s+\$\s*([\d,]+\.\d{2})", norm, re.I):
+        amt = _money(jm.group(1))
+        if abs(amt - r.principal) > 1.0 and abs(amt - interest_bearing) > 1.0:
+            r.junior_liens += amt
+    if r.junior_liens:
+        r.notes.append(f"junior lien(s) added: ${r.junior_liens:,.2f}")
+
+    if not r.has_computable_interest:
+        r.notes.append("no computable rate/date — debt may be understated (flag)")
     return r
 
 
