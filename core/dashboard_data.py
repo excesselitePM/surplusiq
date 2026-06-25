@@ -614,7 +614,7 @@ def export_dashboard_data():
             cc = COUNTY_BY_ID.get(cid)
             p_stub = {
                 "county_id":            cid,
-                "county_name":          (cc.county_name if cc else cid),
+                "county_name":          (cc.name if cc else cid),
                 "state":                (cc.state if cc else ""),
                 "case_number":          docket.get("case_number", ""),
                 "address":              raw.get("address", ""),
