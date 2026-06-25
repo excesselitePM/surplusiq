@@ -1,32 +1,33 @@
 {
-  "generated_at": "2026-06-25T12:10:46",
-  "total_leads": 18,
-  "total_leads_pre_filter": 25,
+  "generated_at": "2026-06-25T17:42:23",
+  "total_leads": 15,
+  "total_leads_pre_filter": 22,
   "killed_filtered_count": 7,
+  "killed_shown_count": 13,
   "below_floor_filtered_count": 0,
   "min_display_surplus": 5000.0,
-  "confirmed_surplus_total": 78439.58,
-  "estimated_surplus_total": 78268.35,
-  "apparent_surplus_total": 783114.9500000001,
-  "docket_verified_positive_count": 3,
-  "docket_verified_positive_total": 93634.06000000001,
-  "confirmed_surplus_count": 1,
-  "estimated_surplus_count": 3,
-  "apparent_surplus_count": 12,
+  "confirmed_surplus_total": 0,
+  "estimated_surplus_total": 71726.74,
+  "apparent_surplus_total": 705311.24,
+  "docket_verified_positive_count": 1,
+  "docket_verified_positive_total": 9288.74,
+  "confirmed_surplus_count": 0,
+  "estimated_surplus_count": 2,
+  "apparent_surplus_count": 11,
   "unverified_count": 2,
   "killed_count": 0,
   "red_count": 0,
-  "pipeline_ready_count": 1,
-  "pr_matched_count": 12,
-  "docket_matched_count": 20,
+  "pipeline_ready_count": 0,
+  "pr_matched_count": 11,
+  "docket_matched_count": 17,
   "by_state": {
     "FL": {
       "leads": 16,
       "surplus": 1190398.7199999997
     },
     "OH": {
-      "leads": 9,
-      "surplus": 1005613.4200000002
+      "leads": 6,
+      "surplus": 802779.3300000001
     }
   },
   "by_county": [
@@ -63,14 +64,6 @@
       "top_lead": 278364.03
     },
     {
-      "county_id": "cuyahoga-oh",
-      "county_name": "Cuyahoga",
-      "state": "OH",
-      "leads": 5,
-      "surplus": 267634.09,
-      "top_lead": 107581.09000000003
-    },
-    {
       "county_id": "duval-fl",
       "county_name": "Duval",
       "state": "FL",
@@ -85,6 +78,14 @@
       "leads": 3,
       "surplus": 116916.87000000002,
       "top_lead": 58722.15000000002
+    },
+    {
+      "county_id": "cuyahoga-oh",
+      "county_name": "Cuyahoga",
+      "state": "OH",
+      "leads": 2,
+      "surplus": 64800.0,
+      "top_lead": 63100.0
     },
     {
       "county_id": "montgomery-oh",
@@ -104,22 +105,12 @@
     }
   ],
   "by_score": {
-    "A+": 8,
-    "A": 6,
+    "A+": 7,
+    "A": 5,
     "B": 6,
     "C": 3
   },
-  "top_5_confirmed_leads": [
-    {
-      "county": "Cuyahoga",
-      "state": "OH",
-      "case_number": "CV23990702 (63448)",
-      "address": "35025 CANNON ROAD AKA 35023 CA",
-      "surplus": 78439.58,
-      "money_status": "confirmed_surplus",
-      "evidence_level": "docket_confirmed"
-    }
-  ],
+  "top_5_confirmed_leads": [],
   "top_5_estimated_leads": [
     {
       "county": "Duval",
@@ -136,15 +127,6 @@
       "case_number": "CV25110566 (63451)",
       "address": "1464 EAST 120TH STREET",
       "surplus": 9288.74,
-      "money_status": "estimated_surplus",
-      "evidence_level": "docket_reviewed"
-    },
-    {
-      "county": "Cuyahoga",
-      "state": "OH",
-      "case_number": "CV23982509 (63136)",
-      "address": "379 EAST 161ST STREET",
-      "surplus": 6541.61,
       "money_status": "estimated_surplus",
       "evidence_level": "docket_reviewed"
     }
@@ -178,15 +160,6 @@
       "evidence_level": "docket_reviewed"
     },
     {
-      "county": "Cuyahoga",
-      "state": "OH",
-      "case_number": "CV25115432 (63452)",
-      "address": "",
-      "surplus": 77803.71,
-      "money_status": "apparent_surplus",
-      "evidence_level": "docket_reviewed"
-    },
-    {
       "county": "Orange",
       "state": "FL",
       "case_number": "2024-CA-009320-O",
@@ -194,6 +167,15 @@
       "surplus": 58722.15000000002,
       "money_status": "apparent_surplus",
       "evidence_level": "auction_only"
+    },
+    {
+      "county": "Broward",
+      "state": "FL",
+      "case_number": "CACE-25-006937",
+      "address": "11189 NW 37 ST",
+      "surplus": 50440.600000000006,
+      "money_status": "apparent_surplus",
+      "evidence_level": "docket_reviewed"
     }
   ],
   "coverage": {

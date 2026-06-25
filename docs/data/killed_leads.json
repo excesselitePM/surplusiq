@@ -1,0 +1,221 @@
+[
+  {
+    "county_id": "miami-dade-fl",
+    "county_name": "Miami-Dade",
+    "state": "FL",
+    "case_number": "2022-021136-CA-01",
+    "address": "18480 SW 77 CT",
+    "sale_date": "2026-06-23",
+    "sold_to": "3rd Party Bidder",
+    "former_surplus": 249361.09999999998,
+    "kill_label": "Sale cancelled/vacated",
+    "kill_signals": [
+      "sale_issue",
+      "bankruptcy_resolved"
+    ],
+    "kill_detail": "sale vacated/cancelled (hard kill): 'Motion to Cancel Sale'",
+    "docket_url": "https://www2.miamidadeclerk.gov/ocs/",
+    "source_url": "https://www.miamidade.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/23/2026"
+  },
+  {
+    "county_id": "miami-dade-fl",
+    "county_name": "Miami-Dade",
+    "state": "FL",
+    "case_number": "2025-024394-CA-01",
+    "address": "20630 SW 125 AVE",
+    "sale_date": "2026-06-16",
+    "sold_to": "3rd Party Bidder",
+    "former_surplus": 116069.45,
+    "kill_label": "Sale cancelled/vacated",
+    "kill_signals": [
+      "sale_issue"
+    ],
+    "kill_detail": "sale vacated/cancelled (hard kill): 'Order Cancelling Foreclosure Sale'",
+    "docket_url": "https://www2.miamidadeclerk.gov/ocs/",
+    "source_url": "https://www.miamidade.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/16/2026"
+  },
+  {
+    "county_id": "cuyahoga-oh",
+    "county_name": "Cuyahoga",
+    "state": "OH",
+    "case_number": "CV23990702 (63448)",
+    "address": "35025 CANNON ROAD AKA 35023 CA",
+    "sale_date": "2026-06-15",
+    "sold_to": "Plaintiff",
+    "former_surplus": 107581.09000000003,
+    "kill_label": "Sold to plaintiff",
+    "kill_signals": [
+      "sold_to_plaintiff"
+    ],
+    "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $107,581.",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=lZ_ZuL3Ca-C_Aq7SNadpHYHxb-Nq1pfhW152f_6qJNI1",
+    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/15/2026"
+  },
+  {
+    "county_id": "cuyahoga-oh",
+    "county_name": "Cuyahoga",
+    "state": "OH",
+    "case_number": "CV25115432 (63452)",
+    "address": "",
+    "sale_date": "2026-06-15",
+    "sold_to": "Plaintiff",
+    "former_surplus": 95253.0,
+    "kill_label": "Sold to plaintiff",
+    "kill_signals": [
+      "sold_to_plaintiff"
+    ],
+    "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $95,253.",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=OXr8vOQk6-PpHkfwlZF3W9AEhGqguXuY3ENle2O-X0E1",
+    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/15/2026"
+  },
+  {
+    "county_id": "summit-oh",
+    "county_name": "Summit",
+    "state": "OH",
+    "case_number": "CV2019062134 (10615)",
+    "address": "2540 ROYAL COUNTY DOWN DRIVE",
+    "sale_date": "2026-06-12",
+    "sold_to": "Plaintiff",
+    "former_surplus": 69300.0,
+    "kill_label": "Sold to plaintiff",
+    "kill_signals": [
+      "sold_to_plaintiff"
+    ],
+    "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $69,300.",
+    "docket_url": "https://clerk.summitoh.net/PublicSite/CaseDetail.aspx",
+    "source_url": "https://summit.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/12/2026"
+  },
+  {
+    "county_id": "cuyahoga-oh",
+    "county_name": "Cuyahoga",
+    "state": "OH",
+    "case_number": "CV25111552-C (63447)",
+    "address": "10114 PARKGATE AVENUE",
+    "sale_date": "2026-06-15",
+    "sold_to": "Plaintiff",
+    "former_surplus": 66519.6,
+    "kill_label": "Sold to plaintiff",
+    "kill_signals": [
+      "sold_to_plaintiff"
+    ],
+    "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $66,520.",
+    "docket_url": "",
+    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/15/2026"
+  },
+  {
+    "county_id": "cuyahoga-oh",
+    "county_name": "Cuyahoga",
+    "state": "OH",
+    "case_number": "CV24106082 (63695)",
+    "address": "1731 BEVERLY HILLS DRIVE",
+    "sale_date": "2026-06-22",
+    "sold_to": "3rd Party Bidder",
+    "former_surplus": 63100.0,
+    "kill_label": "Debt exceeds sale",
+    "kill_signals": [
+      "sale_vacated"
+    ],
+    "kill_detail": "conservative debt $277,661 \u2265 sale $163,100 \u2014 NO surplus (principal $241,335 + interest $12,193 + junior $0 + buffer $24,133)",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=DO3dBU2-oO1ywIzI3MQ1rwqohYfhSFhRymjAtBqr5GE1",
+    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/22/2026"
+  },
+  {
+    "county_id": "montgomery-oh",
+    "county_name": "Montgomery",
+    "state": "OH",
+    "case_number": "2025 CV 05617 (0)",
+    "address": "4473 CATALINA AVENUE",
+    "sale_date": "2026-06-12",
+    "sold_to": "3rd Party Bidder",
+    "former_surplus": 56100.0,
+    "kill_label": "Debt exceeds sale",
+    "kill_signals": [],
+    "kill_detail": "true surplus only $-19,913 after debt verification",
+    "docket_url": "https://pro.mcohio.org/",
+    "source_url": "https://montgomery.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/12/2026"
+  },
+  {
+    "county_id": "summit-oh",
+    "county_name": "Summit",
+    "state": "OH",
+    "case_number": "CV2025115346 (10609)",
+    "address": "2396 LADD STREET",
+    "sale_date": "2026-06-12",
+    "sold_to": "3rd Party Bidder",
+    "former_surplus": 50100.0,
+    "kill_label": "Debt exceeds sale",
+    "kill_signals": [],
+    "kill_detail": "conservative debt $108,494 \u2265 sale $100,100 \u2014 NO surplus (principal $95,487 + interest $3,458 + junior $0 + buffer $9,549)",
+    "docket_url": "https://clerk.summitoh.net/PublicSite/CaseDetail.aspx",
+    "source_url": "https://summit.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/12/2026"
+  },
+  {
+    "county_id": "broward-fl",
+    "county_name": "Broward",
+    "state": "FL",
+    "case_number": "CACE-25-002006",
+    "address": "8452 SW 29 ST",
+    "sale_date": "2026-06-23",
+    "sold_to": "3rd Party Bidder",
+    "former_surplus": 35136.61,
+    "kill_label": "Surplus claim filed",
+    "kill_signals": [
+      "surplus_firm_appearance"
+    ],
+    "kill_detail": "Docket checked. Notice of Appearance found from Home Defense Now, also known as Evo Recovery Consultation Corp., as exclusive assignee of Limone Jos ph. Lead already being pursued.",
+    "docket_url": "https://www.browardclerk.org/Web2/CaseSearchECA/Index/?AccessLevel=ANONYMOUS",
+    "source_url": "https://broward.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/23/2026"
+  },
+  {
+    "county_id": "miami-dade-fl",
+    "county_name": "Miami-Dade",
+    "state": "FL",
+    "case_number": "2022-019723-CA-01",
+    "address": "",
+    "sale_date": "2026-06-15",
+    "sold_to": "3rd Party Bidder",
+    "former_surplus": 35075.93,
+    "kill_label": "Sale cancelled/vacated",
+    "kill_signals": [
+      "sale_issue",
+      "bankruptcy_resolved"
+    ],
+    "kill_detail": "sale vacated/cancelled (hard kill): 'Order Granting Motion to Cancel Sale Date'",
+    "docket_url": "https://www2.miamidadeclerk.gov/ocs/",
+    "source_url": "https://www.miamidade.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/15/2026"
+  },
+  {
+    "county_id": "montgomery-oh",
+    "county_name": "Montgomery",
+    "state": "OH",
+    "case_number": "2025 CV 06778 (0)",
+    "address": "1307 KUMLER AVE",
+    "sale_date": "2026-06-12",
+    "sold_to": "Plaintiff",
+    "former_surplus": 18300.0,
+    "kill_label": "Sold to plaintiff",
+    "kill_signals": [
+      "sold_to_plaintiff"
+    ],
+    "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $18,300.",
+    "docket_url": "https://pro.mcohio.org/",
+    "source_url": "https://montgomery.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/12/2026"
+  },
+  {
+    "county_id": "orange-fl",
+    "county_name": "Orange",
+    "state": "FL",
+    "case_number": "2025-CA-005305-O (Count II)",
+    "address": "",
+    "sale_date": "2026-06-23",
+    "sold_to": "Plaintiff",
+    "former_surplus": 14954.95,
+    "kill_label": "Sold to plaintiff",
+    "kill_signals": [
+      "sold_to_plaintiff"
+    ],
+    "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $14,955.",
+    "docket_url": "",
+    "source_url": "https://myorangeclerk.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/23/2026"
+  }
+]
