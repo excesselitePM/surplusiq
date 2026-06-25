@@ -15,9 +15,11 @@ import argparse
 import asyncio
 import json
 import os
+import re
 import sys
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, date
+from typing import Optional
 
 # Project paths
 def _find_project_root() -> Path:
@@ -81,6 +83,64 @@ def _case_key_for_county(county_id: str):
     except Exception:
         pass
     return lambda raw: raw
+
+
+def _parse_sale_date(rec: dict) -> Optional[date]:
+    """Auction sale date from a parcel record (for OH-mortgage interest accrual)."""
+    for k in ("sale_date", "auction_date", "soldDate", "AUCTIONDATE", "sale_datetime"):
+        v = rec.get(k)
+        if not v:
+            continue
+        s = str(v).strip()
+        m = re.search(r"(\d{4})-(\d{2})-(\d{2})", s) or re.search(r"(\d{1,2})/(\d{1,2})/(\d{4})", s)
+        if not m:
+            continue
+        for fmt in ("%Y-%m-%d", "%m/%d/%Y"):
+            try:
+                return datetime.strptime(m.group(0), fmt).date()
+            except ValueError:
+                continue
+    return None
+
+
+def _apply_oh_mortgage_debt(result: dict, rep: dict, aggregate_sale: float) -> None:
+    """OH-MORTGAGE conservative debt: the scraper stored the decree COMPONENTS;
+    compute the sale-date math here (interest accrual needs the auction sale date,
+    which lives on the parcels). Sets prayer_amount = conservative debt and the
+    classification from the verdict: killed (debt ≥ sale) / yellow surplus / yellow
+    'surplus uncertain' (old decree or no sale date). No-op for non-OH-mortgage."""
+    comp = result.get("debt_components") or {}
+    if not comp or comp.get("is_tax_decree") or float(comp.get("principal") or 0) <= 0:
+        return
+    from core.dockets.oh_debt import compute_from_components
+
+    sale_date = _parse_sale_date(rep)
+    if sale_date is None:
+        # Can't compute interest without the sale date → conservative + flag.
+        d = compute_from_components(comp, date.today(), aggregate_sale)
+        d.verdict, d.flag = "flag_uncertain", "sale date unavailable — interest not applied, manual verify"
+    else:
+        d = compute_from_components(comp, sale_date, aggregate_sale)
+
+    result["prayer_amount"] = d.total_debt
+    result["debt_flag"] = d.flag
+    _bk = (f"principal ${d.principal:,.0f} + interest ${d.accrued_interest:,.0f} + "
+           f"junior ${d.junior_liens:,.0f} + buffer ${d.buffer:,.0f}")
+    if d.verdict == "killed":
+        result["debt_source"] = "oh_mortgage_computed"
+        result["classification"] = "killed"
+        result["classification_reason"] = (
+            f"conservative debt ${d.total_debt:,.0f} ≥ sale ${aggregate_sale:,.0f} — "
+            f"NO surplus ({_bk})")
+    elif d.verdict == "flag_uncertain":
+        result["debt_source"] = "oh_mortgage_uncertain"
+        result["classification"] = "yellow"
+        result["classification_reason"] = f"OH-mortgage surplus uncertain — {d.flag} ({_bk})"
+    else:  # surplus
+        result["debt_source"] = "oh_mortgage_computed"
+        result["classification"] = "yellow"
+        result["classification_reason"] = (
+            f"conservative surplus ${d.surplus:,.0f} (debt ${d.total_debt:,.0f} = {_bk})")
 
 
 async def run_one(county_id: str, case_number: str, headless: bool, final_sale_price: float = 0.0) -> dict:
@@ -164,6 +224,9 @@ async def run_county(county_id: str, headless: bool, only_case: str | None = Non
         except Exception as e:
             print(f"      ⚠ scrape failed: {e}")
             continue
+
+        # OH-mortgage: compute conservative debt from stored components + sale date.
+        _apply_oh_mortgage_debt(result, rep, aggregate_sale)
 
         prayer = result.get("prayer_amount", 0.0)
         # Aggregate true_surplus: pooled sale across the case minus the

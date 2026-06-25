@@ -88,6 +88,14 @@ class DocketResult:
     prayer_amount:    float = 0.0  # The TRUE debt amount
     debt_source:      str = ""     # "prayer_field", "pdf_extract", "propertyradar_estimate"
 
+    # OH-mortgage conservative debt (core/dockets/oh_debt). The scraper parses the
+    # decree and stores the COMPONENTS here (principal/rate/from-date/base/junior);
+    # enrich.run_county does the sale-date math (needs the auction sale date) and
+    # sets prayer_amount + classification + debt_flag from the verdict. Inert
+    # default → counties that don't use it are unaffected.
+    debt_components:  dict = field(default_factory=dict)
+    debt_flag:        str = ""     # "" or "surplus uncertain — manual review" reason
+
     # Parties
     plaintiff:           str = ""
     defendants:          list = field(default_factory=list)

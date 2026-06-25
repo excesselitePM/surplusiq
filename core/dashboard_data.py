@@ -141,7 +141,8 @@ def _surplus_for_payload(payload_lead: dict) -> tuple:
         and ts > 0
         and (debt_src.startswith("docket_prayer")
              or debt_src.startswith("pdf_extract:")
-             or debt_src == "prayer_field")
+             or debt_src == "prayer_field"
+             or debt_src == "oh_mortgage_computed")   # Summit conservative debt
     )
     if has_real_docket_debt:
         return (float(ts), money_status if money_status in
@@ -157,6 +158,13 @@ def _surplus_for_payload(payload_lead: dict) -> tuple:
     # debt_source='oh_tax_minimum_bid'). Display it as apparent surplus.
     if debt_src == "oh_tax_minimum_bid" and ts is not None and ts > 0:
         return (float(ts), "apparent_surplus")
+
+    # OH MORTGAGE with computed debt but UNCERTAIN surplus (old decree with no
+    # parseable interest rate, or no sale date) — a real surplus may exist but we
+    # can't state it confidently, so show it like the OH-no-debt unverified
+    # treatment ("— surplus uncertain, manual review"), NOT a confident green.
+    if debt_src == "oh_mortgage_uncertain":
+        return (None, "oh_uncertain")
 
     # OH MORTGAGE without usable docket debt → UNVERIFIED. The opening bid is the
     # statutory 2/3-appraised value, NOT real debt, so it must NEVER stand in as a
@@ -466,8 +474,8 @@ def export_dashboard_data():
     pre_floor = len(leads_payload)
 
     def _below_floor(p):
-        if p.get("real_surplus_source") == "oh_unverified":
-            return False
+        if p.get("real_surplus_source") in ("oh_unverified", "oh_uncertain"):
+            return False  # no known surplus figure → can't floor-filter; keep visible
         return (p.get("best_real_surplus") or 0) < MIN_DISPLAY_SURPLUS
 
     below_floor = [p for p in leads_payload if _below_floor(p)]
@@ -498,7 +506,7 @@ def export_dashboard_data():
     # VISIBLE in the list but must NOT inflate the real-surplus KPI count/total —
     # they're tracked in their own 'unverified' bucket for the headline.
     def _unverified(p):
-        return p.get("real_surplus_source") == "oh_unverified"
+        return p.get("real_surplus_source") in ("oh_unverified", "oh_uncertain")
 
     confirmed = [p for p in leads_payload if _bucket(p) == "confirmed_surplus" and not _unverified(p)]
     estimated = [p for p in leads_payload if _bucket(p) == "estimated_surplus" and not _unverified(p)]

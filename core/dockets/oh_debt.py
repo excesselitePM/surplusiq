@@ -212,3 +212,37 @@ def oh_mortgage_debt(full_text: str, sale_date: date, sale_price: float,
                      buffer_pct: float = DEFAULT_BUFFER_PCT) -> OHMortgageDebt:
     """Convenience: parse + compute in one call."""
     return compute_debt(parse_oh_mortgage_debt(full_text), sale_date, sale_price, buffer_pct)
+
+
+# ── component storage (Option a): scraper parses & stores; enrich computes ──
+def components_dict(d: OHMortgageDebt) -> dict:
+    """Serialize the parse-time inputs the sale-date computation needs. Stored on
+    the DocketResult (and the saved jsonl) so the debt breakdown is auditable."""
+    return {
+        "is_tax_decree": d.is_tax_decree,
+        "principal": d.principal,
+        "interest_rate": d.interest_rate,
+        "interest_from_date": d.interest_from_date.isoformat() if d.interest_from_date else None,
+        "interest_base": d.interest_base,
+        "junior_liens": d.junior_liens,
+        "has_computable_interest": d.has_computable_interest,
+        "notes": list(d.notes),
+    }
+
+
+def compute_from_components(comp: dict, sale_date: date, sale_price: float,
+                           buffer_pct: float = DEFAULT_BUFFER_PCT) -> OHMortgageDebt:
+    """Rebuild an OHMortgageDebt from a stored components dict and run the
+    sale-date computation. Used by enrich.run_county where the sale date lives."""
+    fd = comp.get("interest_from_date")
+    d = OHMortgageDebt(
+        is_tax_decree=bool(comp.get("is_tax_decree")),
+        principal=float(comp.get("principal") or 0.0),
+        interest_rate=comp.get("interest_rate"),
+        interest_from_date=(date.fromisoformat(fd) if fd else None),
+        interest_base=float(comp.get("interest_base") or 0.0),
+        junior_liens=float(comp.get("junior_liens") or 0.0),
+        has_computable_interest=bool(comp.get("has_computable_interest")),
+        notes=list(comp.get("notes") or []),
+    )
+    return compute_debt(d, sale_date, sale_price, buffer_pct)

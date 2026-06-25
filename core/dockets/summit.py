@@ -42,7 +42,17 @@ from pathlib import Path
 from playwright.async_api import async_playwright, Page, TimeoutError as PWTimeout
 
 from .base import DocketScraper, DocketResult, DocketEvent
-from .montgomery import extract_debt_from_pdf_bytes
+from .oh_debt import parse_oh_mortgage_debt, components_dict
+
+
+def _pdf_to_text(pdf_bytes: bytes) -> str:
+    """Full pdfplumber text (first 15 pages) for oh_debt parsing + audit."""
+    import pdfplumber
+    text = ""
+    with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
+        for pg in pdf.pages[:15]:
+            text += (pg.extract_text() or "") + "\n"
+    return text
 
 
 CLERK_HOST = "https://clerk.summitoh.net"
@@ -644,79 +654,94 @@ class SummitDocketScraper(DocketScraper):
         for prio, idx, preview in supporting_seen[:4]:
             print(f"         · [SUPPORTING — not fetched] prio={prio} row={idx} :: {preview}")
 
-        if not judgment_candidates:
+        # FALLBACK candidates: "Motion for Default Judgment" rows. The dollar
+        # figures sometimes live ONLY in the default-judgment motion when there is
+        # no separate Judgment Entry. These are normally treated as supporting-only
+        # and skipped — fetch them ONLY when the Judgment Entry candidates yield no
+        # usable debt.
+        default_motions = []
+        for idx, text, _fd, href in rows:
+            tl = text.lower()
+            if href and ("default judgment" in tl or "motion for default" in tl) \
+                    and not any(ex in tl for ex in exclusion_markers):
+                default_motions.append((idx, text[:160].replace("\n", " "), href))
+
+        if not judgment_candidates and not default_motions:
             print(f"      → no qualified judgment document; prayer stays $0 (lead → unknown)")
             return
 
         req = page.context.request
-        for prio, idx, preview, href in judgment_candidates[:6]:
-            full_url = href if href.startswith("http") else f"{CLERK_HOST}/PublicSite/{href}"
-            try:
-                resp = await req.get(full_url, timeout=20000)
-                if not resp.ok:
-                    print(f"      ⚠ PDF fetch row={idx}: HTTP {resp.status}")
-                    continue
-                pdf_bytes = await resp.body()
-                if not pdf_bytes or len(pdf_bytes) < 1000:
-                    print(f"      ⚠ PDF row={idx}: body too small ({len(pdf_bytes)} bytes)")
-                    continue
-                if pdf_bytes[:4] != b"%PDF":
-                    # Summit's DisplayImage.asp may return an HTML viewer
-                    # wrapping an embed/iframe pointing at the real PDF.
-                    head = pdf_bytes[:200].decode("utf-8", errors="ignore")
-                    print(f"      ⚠ PDF row={idx}: not a raw PDF (head: {head[:120]!r})")
-                    continue
-                amount, snippet = extract_debt_from_pdf_bytes(pdf_bytes)
-                # Prayer-plausibility floor — mirror Cuyahoga's MIN_PLAUSIBLE_PRAYER
-                # ($10K, core/dockets/cuyahoga.py). A sub-$10K "judgment" figure is
-                # court-cost / filing-fee / ancillary noise, NOT a real foreclosure
-                # judgment principal (those run $50K–$300K+). Reject it and keep
-                # scanning the remaining candidates; if none qualify, prayer stays
-                # $0 and the lead falls through to the OH-no-debt path (the 1.5×
-                # overbid gate). Anti-fabrication: prefer "unknown" over fee-noise.
-                MIN_PLAUSIBLE_PRAYER = 10000.0
-                if amount and amount < MIN_PLAUSIBLE_PRAYER:
-                    print(f"      ⚠ rejected pdf_extract=${amount:,.2f} row={idx} as implausible "
-                          f"for a foreclosure judgment (floor ${MIN_PLAUSIBLE_PRAYER:,.0f}); "
-                          f"treating as not-found")
-                    result.classification_reason = (
-                        f"pdf_extract=${amount:,.2f} rejected as below ${MIN_PLAUSIBLE_PRAYER:,.0f} "
-                        f"foreclosure-judgment plausibility floor"
-                    )
-                    continue
-                if amount:
-                    result.prayer_amount = amount
-                    result.debt_source = f"pdf_extract:docket_row_{idx}:judgment"
-                    print(f"      ✅ extracted debt from PDF row={idx} [JUDGMENT]: ${amount:,.2f}")
-                    print(f"      📄 PDF context (~400 chars around match):")
-                    print(f"         {snippet}")
-                    # Persist the raw PDF and full pdfplumber text so the
-                    # auditor can verify the figure in context (e.g. that a
-                    # multi-parcel decree is one blanket judgment vs. a
-                    # collapse of per-parcel debts).
-                    try:
-                        safe_case = re.sub(r"[^A-Za-z0-9_-]+", "_", result.case_number)
-                        ts = datetime.now().strftime("%H%M%S")
-                        diag = Path("data/diagnostics/summit-oh")
-                        (diag / f"{ts}-{safe_case}-row{idx}.pdf").write_bytes(pdf_bytes)
-                        # Re-extract full text for the audit file
-                        import pdfplumber
-                        full_text = ""
-                        with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
-                            for page in pdf.pages[:15]:
-                                full_text += (page.extract_text() or "") + "\n"
-                        (diag / f"{ts}-{safe_case}-row{idx}.txt").write_text(full_text, encoding="utf-8")
-                        print(f"      📝 saved raw PDF + extracted text ({len(pdf_bytes)} bytes, {len(full_text)} chars text)")
-                    except Exception as e:
-                        print(f"      ⚠ PDF save failed: {e}")
-                    return
-                else:
-                    print(f"      → PDF row={idx} parsed but no debt keyword match")
-            except Exception as e:
-                print(f"      ⚠ PDF fetch row={idx} failed: {type(e).__name__}: {e}")
+        # Judgment Entries first, then default-judgment motions as a fallback.
+        ordered = ([("JUDGMENT", idx, href) for (_p, idx, _pv, href) in judgment_candidates[:6]]
+                   + [("DEFAULT-MOTION", idx, href) for (idx, _pv, href) in default_motions[:4]])
+        for label, idx, href in ordered:
+            if await self._fetch_parse_store(req, result, idx, href, label):
+                return
 
-        print(f"      → all qualified judgment PDFs failed; prayer stays $0 (lead → unknown)")
+        print(f"      → no usable OH-mortgage decree extracted; prayer stays $0 (lead → unknown)")
         return
+
+    async def _fetch_parse_store(self, req, result, idx, href, label) -> bool:
+        """Fetch one PDF, parse it with the OH-mortgage debt extractor, and on a
+        valid mortgage decree (principal ≥ $10K, not a tax decree) STORE the debt
+        COMPONENTS on the result. The sale-date math (interest accrual) runs later
+        in enrich.run_county. Returns True once a usable decree is stored."""
+        full_url = href if href.startswith("http") else f"{CLERK_HOST}/PublicSite/{href}"
+        try:
+            resp = await req.get(full_url, timeout=20000)
+            if not resp.ok:
+                print(f"      ⚠ PDF fetch row={idx} [{label}]: HTTP {resp.status}")
+                return False
+            pdf_bytes = await resp.body()
+            if not pdf_bytes or len(pdf_bytes) < 1000:
+                print(f"      ⚠ PDF row={idx} [{label}]: body too small ({len(pdf_bytes)} bytes)")
+                return False
+            if pdf_bytes[:4] != b"%PDF":
+                head = pdf_bytes[:200].decode("utf-8", errors="ignore")
+                print(f"      ⚠ PDF row={idx} [{label}]: not a raw PDF (head: {head[:120]!r})")
+                return False
+
+            full_text = _pdf_to_text(pdf_bytes)
+            parsed = parse_oh_mortgage_debt(full_text)
+
+            if parsed.is_tax_decree:
+                print(f"      ⏭ row={idx} [{label}] is a TAX decree (RC 5721) — not OH mortgage; skipping")
+                return False
+            # Plausibility floor (mirror Cuyahoga $10K): a sub-$10K principal is
+            # fee-noise, not a real foreclosure judgment.
+            if parsed.principal < 10000.0:
+                print(f"      ⚠ row={idx} [{label}] principal ${parsed.principal:,.2f} < $10K floor — "
+                      f"fee-noise / not a judgment; skipping")
+                result.classification_reason = (
+                    f"OH-mortgage principal ${parsed.principal:,.2f} below $10K plausibility floor")
+                return False
+
+            # Store the components — enrich.run_county computes the conservative
+            # debt with the auction sale date and sets prayer_amount/classification.
+            result.debt_components = components_dict(parsed)
+            result.prayer_amount = 0.0            # computed downstream (needs sale date)
+            result.debt_source = "oh_mortgage_decree"
+            print(f"      ✅ OH-mortgage decree row={idx} [{label}]: principal "
+                  f"${parsed.principal:,.2f}  rate="
+                  f"{(str(round(parsed.interest_rate*100,3))+'%') if parsed.interest_rate else 'none'}"
+                  f"  base ${parsed.interest_base:,.2f}  junior ${parsed.junior_liens:,.2f}")
+            for n in parsed.notes:
+                print(f"         · {n}")
+
+            try:
+                safe_case = re.sub(r"[^A-Za-z0-9_-]+", "_", result.case_number)
+                ts = datetime.now().strftime("%H%M%S")
+                diag = Path("data/diagnostics/summit-oh")
+                diag.mkdir(parents=True, exist_ok=True)
+                (diag / f"{ts}-{safe_case}-row{idx}.pdf").write_bytes(pdf_bytes)
+                (diag / f"{ts}-{safe_case}-row{idx}.txt").write_text(full_text, encoding="utf-8")
+                print(f"      📝 saved raw PDF + text ({len(pdf_bytes)} bytes, {len(full_text)} chars)")
+            except Exception as e:
+                print(f"      ⚠ PDF save failed: {e}")
+            return True
+        except Exception as e:
+            print(f"      ⚠ fetch/parse row={idx} [{label}] failed: {type(e).__name__}: {e}")
+            return False
 
     async def _scrape_parties(self, page: Page, result: DocketResult) -> None:
         """Read plaintiff(s) and defendant(s) from the gv* GridViews.

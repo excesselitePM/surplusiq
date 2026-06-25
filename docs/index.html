@@ -707,10 +707,18 @@
                      || ds.startsWith('pdf_extract:')
                      || ds === 'prayer_field'          // Cuyahoga structured prayer
                      || ds === 'fl_opening_bid'        // FL opening = real judgment
-                     || ds === 'oh_tax_minimum_bid';   // OH tax (RC 5721) = real debt
-    // Backend is authoritative: OH-mortgage leads with no usable docket debt are
-    // tagged real_surplus_source='oh_unverified' (best_real_surplus=null). Never
-    // show the 2/3-appraised opening-bid number for those — render unverified.
+                     || ds === 'oh_tax_minimum_bid'    // OH tax (RC 5721) = real debt
+                     || ds === 'oh_mortgage_computed'; // Summit conservative debt
+    // Backend is authoritative. OH-mortgage with COMPUTED debt but uncertain
+    // surplus (old decree without a parseable interest rate, or no sale date):
+    // a real surplus may exist but we can't state it confidently → show
+    // "surplus uncertain — manual review", NOT a confident green.
+    if (l.real_surplus_source === 'oh_uncertain') {
+      return '<span class="surplus-pending" title="Surplus uncertain — conservative debt computed, but the interest rate was not parseable (old decree) or the sale date is missing, so the surplus can\'t be stated confidently. A real surplus may exist — manual review via the Clerk Docket link.">— uncertain</span>';
+    }
+    // OH-mortgage leads with no usable docket debt are tagged
+    // real_surplus_source='oh_unverified' (best_real_surplus=null). Never show the
+    // 2/3-appraised opening-bid number for those — render unverified.
     if (l.real_surplus_source === 'oh_unverified' || (state === 'OH' && !hasRealDebt)) {
       return '<span class="surplus-pending" title="Docket debt not available — unverified. OH opening bid is the statutory 2/3-appraised value, NOT real debt. Use the Clerk Docket link to verify the actual judgment amount.">—</span>';
     }
