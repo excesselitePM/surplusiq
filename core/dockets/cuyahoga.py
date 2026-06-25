@@ -423,9 +423,14 @@ class CuyahogaDocketScraper(DocketScraper):
             print(f"      ⚠ decree row scan failed: {e}")
             return
 
-        want = re.compile(r"judgment entry|decree of foreclosure|adopting (the )?magistrate|"
-                          r"magistrate.?s decision|final judgment|order .*foreclosure", re.I)
-        skip = re.compile(r"satisf|vacat|release|dismiss|withdraw|denied|continu", re.I)
+        want = re.compile(r"decree of foreclosure|judgment entry adopting|"
+                          r"adopting (the )?magistrate.?s decision|magistrate.?s decision|"
+                          r"final judgment entry", re.I)
+        # Skip non-decree procedural rows (hearings/notices/orders of sale) AND
+        # released/vacated entries — these are not the judgment decree.
+        skip = re.compile(r"satisf|vacat|release|dismiss|withdraw|denied|continu|"
+                          r"hearing|called for|scheduled|notice|praecipe|writ|order of sale",
+                          re.I)
         cands = [r for r in rows if want.search(r["t"]) and not skip.search(r["t"])]
         print(f"      → decree candidates: {len(cands)}")
 
@@ -449,10 +454,16 @@ class CuyahogaDocketScraper(DocketScraper):
                     print(f"      ⏭ [{r['t'][:40]}] is a tax decree — skipping")
                     continue
                 if parsed.principal < 10000.0:
-                    if parsed.principal == 0.0:
-                        # Anchor miss on a real decree → surface loudly + save text.
-                        print(f"      ⚠ ANCHOR MISS (principal $0) on [{r['t'][:45]}] — "
-                              f"saving UNPARSED for review")
+                    # Only a REAL mortgage decree whose principal anchor we missed is
+                    # worth surfacing. Procedural/tax docs (no "plus interest"/"principal
+                    # balance"/"in rem judgment" language) parse to $0 too — don't cry
+                    # wolf on those, or a true miss drowns in the noise.
+                    looks_mortgage = re.search(
+                        r"plus\s+interest|principal\s+(?:balance|amount)|promissory\s+note|"
+                        r"in\s+rem\s+judgment", text, re.I)
+                    if parsed.principal == 0.0 and looks_mortgage:
+                        print(f"      ⚠ ANCHOR MISS (principal $0) on a MORTGAGE-like decree "
+                              f"[{r['t'][:45]}] — saving UNPARSED for review")
                         try:
                             diag.mkdir(parents=True, exist_ok=True)
                             sc = re.sub(r"[^A-Za-z0-9_-]+", "_", result.case_number)
