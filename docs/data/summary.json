@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-06-25T19:09:40",
+  "generated_at": "2026-06-25T19:18:46",
   "total_leads": 15,
   "total_leads_pre_filter": 22,
   "killed_filtered_count": 7,
-  "killed_shown_count": 13,
+  "killed_shown_count": 20,
   "below_floor_filtered_count": 0,
   "min_display_surplus": 5000.0,
   "confirmed_surplus_total": 0,
