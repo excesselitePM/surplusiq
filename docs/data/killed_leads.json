@@ -18,6 +18,23 @@
     "source_url": "https://www.miamidade.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/23/2026"
   },
   {
+    "county_id": "montgomery-oh",
+    "county_name": "Montgomery",
+    "state": "OH",
+    "case_number": "2024 CV 05169-2 (0)",
+    "address": "418 SALEM AVENUE",
+    "sale_date": "2026-06-26",
+    "sold_to": "Plaintiff",
+    "former_surplus": 125100.0,
+    "kill_label": "Sold to plaintiff",
+    "kill_signals": [
+      "sold_to_plaintiff"
+    ],
+    "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $125,100.",
+    "docket_url": "https://pro.mcohio.org/",
+    "source_url": "https://montgomery.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/26/2026"
+  },
+  {
     "county_id": "miami-dade-fl",
     "county_name": "Miami-Dade",
     "state": "FL",
@@ -46,7 +63,7 @@
     "kill_label": "Debt exceeds sale",
     "kill_signals": [],
     "kill_detail": "conservative debt $435,724 \u2265 sale $382,600 \u2014 NO surplus (principal $334,080 + interest $68,236 + junior $0 + buffer $33,408)",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=6kglyBoEzxBB3nZpEytbBqyRdV9Ad823Kxv8mHVFRck1",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=6kglyBoEzxBB3nZpEytbBkZgOZasunnq14Gf2T5EdTY1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/22/2026"
   },
   {
@@ -63,7 +80,7 @@
       "sold_to_plaintiff"
     ],
     "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $107,581.",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=lZ_ZuL3Ca-C_Aq7SNadpHV-al_0Nf0V_LVpJUya2vao1",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=lZ_ZuL3Ca-C_Aq7SNadpHdVidwpHu9czwg04bKSmmlc1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/15/2026"
   },
   {
@@ -80,7 +97,7 @@
       "sold_to_plaintiff"
     ],
     "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $95,253.",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=OXr8vOQk6-PpHkfwlZF3W4kOsv7cmnNloixNTnNMBIE1",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=OXr8vOQk6-PpHkfwlZF3W-g7GNgzGF4FvKj7pV3Jfqo1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/15/2026"
   },
   {
@@ -114,7 +131,7 @@
       "sale_vacated"
     ],
     "kill_detail": "conservative debt $277,661 \u2265 sale $163,100 \u2014 NO surplus (principal $241,335 + interest $12,193 + junior $0 + buffer $24,133)",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=DO3dBU2-oO1ywIzI3MQ1rx6Ilaim43JJDGHpgxjpQwA1",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=DO3dBU2-oO1ywIzI3MQ1r4Py86UXVMKBx-yl8aXBxHQ1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/22/2026"
   },
   {
@@ -184,7 +201,7 @@
       "motion_to_vacate"
     ],
     "kill_detail": "conservative debt $133,694 \u2265 sale $132,300 \u2014 NO surplus (principal $116,794 + interest $5,221 + junior $0 + buffer $11,679)",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=Cvacw4PHlNfh9_vsuzXPt03dibwCFpfAOQCXnShaO_41",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=Cvacw4PHlNfh9_vsuzXPt-eX7pkBw3WTpVipuchEaUQ1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/15/2026"
   },
   {
@@ -201,7 +218,7 @@
       "bankruptcy"
     ],
     "kill_detail": "conservative debt $178,769 \u2265 sale $103,100 \u2014 NO surplus (principal $116,500 + interest $50,619 + junior $0 + buffer $11,650)",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=fSbivy6ZAZ6f41t6Ip1agQEpbwDm4NqMqkcmsOG72e01",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=fSbivy6ZAZ6f41t6Ip1agflyVAt8rqQ8CiMyV3zd0dk1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/22/2026"
   },
   {
@@ -233,7 +250,7 @@
     "kill_label": "Debt exceeds sale",
     "kill_signals": [],
     "kill_detail": "conservative debt $160,166 \u2265 sale $80,100 \u2014 NO surplus (principal $145,606 + interest $0 + junior $0 + buffer $14,561)",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=kHd-FnxUY6wfiO4Ax86LvgDcrzWnBp_cuKkPzK_NNQ81",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=kHd-FnxUY6wfiO4Ax86Lvpmd68NTphARHsINmr0SfAY1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/22/2026"
   },
   {
@@ -248,7 +265,7 @@
     "kill_label": "Debt exceeds sale",
     "kill_signals": [],
     "kill_detail": "conservative debt $121,340 \u2265 sale $103,100 \u2014 NO surplus (principal $105,920 + interest $4,828 + junior $0 + buffer $10,592)",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=A2CMjHGd57-WUEUlVHMj1gtfynHilNbEtvUnSCkRc2s1",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=A2CMjHGd57-WUEUlVHMj1i6ECjoOSBFbjPDabAYGUtc1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/22/2026"
   },
   {
@@ -263,7 +280,7 @@
     "kill_label": "Debt exceeds sale",
     "kill_signals": [],
     "kill_detail": "conservative debt $155,602 \u2265 sale $109,200 \u2014 NO surplus (principal $129,871 + interest $12,744 + junior $0 + buffer $12,987)",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=gmuRX3twObvc0lE9TUt4Un2GGZIe2SpoafG7qeGHeSA1",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=gmuRX3twObvc0lE9TUt4UoP-NLKOOJfzw8dgQWFKPDg1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/15/2026"
   }
 ]
