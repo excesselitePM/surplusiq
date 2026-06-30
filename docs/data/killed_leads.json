@@ -38,52 +38,65 @@
     "county_id": "cuyahoga-oh",
     "county_name": "Cuyahoga",
     "state": "OH",
-    "case_number": "CV23990702 (63448)",
-    "address": "35025 CANNON ROAD AKA 35023 CA",
-    "sale_date": "2026-06-15",
-    "sold_to": "Plaintiff",
-    "former_surplus": 107581.09000000003,
-    "kill_label": "Sold to plaintiff",
-    "kill_signals": [
-      "sold_to_plaintiff"
-    ],
-    "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $107,581.",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=lZ_ZuL3Ca-C_Aq7SNadpHa3bjXE2KGGaLT0kveXFgec1",
-    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/15/2026"
+    "case_number": "CV19923457 (63694)",
+    "address": "Property Address:\t1483 85 COHASSETT AVENUE",
+    "sale_date": "2026-06-22",
+    "sold_to": "3rd Party Bidder",
+    "former_surplus": 115933.0,
+    "kill_label": "Debt exceeds sale",
+    "kill_signals": [],
+    "kill_detail": "conservative debt $435,724 \u2265 sale $382,600 \u2014 NO surplus (principal $334,080 + interest $68,236 + junior $0 + buffer $33,408)",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=6kglyBoEzxBB3nZpEytbBs28q2s2r2KBMim_s-4bp8Q1",
+    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/22/2026"
   },
   {
     "county_id": "cuyahoga-oh",
     "county_name": "Cuyahoga",
     "state": "OH",
-    "case_number": "CV25115432 (63452)",
+    "case_number": "CV24106082 (63695)",
+    "address": "1731 BEVERLY HILLS DRIVE",
+    "sale_date": "2026-06-22",
+    "sold_to": "3rd Party Bidder",
+    "former_surplus": 63100.0,
+    "kill_label": "Debt exceeds sale",
+    "kill_signals": [
+      "sale_vacated"
+    ],
+    "kill_detail": "conservative debt $277,661 \u2265 sale $163,100 \u2014 NO surplus (principal $241,335 + interest $12,193 + junior $0 + buffer $24,133)",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=DO3dBU2-oO1ywIzI3MQ1r9f_0VL0yH3nqWapjwtGI7s1",
+    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/22/2026"
+  },
+  {
+    "county_id": "broward-fl",
+    "county_name": "Broward",
+    "state": "FL",
+    "case_number": "CACE-25-006937",
+    "address": "11189 NW 37 ST",
+    "sale_date": "2026-06-17",
+    "sold_to": "3rd Party Bidder",
+    "former_surplus": 50440.600000000006,
+    "kill_label": "Surplus claim filed",
+    "kill_signals": [
+      "surplus_claim_filed"
+    ],
+    "kill_detail": "Docket checked. Surplus claim activity found: 'Joint Motion MOTION FOR ORDER DIRECTING CLERK TO RELEASE THE SURPLUS FUNDS & MOTION FOR CLARIFICATION OF PLAI TIFF POST-JUDGMENT FEES",
+    "docket_url": "https://www.browardclerk.org/Web2/CaseSearchECA/Index/?AccessLevel=ANONYMOUS",
+    "source_url": "https://broward.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/17/2026"
+  },
+  {
+    "county_id": "cuyahoga-oh",
+    "county_name": "Cuyahoga",
+    "state": "OH",
+    "case_number": "CV25119971 (63945)",
     "address": "",
-    "sale_date": "2026-06-15",
-    "sold_to": "Plaintiff",
-    "former_surplus": 95253.0,
-    "kill_label": "Sold to plaintiff",
-    "kill_signals": [
-      "sold_to_plaintiff"
-    ],
-    "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $95,253.",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=OXr8vOQk6-PpHkfwlZF3W2ptpSamzGMmcSxedPB717M1",
-    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/15/2026"
-  },
-  {
-    "county_id": "cuyahoga-oh",
-    "county_name": "Cuyahoga",
-    "state": "OH",
-    "case_number": "CV25111552-C (63447)",
-    "address": "10114 PARKGATE AVENUE",
-    "sale_date": "2026-06-15",
-    "sold_to": "Plaintiff",
-    "former_surplus": 66519.6,
-    "kill_label": "Sold to plaintiff",
-    "kill_signals": [
-      "sold_to_plaintiff"
-    ],
-    "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $66,520.",
-    "docket_url": "",
-    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/15/2026"
+    "sale_date": "2026-06-29",
+    "sold_to": "3rd Party Bidder",
+    "former_surplus": 46566.0,
+    "kill_label": "Debt exceeds sale",
+    "kill_signals": [],
+    "kill_detail": "conservative debt $131,849 \u2265 sale $119,900 \u2014 NO surplus (principal $119,862 + interest $0 + junior $0 + buffer $11,986)",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=UjlufV73Ibl18-ZqaidO2y49SkwJuJewkT5ZhMFZT-w1",
+    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/29/2026"
   },
   {
     "county_id": "broward-fl",
@@ -101,24 +114,6 @@
     "kill_detail": "Docket checked. Notice of Appearance found from Home Defense Now, also known as Evo Recovery Consultation Corp., as exclusive assignee of Limone Jos ph. Lead already being pursued.",
     "docket_url": "https://www.browardclerk.org/Web2/CaseSearchECA/Index/?AccessLevel=ANONYMOUS",
     "source_url": "https://broward.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/23/2026"
-  },
-  {
-    "county_id": "miami-dade-fl",
-    "county_name": "Miami-Dade",
-    "state": "FL",
-    "case_number": "2022-019723-CA-01",
-    "address": "",
-    "sale_date": "2026-06-15",
-    "sold_to": "3rd Party Bidder",
-    "former_surplus": 35075.93,
-    "kill_label": "Sale cancelled/vacated",
-    "kill_signals": [
-      "sale_issue",
-      "bankruptcy_resolved"
-    ],
-    "kill_detail": "sale vacated/cancelled (hard kill): 'Order Granting Motion to Cancel Sale Date'",
-    "docket_url": "https://www2.miamidadeclerk.gov/ocs/",
-    "source_url": "https://www.miamidade.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/15/2026"
   },
   {
     "county_id": "broward-fl",
@@ -141,19 +136,36 @@
     "county_id": "cuyahoga-oh",
     "county_name": "Cuyahoga",
     "state": "OH",
-    "case_number": "CV25117671 (63454)",
-    "address": "Property Address:\t17618 PURITAS AVENUE",
-    "sale_date": "2026-06-15",
-    "sold_to": "3rd Party Bidder",
-    "former_surplus": 32300.0,
-    "kill_label": "Debt exceeds sale",
+    "case_number": "CV25121388 (63947)",
+    "address": "Property Address:\t25251 RICHARDS AVENUE",
+    "sale_date": "2026-06-29",
+    "sold_to": "Plaintiff",
+    "former_surplus": 33066.0,
+    "kill_label": "Bankruptcy filed",
     "kill_signals": [
       "bankruptcy",
       "motion_to_vacate"
     ],
-    "kill_detail": "conservative debt $133,694 \u2265 sale $132,300 \u2014 NO surplus (principal $116,794 + interest $5,221 + junior $0 + buffer $11,679)",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=Cvacw4PHlNfh9_vsuzXPt7wgpCxtozFc5_g-Qyp_ny01",
-    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/15/2026"
+    "kill_detail": "kill signal: bankruptcy",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=S_04sH7veHEPt07RtUt0JqDCYvrZQm_urdmwiSOgBbY1",
+    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/29/2026"
+  },
+  {
+    "county_id": "cuyahoga-oh",
+    "county_name": "Cuyahoga",
+    "state": "OH",
+    "case_number": "CV25111605 (63700)",
+    "address": "Property Address:\t1532 FELTON ROAD",
+    "sale_date": "2026-06-22",
+    "sold_to": "Plaintiff",
+    "former_surplus": 19766.0,
+    "kill_label": "Debt exceeds sale",
+    "kill_signals": [
+      "bankruptcy"
+    ],
+    "kill_detail": "conservative debt $178,769 \u2265 sale $103,100 \u2014 NO surplus (principal $116,500 + interest $50,619 + junior $0 + buffer $11,650)",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=fSbivy6ZAZ6f41t6Ip1agcnR0hglaxWJTj9Pnm32TAU1",
+    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/22/2026"
   },
   {
     "county_id": "orange-fl",
@@ -176,15 +188,30 @@
     "county_id": "cuyahoga-oh",
     "county_name": "Cuyahoga",
     "state": "OH",
-    "case_number": "CV24106266 (63692)",
-    "address": "Property Address:\t4479 STATE ROAD",
-    "sale_date": "2026-06-15",
+    "case_number": "CV25109597 (63697)",
+    "address": "Property Address:\t3128 WEST 40TH STREET",
+    "sale_date": "2026-06-22",
     "sold_to": "3rd Party Bidder",
-    "former_surplus": 11866.0,
+    "former_surplus": 13433.0,
     "kill_label": "Debt exceeds sale",
     "kill_signals": [],
-    "kill_detail": "conservative debt $155,602 \u2265 sale $109,200 \u2014 NO surplus (principal $129,871 + interest $12,744 + junior $0 + buffer $12,987)",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=gmuRX3twObvc0lE9TUt4UnbHa_Yn-JrfebVFzvmGmvg1",
-    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/15/2026"
+    "kill_detail": "conservative debt $160,166 \u2265 sale $80,100 \u2014 NO surplus (principal $145,606 + interest $0 + junior $0 + buffer $14,561)",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=kHd-FnxUY6wfiO4Ax86LvlwGtuBYM0CLbZ8_IyzsOQE1",
+    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/22/2026"
+  },
+  {
+    "county_id": "cuyahoga-oh",
+    "county_name": "Cuyahoga",
+    "state": "OH",
+    "case_number": "CV24108223 (63135)",
+    "address": "Property Address:\t1884 GLENRIDGE ROAD",
+    "sale_date": "2026-06-22",
+    "sold_to": "Plaintiff",
+    "former_surplus": 13100.0,
+    "kill_label": "Debt exceeds sale",
+    "kill_signals": [],
+    "kill_detail": "conservative debt $121,340 \u2265 sale $103,100 \u2014 NO surplus (principal $105,920 + interest $4,828 + junior $0 + buffer $10,592)",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=A2CMjHGd57-WUEUlVHMj1qwdi2vI6T5CHkB4NljzpFs1",
+    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/22/2026"
   }
 ]
