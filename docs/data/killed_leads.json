@@ -1,5 +1,23 @@
 [
   {
+    "county_id": "miami-dade-fl",
+    "county_name": "Miami-Dade",
+    "state": "FL",
+    "case_number": "2022-021136-CA-01",
+    "address": "18480 SW 77 CT",
+    "sale_date": "2026-06-23",
+    "sold_to": "3rd Party Bidder",
+    "former_surplus": 249361.09999999998,
+    "kill_label": "Sale cancelled/vacated",
+    "kill_signals": [
+      "sale_issue",
+      "bankruptcy_resolved"
+    ],
+    "kill_detail": "sale vacated/cancelled (hard kill): 'Motion to Cancel Sale'",
+    "docket_url": "https://www2.miamidadeclerk.gov/ocs/",
+    "source_url": "https://www.miamidade.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/23/2026"
+  },
+  {
     "county_id": "cuyahoga-oh",
     "county_name": "Cuyahoga",
     "state": "OH",
@@ -11,7 +29,7 @@
     "kill_label": "Debt exceeds sale",
     "kill_signals": [],
     "kill_detail": "conservative debt $435,724 \u2265 sale $382,600 \u2014 NO surplus (principal $334,080 + interest $68,236 + junior $0 + buffer $33,408)",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=6kglyBoEzxCVYvw_8Uyk59fv6usyf_69wpteIhYqdzI1",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=6kglyBoEzxCVYvw_8Uyk5zpTFyZ54LiJg7xy9O0abl81",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/22/2026"
   },
   {
@@ -28,25 +46,8 @@
       "sale_vacated"
     ],
     "kill_detail": "conservative debt $277,661 \u2265 sale $163,100 \u2014 NO surplus (principal $241,335 + interest $12,193 + junior $0 + buffer $24,133)",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=DO3dBU2-oO3CbZwBHaUypitRMxZV0VdBuPKYHoQ3vfE1",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=DO3dBU2-oO3CbZwBHaUypg6QcPeLcbX6OLfWKPINFIk1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/22/2026"
-  },
-  {
-    "county_id": "broward-fl",
-    "county_name": "Broward",
-    "state": "FL",
-    "case_number": "CACE-25-006937",
-    "address": "11189 NW 37 ST",
-    "sale_date": "2026-06-17",
-    "sold_to": "3rd Party Bidder",
-    "former_surplus": 50440.600000000006,
-    "kill_label": "Surplus claim filed",
-    "kill_signals": [
-      "surplus_claim_filed"
-    ],
-    "kill_detail": "Docket checked. Surplus claim activity found: 'Joint Motion MOTION FOR ORDER DIRECTING CLERK TO RELEASE THE SURPLUS FUNDS & MOTION FOR CLARIFICATION OF PLAI TIFF POST-JUDGMENT FEES",
-    "docket_url": "https://www.browardclerk.org/Web2/CaseSearchECA/Index/?AccessLevel=ANONYMOUS",
-    "source_url": "https://broward.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/17/2026"
   },
   {
     "county_id": "cuyahoga-oh",
@@ -60,7 +61,7 @@
     "kill_label": "Debt exceeds sale",
     "kill_signals": [],
     "kill_detail": "conservative debt $131,849 \u2265 sale $119,900 \u2014 NO surplus (principal $119,862 + interest $0 + junior $0 + buffer $11,986)",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=UjlufV73IbkbU-0WL42aRapwoFfNL8L_dfEdJW4CDrY1",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=UjlufV73IbkbU-0WL42aRZtyOfbItHlBvrPLlG_2k_k1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/29/2026"
   },
   {
@@ -112,7 +113,7 @@
       "bankruptcy"
     ],
     "kill_detail": "kill signal: motion_to_vacate",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=S_04sH7veHGuO-TxBNx8cSmmr08DUd4WDWKv6hAqsU01",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=S_04sH7veHGuO-TxBNx8ccJuqe9ldTWH5grEWgR8VqI1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/29/2026"
   },
   {
@@ -129,7 +130,7 @@
       "bankruptcy"
     ],
     "kill_detail": "conservative debt $178,769 \u2265 sale $103,100 \u2014 NO surplus (principal $116,500 + interest $50,619 + junior $0 + buffer $11,650)",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=fSbivy6ZAZ7q-Gzy7JzxPD80DjaTTrA9zGxrJmcXwQU1",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=fSbivy6ZAZ7q-Gzy7JzxPLf5ql0L39kaXiPtwoBKizo1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/22/2026"
   },
   {
@@ -161,7 +162,7 @@
     "kill_label": "Debt exceeds sale",
     "kill_signals": [],
     "kill_detail": "conservative debt $160,166 \u2265 sale $80,100 \u2014 NO surplus (principal $145,606 + interest $0 + junior $0 + buffer $14,561)",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=kHd-FnxUY6wuBgB_OGFxFIC63JETGg7Kk_oFgQNRLHg1",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=kHd-FnxUY6wuBgB_OGFxFA6W4cdBNGoBbqTEPHCoq_M1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/22/2026"
   },
   {
@@ -176,7 +177,7 @@
     "kill_label": "Debt exceeds sale",
     "kill_signals": [],
     "kill_detail": "conservative debt $121,340 \u2265 sale $103,100 \u2014 NO surplus (principal $105,920 + interest $4,828 + junior $0 + buffer $10,592)",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=A2CMjHGd57_o_-rXQ6mrHEImOsURGPMhxTshZ9oh9NQ1",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=A2CMjHGd57_o_-rXQ6mrHDdHElzilwHNzP_fe9r0D181",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/22/2026"
   }
 ]
