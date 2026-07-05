@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-04T11:49:46",
+  "generated_at": "2026-07-05T11:47:35",
   "total_leads": 21,
   "total_leads_pre_filter": 27,
   "killed_filtered_count": 6,
@@ -18,7 +18,7 @@
   "killed_count": 0,
   "red_count": 0,
   "pipeline_ready_count": 0,
-  "pr_matched_count": 12,
+  "pr_matched_count": 14,
   "docket_matched_count": 19,
   "by_state": {
     "FL": {
