@@ -1,33 +1,33 @@
 {
-  "generated_at": "2026-07-06T12:37:53",
-  "total_leads": 21,
-  "total_leads_pre_filter": 27,
-  "killed_filtered_count": 6,
-  "killed_shown_count": 12,
+  "generated_at": "2026-07-07T12:15:09",
+  "total_leads": 25,
+  "total_leads_pre_filter": 30,
+  "killed_filtered_count": 5,
+  "killed_shown_count": 9,
   "below_floor_filtered_count": 0,
   "min_display_surplus": 5000.0,
   "confirmed_surplus_total": 0,
-  "estimated_surplus_total": 64878.95,
-  "apparent_surplus_total": 734153.8200000001,
-  "docket_verified_positive_count": 4,
-  "docket_verified_positive_total": 79248.45999999999,
+  "estimated_surplus_total": 154978.95,
+  "apparent_surplus_total": 603351.75,
+  "docket_verified_positive_count": 7,
+  "docket_verified_positive_total": 308010.52999999997,
   "confirmed_surplus_count": 0,
-  "estimated_surplus_count": 2,
+  "estimated_surplus_count": 3,
   "apparent_surplus_count": 15,
-  "unverified_count": 4,
+  "unverified_count": 5,
   "killed_count": 0,
-  "red_count": 0,
+  "red_count": 3,
   "pipeline_ready_count": 0,
-  "pr_matched_count": 14,
-  "docket_matched_count": 19,
+  "pr_matched_count": 15,
+  "docket_matched_count": 21,
   "by_state": {
     "FL": {
       "leads": 18,
-      "surplus": 1053932.27
+      "surplus": 923130.2
     },
     "OH": {
-      "leads": 9,
-      "surplus": 583915.29
+      "leads": 12,
+      "surplus": 844415.29
     }
   },
   "by_county": [
@@ -35,9 +35,17 @@
       "county_id": "miami-dade-fl",
       "county_name": "Miami-Dade",
       "state": "FL",
-      "leads": 4,
-      "surplus": 523176.6599999999,
+      "leads": 3,
+      "surplus": 378746.2899999999,
       "top_lead": 249361.09999999998
+    },
+    {
+      "county_id": "montgomery-oh",
+      "county_name": "Montgomery",
+      "state": "OH",
+      "leads": 4,
+      "surplus": 323600.0,
+      "top_lead": 184300.0
     },
     {
       "county_id": "broward-fl",
@@ -46,14 +54,6 @@
       "leads": 7,
       "surplus": 275485.95,
       "top_lead": 68112.01000000001
-    },
-    {
-      "county_id": "cuyahoga-oh",
-      "county_name": "Cuyahoga",
-      "state": "OH",
-      "leads": 5,
-      "surplus": 267232.0,
-      "top_lead": 102700.0
     },
     {
       "county_id": "franklin-oh",
@@ -67,9 +67,17 @@
       "county_id": "orange-fl",
       "county_name": "Orange",
       "state": "FL",
-      "leads": 5,
-      "surplus": 195373.16,
+      "leads": 6,
+      "surplus": 209001.46,
       "top_lead": 58722.15000000002
+    },
+    {
+      "county_id": "cuyahoga-oh",
+      "county_name": "Cuyahoga",
+      "state": "OH",
+      "leads": 4,
+      "surplus": 204132.0,
+      "top_lead": 102700.0
     },
     {
       "county_id": "duval-fl",
@@ -91,11 +99,20 @@
   "by_score": {
     "A+": 5,
     "A": 3,
-    "B": 11,
-    "C": 7
+    "B": 13,
+    "C": 8
   },
   "top_5_confirmed_leads": [],
   "top_5_estimated_leads": [
+    {
+      "county": "Montgomery",
+      "state": "OH",
+      "case_number": "2026 CV 00493 (0)",
+      "address": "1575 GARWOOD DR",
+      "surplus": 90100.0,
+      "money_status": "estimated_surplus",
+      "evidence_level": "docket_reviewed"
+    },
     {
       "county": "Cuyahoga",
       "state": "OH",
@@ -116,15 +133,6 @@
     }
   ],
   "top_5_apparent_leads": [
-    {
-      "county": "Miami-Dade",
-      "state": "FL",
-      "case_number": "2016-012537-CA-01",
-      "address": "12078 SW 249 ST",
-      "surplus": 144430.37,
-      "money_status": "apparent_surplus",
-      "evidence_level": "docket_reviewed"
-    },
     {
       "county": "Miami-Dade",
       "state": "FL",
@@ -158,6 +166,15 @@
       "case_number": "COCE-25-068819",
       "address": "101 CONGRESSIONAL WAY",
       "surplus": 48290.869999999995,
+      "money_status": "apparent_surplus",
+      "evidence_level": "docket_reviewed"
+    },
+    {
+      "county": "Duval",
+      "state": "FL",
+      "case_number": "16-2025-CC-001830-AXXX-MA",
+      "address": "3326 INTERNATIONAL VILLAGE CT",
+      "surplus": 44665.17,
       "money_status": "apparent_surplus",
       "evidence_level": "docket_reviewed"
     }
