@@ -3,11 +3,11 @@
     "county_id": "miami-dade-fl",
     "county_name": "Miami-Dade",
     "state": "FL",
-    "case_number": "2022-021136-CA-01",
-    "address": "18480 SW 77 CT",
-    "sale_date": "2026-06-23",
+    "case_number": "2025-020693-CA-01",
+    "address": "145 SW 48 CT",
+    "sale_date": "2026-07-07",
     "sold_to": "3rd Party Bidder",
-    "former_surplus": 249361.09999999998,
+    "former_surplus": 125869.06,
     "kill_label": "Sale cancelled/vacated",
     "kill_signals": [
       "sale_issue",
@@ -15,7 +15,7 @@
     ],
     "kill_detail": "sale vacated/cancelled (hard kill): 'Motion to Cancel Sale'",
     "docket_url": "https://www2.miamidadeclerk.gov/ocs/",
-    "source_url": "https://www.miamidade.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/23/2026"
+    "source_url": "https://www.miamidade.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/07/2026"
   },
   {
     "county_id": "montgomery-oh",
@@ -46,40 +46,8 @@
     "kill_label": "Debt exceeds sale",
     "kill_signals": [],
     "kill_detail": "true surplus only $-209,643 after debt verification",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=vvaldiPkjMDFpPSLwr4SIq5IHN0aQstk2Yg5euHlmyk1",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=vvaldiPkjMDFpPSLwr4SIt55H4Xp2jSAGE7WdRAsuKs1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/06/2026"
-  },
-  {
-    "county_id": "cuyahoga-oh",
-    "county_name": "Cuyahoga",
-    "state": "OH",
-    "case_number": "CV25119971 (63945)",
-    "address": "",
-    "sale_date": "2026-06-29",
-    "sold_to": "3rd Party Bidder",
-    "former_surplus": 46566.0,
-    "kill_label": "Debt exceeds sale",
-    "kill_signals": [],
-    "kill_detail": "conservative debt $131,849 \u2265 sale $119,900 \u2014 NO surplus (principal $119,862 + interest $0 + junior $0 + buffer $11,986)",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=UjlufV73IbkbU-0WL42aRR5HKPYzq6N0tGRrQlRV8C81",
-    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/29/2026"
-  },
-  {
-    "county_id": "broward-fl",
-    "county_name": "Broward",
-    "state": "FL",
-    "case_number": "CACE-25-002006",
-    "address": "8452 SW 29 ST",
-    "sale_date": "2026-06-23",
-    "sold_to": "3rd Party Bidder",
-    "former_surplus": 35136.61,
-    "kill_label": "Surplus claim filed",
-    "kill_signals": [
-      "surplus_claim_filed"
-    ],
-    "kill_detail": "Docket checked. Surplus claim activity found: 'Motion to File For Surplus Funds Party: Defendant Joseph, Limone Defendant Antoine, Marie'. Lead already being pursued.",
-    "docket_url": "https://www.browardclerk.org/Web2/CaseSearchECA/Index/?AccessLevel=ANONYMOUS",
-    "source_url": "https://broward.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/23/2026"
   },
   {
     "county_id": "broward-fl",
@@ -99,24 +67,6 @@
     "source_url": "https://broward.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/26/2026"
   },
   {
-    "county_id": "cuyahoga-oh",
-    "county_name": "Cuyahoga",
-    "state": "OH",
-    "case_number": "CV25121388 (63947)",
-    "address": "Property Address:\t25251 RICHARDS AVENUE",
-    "sale_date": "2026-06-29",
-    "sold_to": "Plaintiff",
-    "former_surplus": 33066.0,
-    "kill_label": "Sale vacated",
-    "kill_signals": [
-      "motion_to_vacate",
-      "bankruptcy"
-    ],
-    "kill_detail": "kill signal: motion_to_vacate",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=S_04sH7veHGuO-TxBNx8cTBoUgRqqK3Ny_1RV6NIbJg1",
-    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/29/2026"
-  },
-  {
     "county_id": "duval-fl",
     "county_name": "Duval",
     "state": "FL",
@@ -132,22 +82,5 @@
     "kill_detail": "Docket checked. Surplus claim activity found: docket 'OWNER'S CLAIM FOR MORTGAGE FORECLOSURE SURPLUS'. Lead already being pursued.",
     "docket_url": "https://core.duvalclerk.com/CoreCms.aspx?mode=PublicAccess",
     "source_url": "https://www.duval.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/30/2026"
-  },
-  {
-    "county_id": "orange-fl",
-    "county_name": "Orange",
-    "state": "FL",
-    "case_number": "2025-CA-005305-O (Count II)",
-    "address": "",
-    "sale_date": "2026-06-23",
-    "sold_to": "Plaintiff",
-    "former_surplus": 14954.95,
-    "kill_label": "Sold to plaintiff",
-    "kill_signals": [
-      "sold_to_plaintiff"
-    ],
-    "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $14,955.",
-    "docket_url": "",
-    "source_url": "https://myorangeclerk.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/23/2026"
   }
 ]
