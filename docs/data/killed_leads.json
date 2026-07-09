@@ -1,5 +1,22 @@
 [
   {
+    "county_id": "broward-fl",
+    "county_name": "Broward",
+    "state": "FL",
+    "case_number": "CACE-21-018171",
+    "address": "3901 NW 108 DR",
+    "sale_date": "2026-07-08",
+    "sold_to": "3rd Party Bidder",
+    "former_surplus": 155048.82,
+    "kill_label": "Surplus claim filed",
+    "kill_signals": [
+      "surplus_firm_appearance"
+    ],
+    "kill_detail": "Docket checked. Notice of Appearance found from Get Liquid Funding, LLC. Lead already being pursued.",
+    "docket_url": "https://www.browardclerk.org/Web2/CaseSearchECA/Index/?AccessLevel=ANONYMOUS",
+    "source_url": "https://broward.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/08/2026"
+  },
+  {
     "county_id": "miami-dade-fl",
     "county_name": "Miami-Dade",
     "state": "FL",
@@ -46,8 +63,23 @@
     "kill_label": "Debt exceeds sale",
     "kill_signals": [],
     "kill_detail": "true surplus only $-209,643 after debt verification",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=vvaldiPkjMDFpPSLwr4SIt55H4Xp2jSAGE7WdRAsuKs1",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=vvaldiPkjMDFpPSLwr4SIvnBzUUD_SZy_OO8ygfo5Us1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/06/2026"
+  },
+  {
+    "county_id": "cuyahoga-oh",
+    "county_name": "Cuyahoga",
+    "state": "OH",
+    "case_number": "CV25119971 (63945)",
+    "address": "",
+    "sale_date": "2026-06-29",
+    "sold_to": "3rd Party Bidder",
+    "former_surplus": 46566.0,
+    "kill_label": "Debt exceeds sale",
+    "kill_signals": [],
+    "kill_detail": "conservative debt $131,849 \u2265 sale $119,900 \u2014 NO surplus (principal $119,862 + interest $0 + junior $0 + buffer $11,986)",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=UjlufV73IbkbU-0WL42aRUMNAqV0wZnFXbQBlgMi_TU1",
+    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/29/2026"
   },
   {
     "county_id": "broward-fl",
@@ -65,6 +97,24 @@
     "kill_detail": "Docket checked. Surplus claim activity found: 'Motion for Disbursement SURPLUS FUNDS Party: Defendant Pena Torres, Irene'. Lead already being pursued.",
     "docket_url": "https://www.browardclerk.org/Web2/CaseSearchECA/Index/?AccessLevel=ANONYMOUS",
     "source_url": "https://broward.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/26/2026"
+  },
+  {
+    "county_id": "cuyahoga-oh",
+    "county_name": "Cuyahoga",
+    "state": "OH",
+    "case_number": "CV25121388 (63947)",
+    "address": "Property Address:\t25251 RICHARDS AVENUE",
+    "sale_date": "2026-06-29",
+    "sold_to": "Plaintiff",
+    "former_surplus": 33066.0,
+    "kill_label": "Sale vacated",
+    "kill_signals": [
+      "motion_to_vacate",
+      "bankruptcy"
+    ],
+    "kill_detail": "kill signal: motion_to_vacate",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=S_04sH7veHGuO-TxBNx8ceV4NAOIGiWfaDkHYnx7lnU1",
+    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/29/2026"
   },
   {
     "county_id": "duval-fl",
