@@ -52,21 +52,6 @@
     "source_url": "https://www.miamidade.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/07/2026"
   },
   {
-    "county_id": "cuyahoga-oh",
-    "county_name": "Cuyahoga",
-    "state": "OH",
-    "case_number": "CV24991301 (64239)",
-    "address": "Property Address:\t707 BROOKPARK ROAD",
-    "sale_date": "2026-07-06",
-    "sold_to": "Plaintiff",
-    "former_surplus": 120100.0,
-    "kill_label": "Debt exceeds sale",
-    "kill_signals": [],
-    "kill_detail": "true surplus only $-209,643 after debt verification",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=vvaldiPkjMDFpPSLwr4SIpxTHSXRS6h40KRGJRSJmk81",
-    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/06/2026"
-  },
-  {
     "county_id": "summit-oh",
     "county_name": "Summit",
     "state": "OH",
@@ -84,37 +69,19 @@
     "source_url": "https://summit.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/10/2026"
   },
   {
-    "county_id": "cuyahoga-oh",
-    "county_name": "Cuyahoga",
-    "state": "OH",
-    "case_number": "CV25119971 (63945)",
-    "address": "",
-    "sale_date": "2026-06-29",
+    "county_id": "lee-fl",
+    "county_name": "Lee",
+    "state": "FL",
+    "case_number": "25-CA-000531",
+    "address": "1303 SW 34TH ST",
+    "sale_date": "2026-07-09",
     "sold_to": "3rd Party Bidder",
-    "former_surplus": 46566.0,
-    "kill_label": "Debt exceeds sale",
+    "former_surplus": 40070.34,
+    "kill_label": "Killed",
     "kill_signals": [],
-    "kill_detail": "conservative debt $131,849 \u2265 sale $119,900 \u2014 NO surplus (principal $119,862 + interest $0 + junior $0 + buffer $11,986)",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=UjlufV73IbkbU-0WL42aRTCvl4ry8lKJwXA0Wwam4a01",
-    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/29/2026"
-  },
-  {
-    "county_id": "cuyahoga-oh",
-    "county_name": "Cuyahoga",
-    "state": "OH",
-    "case_number": "CV25121388 (63947)",
-    "address": "Property Address:\t25251 RICHARDS AVENUE",
-    "sale_date": "2026-06-29",
-    "sold_to": "Plaintiff",
-    "former_surplus": 33066.0,
-    "kill_label": "Sale vacated",
-    "kill_signals": [
-      "motion_to_vacate",
-      "bankruptcy"
-    ],
-    "kill_detail": "kill signal: motion_to_vacate",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=S_04sH7veHGuO-TxBNx8cT_YPYGIUgDJXzVXIsS8EFU1",
-    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/29/2026"
+    "kill_detail": "PR lien check: itemized second-position lien $75,000 exceeds apparent surplus \u2014 surplus consumed (Lee PR-first kill)",
+    "docket_url": "",
+    "source_url": "https://www.lee.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/09/2026"
   },
   {
     "county_id": "montgomery-oh",
