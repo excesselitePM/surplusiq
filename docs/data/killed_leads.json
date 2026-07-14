@@ -34,22 +34,36 @@
     "source_url": "https://broward.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/08/2026"
   },
   {
-    "county_id": "miami-dade-fl",
-    "county_name": "Miami-Dade",
-    "state": "FL",
-    "case_number": "2025-020693-CA-01",
-    "address": "145 SW 48 CT",
-    "sale_date": "2026-07-07",
-    "sold_to": "3rd Party Bidder",
-    "former_surplus": 125869.06,
-    "kill_label": "Sale cancelled/vacated",
+    "county_id": "cuyahoga-oh",
+    "county_name": "Cuyahoga",
+    "state": "OH",
+    "case_number": "CV24991301 (64239)",
+    "address": "Property Address:\t707 BROOKPARK ROAD",
+    "sale_date": "2026-07-06",
+    "sold_to": "Plaintiff",
+    "former_surplus": 120100.0,
+    "kill_label": "Debt exceeds sale",
+    "kill_signals": [],
+    "kill_detail": "true surplus only $-209,643 after debt verification",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=vvaldiPkjMDFpPSLwr4SIgbyPL3JNQUFeBO_cVjoZZs1",
+    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/06/2026"
+  },
+  {
+    "county_id": "cuyahoga-oh",
+    "county_name": "Cuyahoga",
+    "state": "OH",
+    "case_number": "CV23974991 (64390)",
+    "address": "3780 MAYFIELD ROAD",
+    "sale_date": "2026-07-13",
+    "sold_to": "Plaintiff",
+    "former_surplus": 97346.0,
+    "kill_label": "Sold to plaintiff",
     "kill_signals": [
-      "sale_issue",
-      "bankruptcy_resolved"
+      "sold_to_plaintiff"
     ],
-    "kill_detail": "sale vacated/cancelled (hard kill): 'Order Vacating Sale'",
-    "docket_url": "https://www2.miamidadeclerk.gov/ocs/",
-    "source_url": "https://www.miamidade.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/07/2026"
+    "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $97,346.",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=jLBNbBoO4rDiKGlG5pnl_EZ9GFrOyBxJQWXeRL7501U1",
+    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/13/2026"
   },
   {
     "county_id": "summit-oh",
@@ -84,38 +98,21 @@
     "source_url": "https://www.lee.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/09/2026"
   },
   {
-    "county_id": "montgomery-oh",
-    "county_name": "Montgomery",
-    "state": "OH",
-    "case_number": "2025 CV 04109 (0)",
-    "address": "2017 MAYFAIR ROAD",
-    "sale_date": "2026-07-10",
+    "county_id": "duval-fl",
+    "county_name": "Duval",
+    "state": "FL",
+    "case_number": "16-2024-CA-005865-AXXX-MA",
+    "address": "312 GOODWIN ST",
+    "sale_date": "2026-07-13",
     "sold_to": "Plaintiff",
-    "former_surplus": 27680.0,
+    "former_surplus": 15553.330000000002,
     "kill_label": "Sold to plaintiff",
     "kill_signals": [
       "sold_to_plaintiff"
     ],
-    "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $27,680.",
-    "docket_url": "https://pro.mcohio.org/",
-    "source_url": "https://montgomery.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/10/2026"
-  },
-  {
-    "county_id": "montgomery-oh",
-    "county_name": "Montgomery",
-    "state": "OH",
-    "case_number": "2025 CV 00888 (0)",
-    "address": "3566 LANE GARDEN CT",
-    "sale_date": "2026-07-10",
-    "sold_to": "Plaintiff",
-    "former_surplus": 21200.0,
-    "kill_label": "Sold to plaintiff",
-    "kill_signals": [
-      "sold_to_plaintiff"
-    ],
-    "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $21,200.",
-    "docket_url": "https://pro.mcohio.org/",
-    "source_url": "https://montgomery.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/10/2026"
+    "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $15,553.",
+    "docket_url": "https://core.duvalclerk.com/CoreCms.aspx?mode=PublicAccess",
+    "source_url": "https://www.duval.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/13/2026"
   },
   {
     "county_id": "duval-fl",
@@ -133,5 +130,20 @@
     "kill_detail": "Docket checked. Surplus claim activity found: docket 'OWNER'S CLAIM FOR MORTGAGE FORECLOSURE SURPLUS'. Lead already being pursued.",
     "docket_url": "https://core.duvalclerk.com/CoreCms.aspx?mode=PublicAccess",
     "source_url": "https://www.duval.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=06/30/2026"
+  },
+  {
+    "county_id": "cuyahoga-oh",
+    "county_name": "Cuyahoga",
+    "state": "OH",
+    "case_number": "CV25112933 (64393)",
+    "address": "Property Address:\t4824 EAST 84TH STREET",
+    "sale_date": "2026-07-13",
+    "sold_to": "Plaintiff",
+    "former_surplus": 11433.0,
+    "kill_label": "Debt exceeds sale",
+    "kill_signals": [],
+    "kill_detail": "conservative debt $91,812 \u2265 sale $88,100 \u2014 NO surplus (principal $65,536 + interest $19,723 + junior $0 + buffer $6,554)",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=2WlQ45LzB1r1dU2n5Kk8SIhPjmndMaOQeaWNJE1fxWA1",
+    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/13/2026"
   }
 ]
