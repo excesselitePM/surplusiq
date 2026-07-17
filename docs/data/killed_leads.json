@@ -45,7 +45,7 @@
     "kill_label": "Debt exceeds sale",
     "kill_signals": [],
     "kill_detail": "true surplus only $-209,643 after debt verification",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=vvaldiPkjMDFpPSLwr4SInaH7ZQeTWdD7y0AW_zfQX01",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=vvaldiPkjMDFpPSLwr4SIoeKIf2XnxNgEPmIUq6wM4s1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/06/2026"
   },
   {
@@ -62,25 +62,8 @@
       "sold_to_plaintiff"
     ],
     "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $97,346.",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=jLBNbBoO4rDiKGlG5pnl_I7MqxSu0Rl9Xd9hVcyQBUo1",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=jLBNbBoO4rDiKGlG5pnl_NMhUqnyurtKn8DYldkpsuQ1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/13/2026"
-  },
-  {
-    "county_id": "summit-oh",
-    "county_name": "Summit",
-    "state": "OH",
-    "case_number": "CV2025083888 (10695)",
-    "address": "672 BARBARA AVENUE",
-    "sale_date": "2026-07-10",
-    "sold_to": "Plaintiff",
-    "former_surplus": 48800.0,
-    "kill_label": "Sold to plaintiff",
-    "kill_signals": [
-      "sold_to_plaintiff"
-    ],
-    "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $48,800.",
-    "docket_url": "https://clerk.summitoh.net/PublicSite/CaseDetail.aspx",
-    "source_url": "https://summit.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/10/2026"
   },
   {
     "county_id": "lee-fl",
@@ -143,7 +126,7 @@
     "kill_label": "Debt exceeds sale",
     "kill_signals": [],
     "kill_detail": "conservative debt $91,812 \u2265 sale $88,100 \u2014 NO surplus (principal $65,536 + interest $19,723 + junior $0 + buffer $6,554)",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=2WlQ45LzB1r1dU2n5Kk8SNnQOz2-swasxvaJllOR0nQ1",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=2WlQ45LzB1r1dU2n5Kk8SHbL8CG6YhbdKfg5AblWGJw1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/13/2026"
   }
 ]
