@@ -27,9 +27,9 @@
     "former_surplus": 155048.82,
     "kill_label": "Surplus claim filed",
     "kill_signals": [
-      "surplus_firm_appearance"
+      "surplus_claim_filed"
     ],
-    "kill_detail": "Docket checked. Notice of Appearance found from Get Liquid Funding, LLC. Lead already being pursued.",
+    "kill_detail": "Docket checked. Surplus claim activity found: 'Motion for Disbursement OBTAIN THE SURPLUS FUNDS FROM COURT REGISTRY Party: Defendant Brown, Rosalind R Defendant Brown, Ellison'. Le",
     "docket_url": "https://www.browardclerk.org/Web2/CaseSearchECA/Index/?AccessLevel=ANONYMOUS",
     "source_url": "https://broward.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/08/2026"
   },
@@ -45,7 +45,7 @@
     "kill_label": "Debt exceeds sale",
     "kill_signals": [],
     "kill_detail": "true surplus only $-209,643 after debt verification",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=vvaldiPkjMDFpPSLwr4SIoeKIf2XnxNgEPmIUq6wM4s1",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=vvaldiPkjMDFpPSLwr4SIg-nCl_XtybKSgcvwC5lBj01",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/06/2026"
   },
   {
@@ -62,23 +62,70 @@
       "sold_to_plaintiff"
     ],
     "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $97,346.",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=jLBNbBoO4rDiKGlG5pnl_NMhUqnyurtKn8DYldkpsuQ1",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=jLBNbBoO4rDiKGlG5pnl_GJlPoHul-r_75AfY044xaM1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/13/2026"
   },
   {
-    "county_id": "lee-fl",
-    "county_name": "Lee",
-    "state": "FL",
-    "case_number": "25-CA-000531",
-    "address": "1303 SW 34TH ST",
-    "sale_date": "2026-07-09",
+    "county_id": "summit-oh",
+    "county_name": "Summit",
+    "state": "OH",
+    "case_number": "CV2025031396 (10725)",
+    "address": "2420 17TH STREET",
+    "sale_date": "2026-07-17",
     "sold_to": "3rd Party Bidder",
-    "former_surplus": 40070.34,
-    "kill_label": "Killed",
+    "former_surplus": 90100.0,
+    "kill_label": "Debt exceeds sale",
     "kill_signals": [],
-    "kill_detail": "PR lien check: itemized second-position lien $75,000 exceeds apparent surplus \u2014 surplus consumed (Lee PR-first kill)",
-    "docket_url": "",
-    "source_url": "https://www.lee.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/09/2026"
+    "kill_detail": "conservative debt $248,714 \u2265 sale $210,100 \u2014 NO surplus (principal $199,871 + interest $28,855 + junior $0 + buffer $19,987)",
+    "docket_url": "https://clerk.summitoh.net/PublicSite/CaseDetail.aspx",
+    "source_url": "https://summit.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/17/2026"
+  },
+  {
+    "county_id": "summit-oh",
+    "county_name": "Summit",
+    "state": "OH",
+    "case_number": "CV2025083888 (10695)",
+    "address": "672 BARBARA AVENUE",
+    "sale_date": "2026-07-10",
+    "sold_to": "Plaintiff",
+    "former_surplus": 48800.0,
+    "kill_label": "Sold to plaintiff",
+    "kill_signals": [
+      "sold_to_plaintiff"
+    ],
+    "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $48,800.",
+    "docket_url": "https://clerk.summitoh.net/PublicSite/CaseDetail.aspx",
+    "source_url": "https://summit.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/10/2026"
+  },
+  {
+    "county_id": "summit-oh",
+    "county_name": "Summit",
+    "state": "OH",
+    "case_number": "CV2024125569 (10722)",
+    "address": "Property Address:\t1270 SAWYER AVENUE",
+    "sale_date": "2026-07-17",
+    "sold_to": "3rd Party Bidder",
+    "former_surplus": 23000.0,
+    "kill_label": "Debt exceeds sale",
+    "kill_signals": [],
+    "kill_detail": "conservative debt $98,431 \u2265 sale $85,000 \u2014 NO surplus (principal $78,407 + interest $12,183 + junior $0 + buffer $7,841)",
+    "docket_url": "https://clerk.summitoh.net/PublicSite/CaseDetail.aspx",
+    "source_url": "https://summit.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/17/2026"
+  },
+  {
+    "county_id": "summit-oh",
+    "county_name": "Summit",
+    "state": "OH",
+    "case_number": "CV2025125813 (10724)",
+    "address": "Property Address:\t588 CLIFFORD AVENUE",
+    "sale_date": "2026-07-17",
+    "sold_to": "3rd Party Bidder",
+    "former_surplus": 17600.0,
+    "kill_label": "Debt exceeds sale",
+    "kill_signals": [],
+    "kill_detail": "conservative debt $201,789 \u2265 sale $59,600 \u2014 NO surplus (principal $152,250 + interest $34,314 + junior $0 + buffer $15,225)",
+    "docket_url": "https://clerk.summitoh.net/PublicSite/CaseDetail.aspx",
+    "source_url": "https://summit.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/17/2026"
   },
   {
     "county_id": "duval-fl",
@@ -126,7 +173,7 @@
     "kill_label": "Debt exceeds sale",
     "kill_signals": [],
     "kill_detail": "conservative debt $91,812 \u2265 sale $88,100 \u2014 NO surplus (principal $65,536 + interest $19,723 + junior $0 + buffer $6,554)",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=2WlQ45LzB1r1dU2n5Kk8SHbL8CG6YhbdKfg5AblWGJw1",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=2WlQ45LzB1r1dU2n5Kk8SOxn2aVakF79CcujMvir07M1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/13/2026"
   }
 ]
