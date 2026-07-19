@@ -37,21 +37,6 @@
     "county_id": "cuyahoga-oh",
     "county_name": "Cuyahoga",
     "state": "OH",
-    "case_number": "CV24991301 (64239)",
-    "address": "Property Address:\t707 BROOKPARK ROAD",
-    "sale_date": "2026-07-06",
-    "sold_to": "Plaintiff",
-    "former_surplus": 120100.0,
-    "kill_label": "Debt exceeds sale",
-    "kill_signals": [],
-    "kill_detail": "true surplus only $-209,643 after debt verification",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=vvaldiPkjMDFpPSLwr4SIg-nCl_XtybKSgcvwC5lBj01",
-    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/06/2026"
-  },
-  {
-    "county_id": "cuyahoga-oh",
-    "county_name": "Cuyahoga",
-    "state": "OH",
     "case_number": "CV23974991 (64390)",
     "address": "3780 MAYFIELD ROAD",
     "sale_date": "2026-07-13",
@@ -62,7 +47,7 @@
       "sold_to_plaintiff"
     ],
     "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $97,346.",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=jLBNbBoO4rDiKGlG5pnl_GJlPoHul-r_75AfY044xaM1",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=jLBNbBoO4rDiKGlG5pnl_B1csNO8-WnvLe2hno6Mf8o1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/13/2026"
   },
   {
@@ -96,6 +81,21 @@
     "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $48,800.",
     "docket_url": "https://clerk.summitoh.net/PublicSite/CaseDetail.aspx",
     "source_url": "https://summit.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/10/2026"
+  },
+  {
+    "county_id": "lee-fl",
+    "county_name": "Lee",
+    "state": "FL",
+    "case_number": "25-CA-000531",
+    "address": "1303 SW 34TH ST",
+    "sale_date": "2026-07-09",
+    "sold_to": "3rd Party Bidder",
+    "former_surplus": 40070.34,
+    "kill_label": "Killed",
+    "kill_signals": [],
+    "kill_detail": "PR lien check: itemized second-position lien $75,000 exceeds apparent surplus \u2014 surplus consumed (Lee PR-first kill)",
+    "docket_url": "",
+    "source_url": "https://www.lee.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/09/2026"
   },
   {
     "county_id": "summit-oh",
@@ -173,7 +173,7 @@
     "kill_label": "Debt exceeds sale",
     "kill_signals": [],
     "kill_detail": "conservative debt $91,812 \u2265 sale $88,100 \u2014 NO surplus (principal $65,536 + interest $19,723 + junior $0 + buffer $6,554)",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=2WlQ45LzB1r1dU2n5Kk8SOxn2aVakF79CcujMvir07M1",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=2WlQ45LzB1r1dU2n5Kk8SIK5OKgWH8-_23s2RDNexMo1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/13/2026"
   }
 ]

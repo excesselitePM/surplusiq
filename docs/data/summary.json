@@ -1,33 +1,33 @@
 {
-  "generated_at": "2026-07-18T11:41:00",
-  "total_leads": 28,
-  "total_leads_pre_filter": 31,
-  "killed_filtered_count": 3,
+  "generated_at": "2026-07-19T11:38:33",
+  "total_leads": 24,
+  "total_leads_pre_filter": 28,
+  "killed_filtered_count": 4,
   "killed_shown_count": 11,
   "below_floor_filtered_count": 0,
   "min_display_surplus": 5000.0,
   "confirmed_surplus_total": 0,
-  "estimated_surplus_total": 237123.89,
-  "apparent_surplus_total": 1921559.07,
+  "estimated_surplus_total": 145820.89,
+  "apparent_surplus_total": 1818486.2,
   "docket_verified_positive_count": 3,
   "docket_verified_positive_total": 83570.64,
   "confirmed_surplus_count": 0,
-  "estimated_surplus_count": 3,
-  "apparent_surplus_count": 18,
-  "unverified_count": 7,
+  "estimated_surplus_count": 2,
+  "apparent_surplus_count": 17,
+  "unverified_count": 5,
   "killed_count": 0,
-  "red_count": 3,
+  "red_count": 1,
   "pipeline_ready_count": 0,
-  "pr_matched_count": 12,
-  "docket_matched_count": 22,
+  "pr_matched_count": 11,
+  "docket_matched_count": 20,
   "by_state": {
     "FL": {
-      "leads": 21,
-      "surplus": 2894555.3
+      "leads": 20,
+      "surplus": 2791482.4299999997
     },
     "OH": {
-      "leads": 10,
-      "surplus": 571552.26
+      "leads": 8,
+      "surplus": 379439.08
     }
   },
   "by_county": [
@@ -51,17 +51,9 @@
       "county_id": "duval-fl",
       "county_name": "Duval",
       "state": "FL",
-      "leads": 5,
-      "surplus": 524845.15,
+      "leads": 4,
+      "surplus": 421772.28,
       "top_lead": 251206.87
-    },
-    {
-      "county_id": "summit-oh",
-      "county_name": "Summit",
-      "state": "OH",
-      "leads": 7,
-      "surplus": 419613.17999999993,
-      "top_lead": 148932.59
     },
     {
       "county_id": "broward-fl",
@@ -78,6 +70,14 @@
       "leads": 3,
       "surplus": 248547.91,
       "top_lead": 136332.7
+    },
+    {
+      "county_id": "summit-oh",
+      "county_name": "Summit",
+      "state": "OH",
+      "leads": 5,
+      "surplus": 227500.0,
+      "top_lead": 90100.0
     },
     {
       "county_id": "franklin-oh",
@@ -105,22 +105,13 @@
     }
   ],
   "by_score": {
-    "A+": 10,
+    "A+": 8,
     "A": 9,
-    "B": 7,
+    "B": 6,
     "C": 4
   },
   "top_5_confirmed_leads": [],
   "top_5_estimated_leads": [
-    {
-      "county": "Lee",
-      "state": "FL",
-      "case_number": "25-CA-000531",
-      "address": "1303 SW 34TH ST",
-      "surplus": 91303.0,
-      "money_status": "estimated_surplus",
-      "evidence_level": "property_enriched"
-    },
     {
       "county": "Cuyahoga",
       "state": "OH",
