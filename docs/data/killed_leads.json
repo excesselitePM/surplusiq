@@ -47,7 +47,7 @@
       "sold_to_plaintiff"
     ],
     "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $97,346.",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=jLBNbBoO4rDiKGlG5pnl_OfoLyvLgsA7nfHJ6kf2n6Y1",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=jLBNbBoO4rDiKGlG5pnl_EiGkXnFsGtJqXgzI99tnoA1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/13/2026"
   },
   {
@@ -79,7 +79,7 @@
       "sold_to_plaintiff"
     ],
     "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $75,433.",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=dO8u_3f3qItCy_0U13xnJ0LRdF7Vy7gTL_o3DULSOYI1",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=dO8u_3f3qItCy_0U13xnJ6QQpum8IC37ATnOLYHIu601",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/20/2026"
   },
   {
@@ -115,6 +115,23 @@
     "source_url": "https://www.lee.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/09/2026"
   },
   {
+    "county_id": "montgomery-oh",
+    "county_name": "Montgomery",
+    "state": "OH",
+    "case_number": "2025 CV 04109 (0)",
+    "address": "2017 MAYFAIR ROAD",
+    "sale_date": "2026-07-10",
+    "sold_to": "Plaintiff",
+    "former_surplus": 27680.0,
+    "kill_label": "Sold to plaintiff",
+    "kill_signals": [
+      "sold_to_plaintiff"
+    ],
+    "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $27,680.",
+    "docket_url": "https://pro.mcohio.org/",
+    "source_url": "https://montgomery.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/10/2026"
+  },
+  {
     "county_id": "summit-oh",
     "county_name": "Summit",
     "state": "OH",
@@ -128,6 +145,41 @@
     "kill_detail": "conservative debt $98,431 \u2265 sale $85,000 \u2014 NO surplus (principal $78,407 + interest $12,183 + junior $0 + buffer $7,841)",
     "docket_url": "https://clerk.summitoh.net/PublicSite/CaseDetail.aspx",
     "source_url": "https://summit.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/17/2026"
+  },
+  {
+    "county_id": "montgomery-oh",
+    "county_name": "Montgomery",
+    "state": "OH",
+    "case_number": "2025 CV 00888 (0)",
+    "address": "3566 LANE GARDEN CT",
+    "sale_date": "2026-07-10",
+    "sold_to": "Plaintiff",
+    "former_surplus": 21200.0,
+    "kill_label": "Sold to plaintiff",
+    "kill_signals": [
+      "sold_to_plaintiff"
+    ],
+    "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $21,200.",
+    "docket_url": "https://pro.mcohio.org/",
+    "source_url": "https://montgomery.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/10/2026"
+  },
+  {
+    "county_id": "miami-dade-fl",
+    "county_name": "Miami-Dade",
+    "state": "FL",
+    "case_number": "2023-002616-CA-01",
+    "address": "14808 SW 124 CT",
+    "sale_date": "2026-07-21",
+    "sold_to": "3rd Party Bidder",
+    "former_surplus": 18304.140000000014,
+    "kill_label": "Sale cancelled/vacated",
+    "kill_signals": [
+      "sale_issue",
+      "bankruptcy_resolved"
+    ],
+    "kill_detail": "sale vacated/cancelled (hard kill): 'Motion to Cancel Sale'",
+    "docket_url": "https://www2.miamidadeclerk.gov/ocs/",
+    "source_url": "https://www.miamidade.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/21/2026"
   },
   {
     "county_id": "summit-oh",
@@ -190,7 +242,7 @@
     "kill_label": "Debt exceeds sale",
     "kill_signals": [],
     "kill_detail": "conservative debt $91,812 \u2265 sale $88,100 \u2014 NO surplus (principal $65,536 + interest $19,723 + junior $0 + buffer $6,554)",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=2WlQ45LzB1r1dU2n5Kk8SNoTkwrc8V24Gk8llfCvZmE1",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=2WlQ45LzB1r1dU2n5Kk8SG1sckhj1rlX28BaDkVFDMA1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/13/2026"
   }
 ]
