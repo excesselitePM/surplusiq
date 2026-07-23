@@ -1,29 +1,29 @@
 {
-  "generated_at": "2026-07-22T11:50:37",
-  "total_leads": 25,
-  "total_leads_pre_filter": 30,
-  "killed_filtered_count": 5,
-  "killed_shown_count": 15,
+  "generated_at": "2026-07-23T11:52:41",
+  "total_leads": 24,
+  "total_leads_pre_filter": 27,
+  "killed_filtered_count": 3,
+  "killed_shown_count": 13,
   "below_floor_filtered_count": 0,
   "min_display_surplus": 5000.0,
   "confirmed_surplus_total": 0,
-  "estimated_surplus_total": 145820.89,
-  "apparent_surplus_total": 1796441.1,
+  "estimated_surplus_total": 75722.89,
+  "apparent_surplus_total": 1698275.23,
   "docket_verified_positive_count": 5,
   "docket_verified_positive_total": 141661.37,
   "confirmed_surplus_count": 0,
-  "estimated_surplus_count": 2,
+  "estimated_surplus_count": 1,
   "apparent_surplus_count": 17,
   "unverified_count": 5,
   "killed_count": 0,
   "red_count": 2,
   "pipeline_ready_count": 0,
-  "pr_matched_count": 11,
-  "docket_matched_count": 23,
+  "pr_matched_count": 9,
+  "docket_matched_count": 20,
   "by_state": {
     "FL": {
-      "leads": 20,
-      "surplus": 2772693.43
+      "leads": 17,
+      "surplus": 1733753.92
     },
     "OH": {
       "leads": 10,
@@ -31,14 +31,6 @@
     }
   },
   "by_county": [
-    {
-      "county_id": "miami-dade-fl",
-      "county_name": "Miami-Dade",
-      "state": "FL",
-      "leads": 5,
-      "surplus": 1246513.0100000002,
-      "top_lead": 760787.92
-    },
     {
       "county_id": "orange-fl",
       "county_name": "Orange",
@@ -48,20 +40,20 @@
       "top_lead": 212718.63
     },
     {
+      "county_id": "miami-dade-fl",
+      "county_name": "Miami-Dade",
+      "state": "FL",
+      "leads": 4,
+      "surplus": 485725.08999999997,
+      "top_lead": 239325.29
+    },
+    {
       "county_id": "duval-fl",
       "county_name": "Duval",
       "state": "FL",
-      "leads": 4,
-      "surplus": 510674.53,
+      "leads": 3,
+      "surplus": 407601.66000000003,
       "top_lead": 251206.87
-    },
-    {
-      "county_id": "broward-fl",
-      "county_name": "Broward",
-      "state": "FL",
-      "leads": 5,
-      "surplus": 310361.69,
-      "top_lead": 155048.82
     },
     {
       "county_id": "summit-oh",
@@ -78,6 +70,14 @@
       "leads": 2,
       "surplus": 176403.04,
       "top_lead": 136332.7
+    },
+    {
+      "county_id": "broward-fl",
+      "county_name": "Broward",
+      "state": "FL",
+      "leads": 4,
+      "surplus": 135282.97000000003,
+      "top_lead": 42385.22
     },
     {
       "county_id": "montgomery-oh",
@@ -113,9 +113,9 @@
     }
   ],
   "by_score": {
-    "A+": 9,
-    "A": 9,
-    "B": 8,
+    "A+": 6,
+    "A": 8,
+    "B": 9,
     "C": 3
   },
   "top_5_confirmed_leads": [],
@@ -126,15 +126,6 @@
       "case_number": "CV24102681 (63977)",
       "address": "11030 GABRIELLA DRIVE",
       "surplus": 75722.89,
-      "money_status": "estimated_surplus",
-      "evidence_level": "docket_reviewed"
-    },
-    {
-      "county": "Broward",
-      "state": "FL",
-      "case_number": "CACE-24-016659",
-      "address": "4046 NW 19 ST",
-      "surplus": 70098.0,
       "money_status": "estimated_surplus",
       "evidence_level": "docket_reviewed"
     }
