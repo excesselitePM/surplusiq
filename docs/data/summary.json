@@ -1,29 +1,29 @@
 {
-  "generated_at": "2026-07-23T11:52:41",
-  "total_leads": 24,
-  "total_leads_pre_filter": 27,
+  "generated_at": "2026-07-24T11:48:32",
+  "total_leads": 27,
+  "total_leads_pre_filter": 30,
   "killed_filtered_count": 3,
   "killed_shown_count": 13,
   "below_floor_filtered_count": 0,
   "min_display_surplus": 5000.0,
   "confirmed_surplus_total": 0,
   "estimated_surplus_total": 75722.89,
-  "apparent_surplus_total": 1698275.23,
+  "apparent_surplus_total": 1804275.33,
   "docket_verified_positive_count": 5,
   "docket_verified_positive_total": 141661.37,
   "confirmed_surplus_count": 0,
   "estimated_surplus_count": 1,
-  "apparent_surplus_count": 17,
+  "apparent_surplus_count": 20,
   "unverified_count": 5,
   "killed_count": 0,
   "red_count": 2,
   "pipeline_ready_count": 0,
-  "pr_matched_count": 9,
-  "docket_matched_count": 20,
+  "pr_matched_count": 10,
+  "docket_matched_count": 23,
   "by_state": {
     "FL": {
-      "leads": 17,
-      "surplus": 1733753.92
+      "leads": 20,
+      "surplus": 1865537.3199999998
     },
     "OH": {
       "leads": 10,
@@ -36,24 +36,32 @@
       "county_name": "Orange",
       "state": "FL",
       "leads": 4,
-      "surplus": 528741.16,
+      "surplus": 582436.22,
       "top_lead": 212718.63
     },
     {
       "county_id": "miami-dade-fl",
       "county_name": "Miami-Dade",
       "state": "FL",
-      "leads": 4,
-      "surplus": 485725.08999999997,
+      "leads": 5,
+      "surplus": 515159.55999999994,
       "top_lead": 239325.29
     },
     {
       "county_id": "duval-fl",
       "county_name": "Duval",
       "state": "FL",
-      "leads": 3,
-      "surplus": 407601.66000000003,
+      "leads": 4,
+      "surplus": 462064.41000000003,
       "top_lead": 251206.87
+    },
+    {
+      "county_id": "broward-fl",
+      "county_name": "Broward",
+      "state": "FL",
+      "leads": 7,
+      "surplus": 305877.13,
+      "top_lead": 99641.53
     },
     {
       "county_id": "summit-oh",
@@ -62,22 +70,6 @@
       "leads": 5,
       "surplus": 227500.0,
       "top_lead": 90100.0
-    },
-    {
-      "county_id": "lee-fl",
-      "county_name": "Lee",
-      "state": "FL",
-      "leads": 2,
-      "surplus": 176403.04,
-      "top_lead": 136332.7
-    },
-    {
-      "county_id": "broward-fl",
-      "county_name": "Broward",
-      "state": "FL",
-      "leads": 4,
-      "surplus": 135282.97000000003,
-      "top_lead": 42385.22
     },
     {
       "county_id": "montgomery-oh",
@@ -114,8 +106,8 @@
   ],
   "by_score": {
     "A+": 6,
-    "A": 8,
-    "B": 9,
+    "A": 9,
+    "B": 11,
     "C": 3
   },
   "top_5_confirmed_leads": [],
@@ -168,13 +160,13 @@
       "evidence_level": "auction_only"
     },
     {
-      "county": "Lee",
+      "county": "Miami-Dade",
       "state": "FL",
-      "case_number": "24-CA-004319",
-      "address": "2521 SE 19TH PL",
-      "surplus": 136332.7,
+      "case_number": "2024-016324-CA-01",
+      "address": "5005 COLLINS AVE 815",
+      "surplus": 131044.32,
       "money_status": "apparent_surplus",
-      "evidence_level": "auction_only"
+      "evidence_level": "docket_reviewed"
     }
   ],
   "coverage": {
