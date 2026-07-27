@@ -30,7 +30,7 @@
       "sold_to_plaintiff"
     ],
     "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $97,346.",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=jLBNbBoO4rDiKGlG5pnl_LCjJyKulmPvx_8GCrYSbWU1",
+    "docket_url": "",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/13/2026"
   },
   {
@@ -62,7 +62,7 @@
       "sold_to_plaintiff"
     ],
     "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $75,433.",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=dO8u_3f3qItCy_0U13xnJ9Q3gIhykAGnXF3Mqq3dTd01",
+    "docket_url": "",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/20/2026"
   },
   {
@@ -163,20 +163,5 @@
     "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $12,874.",
     "docket_url": "https://core.duvalclerk.com/CoreCms.aspx?mode=PublicAccess",
     "source_url": "https://www.duval.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/15/2026"
-  },
-  {
-    "county_id": "cuyahoga-oh",
-    "county_name": "Cuyahoga",
-    "state": "OH",
-    "case_number": "CV25112933 (64393)",
-    "address": "Property Address:\t4824 EAST 84TH STREET",
-    "sale_date": "2026-07-13",
-    "sold_to": "Plaintiff",
-    "former_surplus": 11433.0,
-    "kill_label": "Debt exceeds sale",
-    "kill_signals": [],
-    "kill_detail": "conservative debt $91,812 \u2265 sale $88,100 \u2014 NO surplus (principal $65,536 + interest $19,723 + junior $0 + buffer $6,554)",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=2WlQ45LzB1r1dU2n5Kk8SAZ5LBjlJcUgqx1--fk_cYQ1",
-    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/13/2026"
   }
 ]
