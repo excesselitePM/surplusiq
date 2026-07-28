@@ -17,21 +17,22 @@
     "source_url": "https://www.duval.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/16/2026"
   },
   {
-    "county_id": "cuyahoga-oh",
-    "county_name": "Cuyahoga",
-    "state": "OH",
-    "case_number": "CV23974991 (64390)",
-    "address": "3780 MAYFIELD ROAD",
-    "sale_date": "2026-07-13",
-    "sold_to": "Plaintiff",
-    "former_surplus": 97346.0,
-    "kill_label": "Sold to plaintiff",
+    "county_id": "miami-dade-fl",
+    "county_name": "Miami-Dade",
+    "state": "FL",
+    "case_number": "2024-015931-CA-01",
+    "address": "3231 NW 151 ST",
+    "sale_date": "2026-07-27",
+    "sold_to": "3rd Party Bidder",
+    "former_surplus": 205511.11,
+    "kill_label": "Sale cancelled/vacated",
     "kill_signals": [
-      "sold_to_plaintiff"
+      "sale_issue",
+      "bankruptcy_resolved"
     ],
-    "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $97,346.",
-    "docket_url": "",
-    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/13/2026"
+    "kill_detail": "sale vacated/cancelled (hard kill): 'Order Cancelling Foreclosure Sale'",
+    "docket_url": "https://www2.miamidadeclerk.gov/ocs/",
+    "source_url": "https://www.miamidade.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/27/2026"
   },
   {
     "county_id": "summit-oh",
@@ -52,6 +53,24 @@
     "county_id": "cuyahoga-oh",
     "county_name": "Cuyahoga",
     "state": "OH",
+    "case_number": "CV25122629 (64326)",
+    "address": "Property Address:\t13211 WEST 130TH STREET",
+    "sale_date": "2026-07-27",
+    "sold_to": "Plaintiff",
+    "former_surplus": 80153.0,
+    "kill_label": "Debt exceeds sale",
+    "kill_signals": [
+      "motion_to_vacate",
+      "bankruptcy"
+    ],
+    "kill_detail": "conservative debt $485,276 \u2265 sale $246,820 \u2014 NO surplus (principal $410,741 + interest $33,461 + junior $0 + buffer $41,074)",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=j6hFAUpbIClZozhJ9AoCTSHRC8TOngWEfZ9OFuenhag1",
+    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/27/2026"
+  },
+  {
+    "county_id": "cuyahoga-oh",
+    "county_name": "Cuyahoga",
+    "state": "OH",
     "case_number": "CV24108663 (64466)",
     "address": "290 KEMPTON DRIVE",
     "sale_date": "2026-07-20",
@@ -62,7 +81,7 @@
       "sold_to_plaintiff"
     ],
     "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $75,433.",
-    "docket_url": "",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=dO8u_3f3qItCy_0U13xnJ7xwe8t9YPXwBrp2SDE9UEE1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/20/2026"
   },
   {
@@ -81,6 +100,53 @@
     "kill_detail": "Docket checked. Surplus claim activity found: docket 'MOTION FOR DISBURSEMENT OF SURPLUS FUNDS AFTER JUDICIAL SALE ALL AMERICAL DEBRIS & WRECKIN'. Lead already being pursued.",
     "docket_url": "https://core.duvalclerk.com/CoreCms.aspx?mode=PublicAccess",
     "source_url": "https://www.duval.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/15/2026"
+  },
+  {
+    "county_id": "cuyahoga-oh",
+    "county_name": "Cuyahoga",
+    "state": "OH",
+    "case_number": "CV25116551 (64561)",
+    "address": "4422 WOODWAY AVENUE",
+    "sale_date": "2026-07-27",
+    "sold_to": "3rd Party Bidder",
+    "former_surplus": 55433.0,
+    "kill_label": "Debt exceeds sale",
+    "kill_signals": [],
+    "kill_detail": "conservative debt $168,249 \u2265 sale $152,100 \u2014 NO surplus (principal $132,189 + interest $22,841 + junior $0 + buffer $13,219)",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=eRsMXwp9uwz_gkM2VjLHTbYKvG_ZSXdH8cbG1Oxw0101",
+    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/27/2026"
+  },
+  {
+    "county_id": "cuyahoga-oh",
+    "county_name": "Cuyahoga",
+    "state": "OH",
+    "case_number": "CV25125501 (64564)",
+    "address": "Property Address:\t671 EAST 250TH STREET",
+    "sale_date": "2026-07-27",
+    "sold_to": "Plaintiff",
+    "former_surplus": 41766.0,
+    "kill_label": "Debt exceeds sale",
+    "kill_signals": [],
+    "kill_detail": "conservative debt $173,192 \u2265 sale $155,100 \u2014 NO surplus (principal $151,658 + interest $6,369 + junior $0 + buffer $15,166)",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=cZi5_ro54EEHZBFTQjxjwcLEety_vpY-mhR_ZYvEJFM1",
+    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/27/2026"
+  },
+  {
+    "county_id": "miami-dade-fl",
+    "county_name": "Miami-Dade",
+    "state": "FL",
+    "case_number": "2022-020068-CA-01",
+    "address": "170 SE 14 ST 1807",
+    "sale_date": "2026-07-27",
+    "sold_to": "Plaintiff",
+    "former_surplus": 41170.140000000014,
+    "kill_label": "Sold to plaintiff",
+    "kill_signals": [
+      "sold_to_plaintiff"
+    ],
+    "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $41,170.",
+    "docket_url": "https://www2.miamidadeclerk.gov/ocs/",
+    "source_url": "https://www.miamidade.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/27/2026"
   },
   {
     "county_id": "summit-oh",
@@ -134,23 +200,6 @@
     "county_id": "duval-fl",
     "county_name": "Duval",
     "state": "FL",
-    "case_number": "16-2024-CA-005865-AXXX-MA",
-    "address": "312 GOODWIN ST",
-    "sale_date": "2026-07-13",
-    "sold_to": "Plaintiff",
-    "former_surplus": 15553.330000000002,
-    "kill_label": "Sold to plaintiff",
-    "kill_signals": [
-      "sold_to_plaintiff"
-    ],
-    "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $15,553.",
-    "docket_url": "https://core.duvalclerk.com/CoreCms.aspx?mode=PublicAccess",
-    "source_url": "https://www.duval.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/13/2026"
-  },
-  {
-    "county_id": "duval-fl",
-    "county_name": "Duval",
-    "state": "FL",
     "case_number": "16-2023-CA-009800-XXXX-MA",
     "address": "254 E 17TH ST",
     "sale_date": "2026-07-15",
@@ -163,5 +212,20 @@
     "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $12,874.",
     "docket_url": "https://core.duvalclerk.com/CoreCms.aspx?mode=PublicAccess",
     "source_url": "https://www.duval.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/15/2026"
+  },
+  {
+    "county_id": "cuyahoga-oh",
+    "county_name": "Cuyahoga",
+    "state": "OH",
+    "case_number": "CV25121712 (64563)",
+    "address": "Property Address:\t12017 SOIKA AVENUE",
+    "sale_date": "2026-07-27",
+    "sold_to": "3rd Party Bidder",
+    "former_surplus": 11133.0,
+    "kill_label": "Debt exceeds sale",
+    "kill_signals": [],
+    "kill_detail": "true surplus only $-48,903 after debt verification",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=3ao-tZbhEFBYbIV32Ytbjvgs7fwuoz6F9Gsik1Z0VDk1",
+    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/27/2026"
   }
 ]
