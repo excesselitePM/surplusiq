@@ -1,33 +1,33 @@
 {
-  "generated_at": "2026-07-28T11:55:17",
-  "total_leads": 24,
-  "total_leads_pre_filter": 30,
-  "killed_filtered_count": 6,
-  "killed_shown_count": 14,
+  "generated_at": "2026-07-29T11:57:53",
+  "total_leads": 21,
+  "total_leads_pre_filter": 26,
+  "killed_filtered_count": 5,
+  "killed_shown_count": 10,
   "below_floor_filtered_count": 0,
   "min_display_surplus": 5000.0,
   "confirmed_surplus_total": 0,
   "estimated_surplus_total": 0,
-  "apparent_surplus_total": 1335897.21,
-  "docket_verified_positive_count": 3,
-  "docket_verified_positive_total": 31710.510000000002,
+  "apparent_surplus_total": 1216446.3,
+  "docket_verified_positive_count": 2,
+  "docket_verified_positive_total": 13272.13,
   "confirmed_surplus_count": 0,
   "estimated_surplus_count": 0,
-  "apparent_surplus_count": 17,
-  "unverified_count": 7,
+  "apparent_surplus_count": 15,
+  "unverified_count": 6,
   "killed_count": 0,
-  "red_count": 2,
+  "red_count": 1,
   "pipeline_ready_count": 0,
   "pr_matched_count": 9,
-  "docket_matched_count": 21,
+  "docket_matched_count": 17,
   "by_state": {
     "FL": {
-      "leads": 19,
-      "surplus": 1845062.4599999997
+      "leads": 18,
+      "surplus": 1744049.9299999995
     },
     "OH": {
-      "leads": 11,
-      "surplus": 726407.62
+      "leads": 8,
+      "surplus": 581931.4099999999
     }
   },
   "by_county": [
@@ -40,20 +40,20 @@
       "top_lead": 212718.63
     },
     {
-      "county_id": "miami-dade-fl",
-      "county_name": "Miami-Dade",
-      "state": "FL",
-      "leads": 5,
-      "surplus": 481345.38,
-      "top_lead": 205511.11
-    },
-    {
       "county_id": "duval-fl",
       "county_name": "Duval",
       "state": "FL",
       "leads": 5,
-      "surplus": 473756.32000000007,
+      "surplus": 469795.13,
       "top_lead": 251206.87
+    },
+    {
+      "county_id": "miami-dade-fl",
+      "county_name": "Miami-Dade",
+      "state": "FL",
+      "leads": 4,
+      "surplus": 384294.04000000004,
+      "top_lead": 205511.11
     },
     {
       "county_id": "franklin-oh",
@@ -70,14 +70,6 @@
       "leads": 5,
       "surplus": 223200.0,
       "top_lead": 90100.0
-    },
-    {
-      "county_id": "cuyahoga-oh",
-      "county_name": "Cuyahoga",
-      "state": "OH",
-      "leads": 3,
-      "surplus": 144476.21,
-      "top_lead": 55433.0
     },
     {
       "county_id": "broward-fl",
@@ -98,8 +90,8 @@
   ],
   "by_score": {
     "A+": 8,
-    "A": 10,
-    "B": 8,
+    "A": 7,
+    "B": 7,
     "C": 3
   },
   "top_5_confirmed_leads": [],
