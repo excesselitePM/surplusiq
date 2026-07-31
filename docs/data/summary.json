@@ -1,29 +1,29 @@
 {
-  "generated_at": "2026-07-30T11:52:19",
-  "total_leads": 21,
-  "total_leads_pre_filter": 27,
-  "killed_filtered_count": 6,
-  "killed_shown_count": 13,
+  "generated_at": "2026-07-31T11:56:58",
+  "total_leads": 19,
+  "total_leads_pre_filter": 26,
+  "killed_filtered_count": 7,
+  "killed_shown_count": 14,
   "below_floor_filtered_count": 0,
   "min_display_surplus": 5000.0,
   "confirmed_surplus_total": 0,
   "estimated_surplus_total": 108530.0,
-  "apparent_surplus_total": 871133.86,
+  "apparent_surplus_total": 784111.89,
   "docket_verified_positive_count": 3,
   "docket_verified_positive_total": 31710.510000000002,
   "confirmed_surplus_count": 0,
   "estimated_surplus_count": 1,
-  "apparent_surplus_count": 14,
+  "apparent_surplus_count": 12,
   "unverified_count": 6,
   "killed_count": 0,
   "red_count": 2,
   "pipeline_ready_count": 0,
   "pr_matched_count": 8,
-  "docket_matched_count": 21,
+  "docket_matched_count": 20,
   "by_state": {
     "FL": {
-      "leads": 17,
-      "surplus": 1622478.7599999995
+      "leads": 16,
+      "surplus": 1371271.89
     },
     "OH": {
       "leads": 10,
@@ -38,14 +38,6 @@
       "leads": 4,
       "surplus": 541959.16,
       "top_lead": 192618.76
-    },
-    {
-      "county_id": "duval-fl",
-      "county_name": "Duval",
-      "state": "FL",
-      "leads": 5,
-      "surplus": 432924.57000000007,
-      "top_lead": 251206.87
     },
     {
       "county_id": "broward-fl",
@@ -80,6 +72,14 @@
       "top_lead": 90100.0
     },
     {
+      "county_id": "duval-fl",
+      "county_name": "Duval",
+      "state": "FL",
+      "leads": 4,
+      "surplus": 181717.7,
+      "top_lead": 86579.96
+    },
+    {
       "county_id": "cuyahoga-oh",
       "county_name": "Cuyahoga",
       "state": "OH",
@@ -89,7 +89,7 @@
     }
   ],
   "by_score": {
-    "A+": 7,
+    "A+": 6,
     "A": 9,
     "B": 7,
     "C": 3
@@ -135,15 +135,6 @@
       "evidence_level": "auction_only"
     },
     {
-      "county": "Broward",
-      "state": "FL",
-      "case_number": "CACE-24-008842",
-      "address": "4921 NW 11 PL",
-      "surplus": 67043.48000000001,
-      "money_status": "apparent_surplus",
-      "evidence_level": "docket_reviewed"
-    },
-    {
       "county": "Orange",
       "state": "FL",
       "case_number": "2024-CA-008963-O",
@@ -151,6 +142,15 @@
       "surplus": 57801.71,
       "money_status": "apparent_surplus",
       "evidence_level": "auction_only"
+    },
+    {
+      "county": "Duval",
+      "state": "FL",
+      "case_number": "16-2016-CA-002390-XXXX-MA",
+      "address": "5857 GUMWOOD DR",
+      "surplus": 54462.75,
+      "money_status": "apparent_surplus",
+      "evidence_level": "docket_reviewed"
     }
   ],
   "coverage": {

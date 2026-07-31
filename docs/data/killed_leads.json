@@ -1,22 +1,5 @@
 [
   {
-    "county_id": "duval-fl",
-    "county_name": "Duval",
-    "state": "FL",
-    "case_number": "16-2025-CA-005579-AXXX-MA",
-    "address": "9227 CHANDLER OAKS DR",
-    "sale_date": "2026-07-16",
-    "sold_to": "3rd Party Bidder",
-    "former_surplus": 251206.87,
-    "kill_label": "Surplus claim filed",
-    "kill_signals": [
-      "surplus_claim_filed"
-    ],
-    "kill_detail": "Docket checked. Surplus claim activity found: docket 'MOTION TO INTERVENE AND DISBURSE SURPLUS FUNDS (HOME DEFENSE NOW'S)'. Lead already being pursued.",
-    "docket_url": "https://core.duvalclerk.com/CoreCms.aspx?mode=PublicAccess",
-    "source_url": "https://www.duval.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/16/2026"
-  },
-  {
     "county_id": "broward-fl",
     "county_name": "Broward",
     "state": "FL",
@@ -77,11 +60,11 @@
     "former_surplus": 80153.0,
     "kill_label": "Debt exceeds sale",
     "kill_signals": [
-      "motion_to_vacate",
-      "bankruptcy"
+      "bankruptcy",
+      "motion_to_vacate"
     ],
     "kill_detail": "conservative debt $485,276 \u2265 sale $246,820 \u2014 NO surplus (principal $410,741 + interest $33,461 + junior $0 + buffer $41,074)",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=j6hFAUpbIClZozhJ9AoCTTLZLKmBSNpIHlRTVT0AVb41",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=j6hFAUpbIClZozhJ9AoCTf1mLCulHYiBL9yfkPNxG8A1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/27/2026"
   },
   {
@@ -98,8 +81,25 @@
       "sold_to_plaintiff"
     ],
     "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $75,433.",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=dO8u_3f3qItCy_0U13xnJ3FbcEhcYt8fhU3bUKU1j701",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=dO8u_3f3qItCy_0U13xnJxvQdvcVDbjcHOCosumtXPw1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/20/2026"
+  },
+  {
+    "county_id": "broward-fl",
+    "county_name": "Broward",
+    "state": "FL",
+    "case_number": "CACE-24-008842",
+    "address": "4921 NW 11 PL",
+    "sale_date": "2026-07-29",
+    "sold_to": "3rd Party Bidder",
+    "former_surplus": 67043.48000000001,
+    "kill_label": "Surplus claim filed",
+    "kill_signals": [
+      "surplus_claim_filed"
+    ],
+    "kill_detail": "Docket checked. Surplus claim activity found: 'Motion for Disbursement MOTION TO INTERVENE AND TO DISBURSE SURPLUS FUNDS'. Lead already being pursued.",
+    "docket_url": "https://www.browardclerk.org/Web2/CaseSearchECA/Index/?AccessLevel=ANONYMOUS",
+    "source_url": "https://broward.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/29/2026"
   },
   {
     "county_id": "cuyahoga-oh",
@@ -113,7 +113,7 @@
     "kill_label": "Debt exceeds sale",
     "kill_signals": [],
     "kill_detail": "conservative debt $168,249 \u2265 sale $152,100 \u2014 NO surplus (principal $132,189 + interest $22,841 + junior $0 + buffer $13,219)",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=eRsMXwp9uwz_gkM2VjLHTUgcRhzKJjna6iMR0JxAD3o1",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=eRsMXwp9uwz_gkM2VjLHTeB-IyshbU1bxBvy7-Oc4To1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/27/2026"
   },
   {
@@ -128,7 +128,7 @@
     "kill_label": "Debt exceeds sale",
     "kill_signals": [],
     "kill_detail": "conservative debt $173,192 \u2265 sale $155,100 \u2014 NO surplus (principal $151,658 + interest $6,369 + junior $0 + buffer $15,166)",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=cZi5_ro54EEHZBFTQjxjwXO22EtxO71JA78byuhqLQk1",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=cZi5_ro54EEHZBFTQjxjwWr-nIqSqYSMbfmY8LVzsqI1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/27/2026"
   },
   {
@@ -162,6 +162,23 @@
     "kill_detail": "conservative debt $98,431 \u2265 sale $85,000 \u2014 NO surplus (principal $78,407 + interest $12,183 + junior $0 + buffer $7,841)",
     "docket_url": "https://clerk.summitoh.net/PublicSite/CaseDetail.aspx",
     "source_url": "https://summit.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/17/2026"
+  },
+  {
+    "county_id": "broward-fl",
+    "county_name": "Broward",
+    "state": "FL",
+    "case_number": "CACE-24-016354",
+    "address": "3051 S PALM AIRE DR",
+    "sale_date": "2026-07-22",
+    "sold_to": "3rd Party Bidder",
+    "former_surplus": 19978.490000000005,
+    "kill_label": "Surplus claim filed",
+    "kill_signals": [
+      "surplus_claim_filed"
+    ],
+    "kill_detail": "Docket checked. Surplus claim activity found: 'Motion for Disbursement REQUEST FOR SURPLUS AND SURPLUS FUNDS Party: Defendant Palm-Aire Country Club Condominium Association No.3, I",
+    "docket_url": "https://www.browardclerk.org/Web2/CaseSearchECA/Index/?AccessLevel=ANONYMOUS",
+    "source_url": "https://broward.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/22/2026"
   },
   {
     "county_id": "miami-dade-fl",
@@ -208,7 +225,7 @@
     "kill_label": "Debt exceeds sale",
     "kill_signals": [],
     "kill_detail": "true surplus only $-48,903 after debt verification",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=3ao-tZbhEFBYbIV32YtbjldofU7Ci3dGkN4zCzAzRgI1",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=3ao-tZbhEFBYbIV32YtbjtWFgCdSsTaXx2P0MnJ-oJ41",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/27/2026"
   }
 ]
