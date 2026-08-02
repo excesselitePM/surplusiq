@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-08-01T12:18:15",
-  "total_leads": 20,
-  "total_leads_pre_filter": 24,
+  "generated_at": "2026-08-02T11:47:09",
+  "total_leads": 18,
+  "total_leads_pre_filter": 22,
   "killed_filtered_count": 4,
   "killed_shown_count": 11,
   "below_floor_filtered_count": 0,
@@ -14,20 +14,20 @@
   "confirmed_surplus_count": 0,
   "estimated_surplus_count": 1,
   "apparent_surplus_count": 15,
-  "unverified_count": 4,
+  "unverified_count": 2,
   "killed_count": 0,
   "red_count": 1,
   "pipeline_ready_count": 0,
-  "pr_matched_count": 9,
-  "docket_matched_count": 10,
+  "pr_matched_count": 7,
+  "docket_matched_count": 14,
   "by_state": {
     "FL": {
       "leads": 16,
       "surplus": 1349567.11
     },
     "OH": {
-      "leads": 8,
-      "surplus": 515468.54000000004
+      "leads": 6,
+      "surplus": 419568.54000000004
     }
   },
   "by_county": [
@@ -80,14 +80,6 @@
       "top_lead": 55433.0
     },
     {
-      "county_id": "montgomery-oh",
-      "county_name": "Montgomery",
-      "state": "OH",
-      "leads": 2,
-      "surplus": 95900.0,
-      "top_lead": 51100.0
-    },
-    {
       "county_id": "summit-oh",
       "county_name": "Summit",
       "state": "OH",
@@ -98,8 +90,8 @@
   ],
   "by_score": {
     "A+": 6,
-    "A": 8,
-    "B": 6,
+    "A": 7,
+    "B": 5,
     "C": 3
   },
   "top_5_confirmed_leads": [],
@@ -111,7 +103,7 @@
       "address": "1803 MAYFAIR RD",
       "surplus": 108530.0,
       "money_status": "estimated_surplus",
-      "evidence_level": "property_enriched"
+      "evidence_level": "docket_reviewed"
     }
   ],
   "top_5_apparent_leads": [
