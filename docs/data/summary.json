@@ -1,33 +1,33 @@
 {
-  "generated_at": "2026-08-05T11:58:05",
-  "total_leads": 20,
-  "total_leads_pre_filter": 27,
+  "generated_at": "2026-08-06T11:59:28",
+  "total_leads": 22,
+  "total_leads_pre_filter": 29,
   "killed_filtered_count": 6,
-  "killed_shown_count": 13,
+  "killed_shown_count": 14,
   "below_floor_filtered_count": 1,
   "min_display_surplus": 5000.0,
   "confirmed_surplus_total": 0,
   "estimated_surplus_total": 108530.0,
-  "apparent_surplus_total": 1143360.2,
-  "docket_verified_positive_count": 5,
-  "docket_verified_positive_total": 132272.54,
+  "apparent_surplus_total": 1240476.15,
+  "docket_verified_positive_count": 6,
+  "docket_verified_positive_total": 177660.94,
   "confirmed_surplus_count": 0,
   "estimated_surplus_count": 1,
-  "apparent_surplus_count": 15,
+  "apparent_surplus_count": 16,
   "unverified_count": 4,
   "killed_count": 0,
-  "red_count": 1,
+  "red_count": 2,
   "pipeline_ready_count": 0,
-  "pr_matched_count": 9,
-  "docket_matched_count": 22,
+  "pr_matched_count": 11,
+  "docket_matched_count": 18,
   "by_state": {
     "FL": {
       "leads": 16,
-      "surplus": 1611654.0299999998
+      "surplus": 1688791.49
     },
     "OH": {
-      "leads": 11,
-      "surplus": 525851.0700000001
+      "leads": 13,
+      "surplus": 621751.0700000001
     }
   },
   "by_county": [
@@ -35,16 +35,16 @@
       "county_id": "orange-fl",
       "county_name": "Orange",
       "state": "FL",
-      "leads": 4,
-      "surplus": 738294.82,
+      "leads": 5,
+      "surplus": 856418.0399999999,
       "top_lead": 420336.41
     },
     {
       "county_id": "broward-fl",
       "county_name": "Broward",
       "state": "FL",
-      "leads": 5,
-      "surplus": 375655.27999999997,
+      "leads": 4,
+      "surplus": 334669.51999999996,
       "top_lead": 221453.33
     },
     {
@@ -80,6 +80,14 @@
       "top_lead": 86579.96
     },
     {
+      "county_id": "montgomery-oh",
+      "county_name": "Montgomery",
+      "state": "OH",
+      "leads": 2,
+      "surplus": 95900.0,
+      "top_lead": 51100.0
+    },
+    {
       "county_id": "summit-oh",
       "county_name": "Summit",
       "state": "OH",
@@ -89,8 +97,8 @@
     }
   ],
   "by_score": {
-    "A+": 6,
-    "A": 8,
+    "A+": 7,
+    "A": 9,
     "B": 6,
     "C": 4
   },
@@ -103,7 +111,7 @@
       "address": "1803 MAYFAIR RD",
       "surplus": 108530.0,
       "money_status": "estimated_surplus",
-      "evidence_level": "docket_reviewed"
+      "evidence_level": "property_enriched"
     }
   ],
   "top_5_apparent_leads": [
@@ -135,20 +143,20 @@
       "evidence_level": "auction_only"
     },
     {
+      "county": "Orange",
+      "state": "FL",
+      "case_number": "2024-CA-009840-O",
+      "address": "13851 BEAUREGARD PL",
+      "surplus": 118123.22,
+      "money_status": "apparent_surplus",
+      "evidence_level": "auction_only"
+    },
+    {
       "county": "Miami-Dade",
       "state": "FL",
       "case_number": "2023-015095-CA-01",
       "address": "200 NE 158 ST",
       "surplus": 97051.38,
-      "money_status": "apparent_surplus",
-      "evidence_level": "docket_reviewed"
-    },
-    {
-      "county": "Summit",
-      "state": "OH",
-      "case_number": "CV2025105075 (10781)",
-      "address": "1991 JAQUELYN DRIVE",
-      "surplus": 93415.38,
       "money_status": "apparent_surplus",
       "evidence_level": "docket_reviewed"
     }
