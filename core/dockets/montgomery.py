@@ -34,9 +34,41 @@ from pathlib import Path
 from playwright.async_api import async_playwright, Page, TimeoutError as PWTimeout
 
 from .base import DocketScraper, DocketResult, DocketEvent
+from .oh_debt import parse_oh_mortgage_debt, components_dict
 
 
 BASE_URL = "https://pro.mcohio.org"
+
+
+def _pdf_to_text(pdf_bytes: bytes) -> str:
+    """Full pdfplumber text (first 15 pages) for oh_debt parsing + audit."""
+    import pdfplumber
+    text = ""
+    with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
+        for page in pdf.pages[:15]:
+            text += (page.extract_text() or "") + "\n"
+    return text
+
+
+# HOA / junior-lien decree detection — verified on the real Fox Ridge
+# (2025 CV 02260) and Pheasant Ridge (2025 CV 03200) decrees. The judgment
+# sentence is "due to (the) Plaintiff, the sum of $X" with NO Note anchor, and
+# the decree carries lien-specific language ("delinquent maintenance fees and
+# assessments", "certificate of continuing lien"). An HOA/condo judgment is a
+# JUNIOR lien — NOT the senior mortgage debt: 03200's decree explicitly says
+# the property is "sold subject to the mortgage of PennyMac" whose amount is
+# "to be determined", i.e. total debt is UNKNOWABLE from this decree. Treating
+# the HOA figure as debt published a $257K phantom surplus off a $5,986 lien.
+# NB: cannot key on absence of "promissory note" — 03200 recites the senior
+# lender's (undetermined) note. Key on the lien markers instead.
+_HOA_LIEN_ANCHOR = re.compile(
+    r"due\s+to\s+(?:the\s+)?Plaintiff,?\s+the\s+sum\s+of\s+\$\s*([\d,]+\.\d{2})", re.I)
+_HOA_LIEN_MARKERS = (
+    "maintenance fees and assessments",
+    "certificate of continuing lien",
+    "condominium association",
+    "homeowners association",
+)
 
 
 def parse_montgomery_case_number(raw: str) -> Optional[dict]:
@@ -819,6 +851,12 @@ class MontgomeryDocketScraper(DocketScraper):
             "partial release", "satisfaction of judgment", "satisfaction",
             "transcript", "subpoena", "praecipe", "writ of execution",
             "garnishment",
+            # Distribution / sale-confirmation orders quote sale-proceeds
+            # figures, not the judgment debt. Probe run 31449965664 caught the
+            # old max() extractor grabbing $164,138.43 (proceeds distribution)
+            # instead of the $158,051.96 judgment on 2025 CV 02213.
+            "confirming sale", "confirmation of sale", "ordering deed",
+            "distribution", "proceeds of sale",
         ]
         # Supporting filings — logged for trail but never fetched. A motion
         # or affidavit can quote the prayer but is not the order itself.
@@ -883,6 +921,7 @@ class MontgomeryDocketScraper(DocketScraper):
             return
 
         req = page.context.request
+        legacy_hits = []  # (docket_id, amount) — flag-only fallback, never money math
         for prio, docket_id, preview in judgment_candidates[:6]:
             url = (
                 f"{BASE_URL}/Helpers/getDocumentFromOnBase.aspx"
@@ -900,24 +939,98 @@ class MontgomeryDocketScraper(DocketScraper):
                 if pdf_bytes[:4] != b"%PDF":
                     print(f"      ⚠ PDF {docket_id}: not a PDF (first bytes {pdf_bytes[:8]!r})")
                     continue
-                amount, snippet = extract_debt_from_pdf_bytes(pdf_bytes)
-                if amount:
-                    result.prayer_amount = amount
-                    result.debt_source = f"pdf_extract:docket_{docket_id}:judgment"
-                    print(f"      ✅ extracted debt from PDF {docket_id} [JUDGMENT]: ${amount:,.2f}")
-                    print(f"      📄 PDF context (~400 chars around match):")
-                    print(f"         {snippet}")
+
+                full_text = _pdf_to_text(pdf_bytes)
+                parsed = parse_oh_mortgage_debt(full_text)
+
+                if parsed.is_tax_decree:
+                    print(f"      ⏭ PDF {docket_id} is a TAX decree (RC 5721) — not OH mortgage; skipping")
+                    continue
+
+                if parsed.principal >= 10000.0:
+                    # Store the components — enrich.run_county computes the
+                    # conservative debt with the auction sale date and sets
+                    # prayer_amount/classification (same as Summit/Cuyahoga).
+                    result.debt_components = components_dict(parsed)
+                    result.prayer_amount = 0.0   # computed downstream (needs sale date)
+                    result.debt_source = "oh_mortgage_decree"
+                    print(f"      ✅ OH-mortgage decree PDF {docket_id}: principal "
+                          f"${parsed.principal:,.2f}  rate="
+                          f"{(str(round(parsed.interest_rate*100,3))+'%') if parsed.interest_rate else 'none'}"
+                          f"  base ${parsed.interest_base:,.2f}  junior ${parsed.junior_liens:,.2f}")
+                    for n in parsed.notes:
+                        print(f"         · {n}")
+                    self._save_decree_diag(result, docket_id, pdf_bytes, full_text)
                     return
-                else:
-                    print(f"      → PDF {docket_id} parsed but no debt keyword match")
+
+                if 0.0 < parsed.principal < 10000.0:
+                    # Plausibility floor (mirror Cuyahoga/Summit $10K): a sub-$10K
+                    # principal is fee-noise, not a real foreclosure judgment.
+                    print(f"      ⚠ PDF {docket_id} principal ${parsed.principal:,.2f} < $10K floor — "
+                          f"fee-noise / not a judgment; skipping")
+                    result.classification_reason = (
+                        f"OH-mortgage principal ${parsed.principal:,.2f} below $10K plausibility floor")
+                    continue
+
+                # principal == 0 → anchor miss. Check for the HOA/junior-lien
+                # decree shape before treating it as a coverage gap.
+                hoa = _HOA_LIEN_ANCHOR.search(re.sub(r"\s+", " ", full_text))
+                if hoa and any(m in full_text.lower() for m in _HOA_LIEN_MARKERS):
+                    amt = float(hoa.group(1).replace(",", ""))
+                    result.debt_flag = (
+                        f"hoa_or_junior_lien_judgment:${amt:,.2f} from docket_{docket_id} — "
+                        f"lien judgment only, senior mortgage debt UNKNOWN; "
+                        f"no confident surplus possible, manual review")
+                    result.classification_reason = (
+                        f"HOA/junior-lien judgment ${amt:,.2f} — not senior debt; "
+                        f"total debt unknown")
+                    print(f"      ⚠ PDF {docket_id}: HOA/junior-lien decree (${amt:,.2f}, no Note "
+                          f"anchor) — NOT senior debt; prayer stays $0, flagged for manual review")
+                    self._save_decree_diag(result, docket_id, pdf_bytes, full_text, unparsed=True)
+                    continue
+
+                # True anchor miss on a qualified judgment PDF — possible parser
+                # coverage GAP (a decree variant the anchors don't reach). Save
+                # the text for review and remember the legacy figure FLAG-ONLY.
+                print(f"      → PDF {docket_id}: oh_debt anchor MISS (principal $0) — "
+                      f"saving UNPARSED text for anchor review")
+                self._save_decree_diag(result, docket_id, pdf_bytes, full_text, unparsed=True)
+                legacy_amt, _snip = extract_debt_from_pdf_bytes(pdf_bytes)
+                if legacy_amt and legacy_amt >= 10000.0:
+                    legacy_hits.append((docket_id, legacy_amt))
             except Exception as e:
                 print(f"      ⚠ PDF fetch {docket_id} failed: {type(e).__name__}: {e}")
 
-        # All qualified judgment PDFs were unreadable or yielded no debt-keyword
-        # match. Per the anti-fabrication rule, prayer stays $0 and the lead
-        # remains unknown — no text-scrape fallback.
-        print(f"      → all qualified judgment PDFs failed; prayer stays $0 (lead → unknown)")
+        # No decree parsed with confidence. Per the anti-fabrication rule prayer
+        # stays $0 and the lead stays unknown. The legacy max() figure — the old
+        # extractor's guess — is recorded as a FLAG for manual review only; it
+        # never enters surplus math (it shipped false positives, e.g. principal-
+        # only $69,712 on 2025 CV 06927 and a $5,986 HOA lien on 2025 CV 03200).
+        if legacy_hits and not result.debt_flag:
+            docket_id, amt = legacy_hits[0]
+            result.debt_flag = (
+                f"legacy_max_extract:${amt:,.2f} from docket_{docket_id} — decree "
+                f"structure unparsed by oh_debt; figure is UNVERIFIED and not used "
+                f"for surplus math; manual review")
+            print(f"      ⚑ legacy fallback figure ${amt:,.2f} recorded as FLAG ONLY (docket_{docket_id})")
+        print(f"      → no usable OH-mortgage decree extracted; prayer stays $0 (lead → unknown)")
         return
+
+    def _save_decree_diag(self, result, docket_id, pdf_bytes, full_text, unparsed=False):
+        """Save the fetched decree PDF + text under data/diagnostics/montgomery-oh
+        (UNPARSED marker on anchor misses, mirroring Summit's coverage diagnostic)."""
+        try:
+            safe_case = re.sub(r"[^A-Za-z0-9_-]+", "_", result.case_number)
+            ts = datetime.now().strftime("%H%M%S")
+            diag = Path("data/diagnostics/montgomery-oh")
+            diag.mkdir(parents=True, exist_ok=True)
+            tag = "-UNPARSED" if unparsed else ""
+            (diag / f"{ts}-{safe_case}-docket{docket_id}{tag}.txt").write_text(
+                full_text, encoding="utf-8")
+            if not unparsed:
+                (diag / f"{ts}-{safe_case}-docket{docket_id}.pdf").write_bytes(pdf_bytes)
+        except Exception as e:
+            print(f"      ⚠ decree diagnostic save failed: {e}")
 
     # ─── Step 6: Scrape parties ──────────────────────────────────────────
 
