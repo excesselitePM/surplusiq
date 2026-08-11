@@ -127,6 +127,19 @@ def parse_oh_mortgage_debt(full_text: str) -> OHMortgageDebt:
         norm, re.I,
     )
     if not m:
+        # Variant anchor (Montgomery 2025 CV 06993, live-scrape anchor-miss):
+        # "Plaintiff is entitled to judgment on its note in the principal
+        #  amount of $X, together with accrued interest of $Y through DATE,
+        #  plus interest at the rate of Z% from DATE, unpaid late charges..."
+        # NB: this decree family QUANTIFIES pre-decree accrued interest ($Y)
+        # separately; the model does not add it — the 10% buffer covers it
+        # (and a surplus within the buffer flags uncertain anyway).
+        m = re.search(
+            r"judgment\s+on\s+its\s+(?:promissory\s+)?note\s+in\s+the\s+"
+            r"principal\s+amount\s+of\s+" + _MONEY,
+            norm, re.I,
+        )
+    if not m:
         r.verdict = "unknown"
         r.notes.append("principal not found (no 'due Plaintiff on the Note $X' anchor)")
         return r
@@ -143,6 +156,15 @@ def parse_oh_mortgage_debt(full_text: str) -> OHMortgageDebt:
         r"([\d.]+)\s*(?:%|percent)\s*per\s+annum\s+from\s+([A-Z][a-z]+\.?\s+\d{1,2},?\s+\d{4})",
         window, re.I,
     )
+    if not m_rate:
+        # Relaxed variant: "at the rate of 8.90% from December 1, 2025" — no
+        # "per annum" (Montgomery 06993 family). Requires "from" DIRECTLY after
+        # the % so lien-statute cites ("8% pursuant to O.R.C. §1343.01, from
+        # July 22, 2025") cannot match; scoped to the 300-char principal window.
+        m_rate = re.search(
+            r"([\d.]+)\s*(?:%|percent)\s*,?\s*from\s+([A-Z][a-z]+\.?\s+\d{1,2},?\s+\d{4})",
+            window, re.I,
+        )
     if m_rate:
         try:
             r.interest_rate = float(m_rate.group(1)) / 100.0

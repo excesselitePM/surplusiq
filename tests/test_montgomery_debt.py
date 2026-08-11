@@ -57,6 +57,10 @@ MORTGAGE_CASES = [
     ("2026_CV_02014_judgment.txt", date(2026, 8, 7),  126075.0, "killed",  136850.06, "Planet Home"),
     ("2025_CV_02213_judgment.txt", date(2026, 7, 10), 173100.0, "killed",  158051.96, "Nationstar"),
     ("2025_CV_06927_judgment.txt", date(2026, 7, 31), 115100.0, "surplus",  69711.60, "MyCUMortgage (live lead)"),
+    # Live-scrape anchor-miss (run 31452888304): "entitled to judgment on its
+    # note in the principal amount of $X ... at the rate of 8.90% from
+    # December 1, 2025" — no "due Plaintiff" lead-in, no "per annum".
+    ("2025_CV_06993_judgment.txt", date(2026, 7, 24),  41600.0, "killed",  115397.13, "06993 (anchor variant)"),
 ]
 
 
