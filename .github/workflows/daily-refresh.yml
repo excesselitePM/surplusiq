@@ -91,6 +91,23 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      # ── TEST GATE ──────────────────────────────────────────────────────
+      # All 8 suites run against COMMITTED captured data (network-free,
+      # <10s). No continue-on-error: a red suite stops the job here —
+      # no scrape, no publish. A broken build must never reach the live
+      # dashboard. Runs before the Playwright browser install so a failure
+      # aborts before any expensive step.
+      - name: Test gate — all suites must pass before scrape/publish
+        run: |
+          python -m tests.test_verification
+          python -m tests.test_miami_dade_docket
+          python -m tests.test_broward_docket
+          python -m tests.test_duval_docket
+          python -m tests.test_lee_liens
+          python -m tests.test_summit_debt
+          python -m tests.test_cuyahoga_debt
+          python -m tests.test_montgomery_debt
+
       - name: Install Playwright Chromium
         run: |
           python -m playwright install --with-deps chromium
