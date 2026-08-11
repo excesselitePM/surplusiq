@@ -24,6 +24,7 @@ import re as _re
 from datetime import datetime, date, timedelta
 from pathlib import Path
 
+from config.counties import LEAD_WINDOW_DAYS
 from core.loader import (
     load_all_leads, get_summary, PROJECT_ROOT,
     _POSITIVE_CLASSIFICATIONS, _NEGATIVE_CLASSIFICATIONS,
@@ -592,7 +593,7 @@ def export_dashboard_data():
         _all_dockets = _load_docket_data()
         _seen = {(e["county_id"], _normalize_case_for_lookup(e["case_number"]))
                  for e in killed_entries if e.get("case_number")}
-        _cutoff = date.today() - timedelta(days=28)
+        _cutoff = date.today() - timedelta(days=LEAD_WINDOW_DAYS)
         for (cid, norm), docket in _all_dockets.items():
             if (docket.get("classification") or "").lower() != "killed":
                 continue

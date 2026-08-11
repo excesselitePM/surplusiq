@@ -50,7 +50,7 @@ for d in (RAW_DIR, DIAG_DIR):
 
 # Import county config
 sys.path.insert(0, str(PROJECT_ROOT))
-from config.counties import ALL_COUNTIES, get_county, CountyConfig
+from config.counties import ALL_COUNTIES, get_county, CountyConfig, LEAD_WINDOW_DAYS
 
 MIN_SURPLUS = 10000
 
@@ -535,7 +535,7 @@ class UniversalAuctionScraper:
             pass
         return False
 
-    async def scrape(self, days_back: int = 7, headless: bool = True) -> list:
+    async def scrape(self, days_back: int = LEAD_WINDOW_DAYS, headless: bool = True) -> list:
         """
         Main entry point. Scrapes the last N days of auctions.
         Returns list of raw sale dicts.
@@ -651,7 +651,7 @@ class UniversalAuctionScraper:
 # CLI
 # ─────────────────────────────────────────────────────────────────────
 
-async def run_one(county_id: str, headless: bool = True, days_back: int = 7):
+async def run_one(county_id: str, headless: bool = True, days_back: int = LEAD_WINDOW_DAYS):
     county = get_county(county_id)
     scraper = UniversalAuctionScraper(county)
     return await scraper.scrape(days_back=days_back, headless=headless)
@@ -693,7 +693,7 @@ async def _run_one_isolated(county, sem: asyncio.Semaphore, headless: bool, days
         return await scraper.scrape(days_back=days_back, headless=headless)
 
 
-async def run_all(headless: bool = True, days_back: int = 7):
+async def run_all(headless: bool = True, days_back: int = LEAD_WINDOW_DAYS):
     """Run all counties — parallel by default, bounded by a semaphore.
 
     See _resolve_parallel_cap for the concurrency rationale. Per-county
@@ -727,7 +727,7 @@ async def run_all(headless: bool = True, days_back: int = 7):
 if __name__ == "__main__":
     args = sys.argv[1:]
     headless = "--headed" not in args
-    days = 7
+    days = LEAD_WINDOW_DAYS
     for a in args:
         if a.startswith("--days="):
             days = int(a.split("=")[1])

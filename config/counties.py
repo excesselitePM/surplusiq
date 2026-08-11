@@ -7,6 +7,21 @@ from dataclasses import dataclass, field
 from typing import Literal
 
 
+# ═══════════════════════════════════════════════════════════════════════
+# Lead window — SINGLE SOURCE OF TRUTH
+# ═══════════════════════════════════════════════════════════════════════
+# One number governs both sides of the pipeline:
+#   • auction scrape depth  (core/auction/universal.py --days default)
+#   • lead display window   (core/loader.py window_days,
+#                            core/dashboard_data.py killed-leads cutoff)
+# They MUST be the same value: every lead still displayed is re-scraped
+# (auction + docket) on each daily run, so late-filed kill signals —
+# vacated sales, surplus claims — are caught for the lead's whole life.
+# History: scrape ran at 14d while the loader kept 28d, so days 15-28
+# were displayed but never re-verified (audit finding 1.5).
+LEAD_WINDOW_DAYS = 28
+
+
 @dataclass
 class CountyConfig:
     id:              str

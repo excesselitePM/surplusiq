@@ -31,6 +31,8 @@ from datetime import datetime, date, timedelta
 from pathlib import Path
 from typing import Optional
 
+from config.counties import LEAD_WINDOW_DAYS
+
 
 # ═══════════════════════════════════════════════════════════════════════
 # Project paths
@@ -558,7 +560,7 @@ def load_all_leads(
     min_surplus: float = 10_000,
     require_third_party: bool = True,
     counties: Optional[list[str]] = None,
-    window_days: int = 28,
+    window_days: int = LEAD_WINDOW_DAYS,
     verbose: bool = True,
 ) -> list[Lead]:
     """
@@ -574,8 +576,11 @@ def load_all_leads(
         min_surplus: Minimum gross surplus required to qualify (default $10K)
         require_third_party: Only include 3rd party bidder wins (default True)
         counties: Optional list of county_ids to include (default: all 10)
-        window_days: Maximum age of sale_date in days (default 28 — wide enough
-                     for late-filed kill signals to be caught by re-verification)
+        window_days: Maximum age of sale_date in days (default: the shared
+                     config.counties.LEAD_WINDOW_DAYS constant, which also
+                     sets the auction scrape depth — the two must match so
+                     every displayed lead is re-scraped for late-filed kill
+                     signals throughout its window)
         verbose: Print summary of what was filtered out
 
     Returns:

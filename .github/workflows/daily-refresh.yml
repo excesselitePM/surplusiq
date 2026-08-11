@@ -139,14 +139,17 @@ jobs:
         id: scrapers
         if: github.event.inputs.pr_probe_address == '' && github.event.inputs.pr_probe_criteria == '' && github.event.inputs.pr_probe_radarid == '' && github.event.inputs.pr_probe_chain == ''
         run: |
+          # No --days flag: scrape depth comes from config.counties.LEAD_WINDOW_DAYS,
+          # the single source of truth shared with the loader/dashboard display
+          # window. Passing an explicit --days here would let the two drift again.
           if [ "${{ steps.params.outputs.county }}" = "all" ]; then
-            echo "Running ALL 10 counties (--days=14)"
+            echo "Running ALL 10 counties (window: config.counties.LEAD_WINDOW_DAYS)"
             xvfb-run -a --server-args="-screen 0 1280x800x24" \
-              python -m core.auction.universal --all --days=14
+              python -m core.auction.universal --all
           else
-            echo "Running SINGLE county: ${{ steps.params.outputs.county }} (--days=14)"
+            echo "Running SINGLE county: ${{ steps.params.outputs.county }} (window: config.counties.LEAD_WINDOW_DAYS)"
             xvfb-run -a --server-args="-screen 0 1280x800x24" \
-              python -m core.auction.universal "${{ steps.params.outputs.county }}" --days=14
+              python -m core.auction.universal "${{ steps.params.outputs.county }}"
           fi
         continue-on-error: false
 
