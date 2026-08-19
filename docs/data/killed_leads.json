@@ -69,25 +69,6 @@
     "source_url": "https://www.duval.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=08/10/2026"
   },
   {
-    "county_id": "cuyahoga-oh",
-    "county_name": "Cuyahoga",
-    "state": "OH",
-    "case_number": "CV23976605 (64833)",
-    "address": "25446 BRYDEN ROAD",
-    "sale_date": "2026-08-17",
-    "sold_to": "3rd Party Bidder",
-    "former_surplus": 150333.0,
-    "kill_label": "Sale vacated",
-    "kill_signals": [
-      "motion_to_vacate",
-      "bankruptcy",
-      "sale_vacated"
-    ],
-    "kill_detail": "kill signal: motion_to_vacate",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=p815iiVwT_XJDeFcmDbQERId71RH_--smZe2oqkLRU41",
-    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=08/17/2026"
-  },
-  {
     "county_id": "franklin-oh",
     "county_name": "Franklin",
     "state": "OH",
@@ -140,24 +121,6 @@
     "source_url": "https://www.duval.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=08/10/2026"
   },
   {
-    "county_id": "cuyahoga-oh",
-    "county_name": "Cuyahoga",
-    "state": "OH",
-    "case_number": "CV25122629 (64326)",
-    "address": "Property Address:\t13211 WEST 130TH STREET",
-    "sale_date": "2026-07-27",
-    "sold_to": "Plaintiff",
-    "former_surplus": 80153.0,
-    "kill_label": "Debt exceeds sale",
-    "kill_signals": [
-      "motion_to_vacate",
-      "bankruptcy"
-    ],
-    "kill_detail": "conservative debt $485,276 \u2265 sale $246,820 \u2014 NO surplus (principal $410,741 + interest $33,461 + junior $0 + buffer $41,074)",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=j6hFAUpbICm_PZfpyVl7COFuS6k_OJlTttA81n1d9D01",
-    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/27/2026"
-  },
-  {
     "county_id": "summit-oh",
     "county_name": "Summit",
     "state": "OH",
@@ -171,38 +134,6 @@
     "kill_detail": "conservative debt $271,759 \u2265 sale $211,100 \u2014 NO surplus (principal $209,887 + interest $40,883 + junior $0 + buffer $20,989)",
     "docket_url": "https://clerk.summitoh.net/PublicSite/CaseDetail.aspx",
     "source_url": "https://summit.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=08/07/2026"
-  },
-  {
-    "county_id": "cuyahoga-oh",
-    "county_name": "Cuyahoga",
-    "state": "OH",
-    "case_number": "CV23975399 (64624)",
-    "address": "2912 CLINTON AVENUE",
-    "sale_date": "2026-08-03",
-    "sold_to": "3rd Party Bidder",
-    "former_surplus": 61333.0,
-    "kill_label": "Sale vacated",
-    "kill_signals": [
-      "sale_vacated"
-    ],
-    "kill_detail": "kill signal: sale_vacated",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=I46_G_8JEtqlyxxqPxZixmjw9lU2Vi7eZMb7GdDgMEo1",
-    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=08/03/2026"
-  },
-  {
-    "county_id": "cuyahoga-oh",
-    "county_name": "Cuyahoga",
-    "state": "OH",
-    "case_number": "CV25116551 (64561)",
-    "address": "4422 WOODWAY AVENUE",
-    "sale_date": "2026-07-27",
-    "sold_to": "3rd Party Bidder",
-    "former_surplus": 55433.0,
-    "kill_label": "Debt exceeds sale",
-    "kill_signals": [],
-    "kill_detail": "conservative debt $168,249 \u2265 sale $152,100 \u2014 NO surplus (principal $132,189 + interest $22,841 + junior $0 + buffer $13,219)",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=eRsMXwp9uwyXgKyy0rHUyPSKGie7WBa9fiuD_KvtBsA1",
-    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/27/2026"
   },
   {
     "county_id": "duval-fl",
@@ -236,7 +167,7 @@
       "sale_vacated"
     ],
     "kill_detail": "kill signal: motion_to_vacate",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=Mc9MeuJlWp1_-NcgQ3sqW6g2mqcYIJeTywg-YDnk4Ws1",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=Mc9MeuJlWp1_-NcgQ3sqWwCYB-0MxPwcBT-3F0w6qc81",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=08/17/2026"
   },
   {
@@ -244,18 +175,16 @@
     "county_name": "Cuyahoga",
     "state": "OH",
     "case_number": "CV21945205 (64622)",
-    "address": "Property Address:\t753 TAFT AVENUE",
+    "address": "753 TAFT AVENUE",
     "sale_date": "2026-08-03",
     "sold_to": "Plaintiff",
     "former_surplus": 46522.57999999999,
-    "kill_label": "Sale vacated",
+    "kill_label": "Sold to plaintiff",
     "kill_signals": [
-      "motion_to_vacate",
-      "bankruptcy",
-      "sale_vacated"
+      "sold_to_plaintiff"
     ],
-    "kill_detail": "kill signal: motion_to_vacate",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=Cbp3ndF9AmDOptfr6TWaG3f9wQkslv5xAo25XeDbIyc1",
+    "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $46,523.",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=Cbp3ndF9AmDOptfr6TWaG3GAVwWxi55JUKk4RIIHGrY1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=08/03/2026"
   },
   {
@@ -274,21 +203,6 @@
     "kill_detail": "Docket checked. Surplus claim activity found: docket 'MOTION TO INTERVENE AND DISBURSE SURPLUS FUNDS'. Lead already being pursued.",
     "docket_url": "https://core.duvalclerk.com/CoreCms.aspx?mode=PublicAccess",
     "source_url": "https://www.duval.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=08/06/2026"
-  },
-  {
-    "county_id": "cuyahoga-oh",
-    "county_name": "Cuyahoga",
-    "state": "OH",
-    "case_number": "CV25125501 (64564)",
-    "address": "Property Address:\t671 EAST 250TH STREET",
-    "sale_date": "2026-07-27",
-    "sold_to": "Plaintiff",
-    "former_surplus": 41766.0,
-    "kill_label": "Debt exceeds sale",
-    "kill_signals": [],
-    "kill_detail": "conservative debt $173,192 \u2265 sale $155,100 \u2014 NO surplus (principal $151,658 + interest $6,369 + junior $0 + buffer $15,166)",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=cZi5_ro54EErZvnAhOaFLBiLUdNZrkTzY2rs0bIW0Nk1",
-    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/27/2026"
   },
   {
     "county_id": "miami-dade-fl",
@@ -323,24 +237,6 @@
     "source_url": "https://summit.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=08/14/2026"
   },
   {
-    "county_id": "miami-dade-fl",
-    "county_name": "Miami-Dade",
-    "state": "FL",
-    "case_number": "2023-002616-CA-01",
-    "address": "14808 SW 124 CT",
-    "sale_date": "2026-07-21",
-    "sold_to": "3rd Party Bidder",
-    "former_surplus": 18304.140000000014,
-    "kill_label": "Sale cancelled/vacated",
-    "kill_signals": [
-      "sale_issue",
-      "bankruptcy_resolved"
-    ],
-    "kill_detail": "sale vacated/cancelled (hard kill): 'Motion to Cancel Sale'",
-    "docket_url": "https://www2.miamidadeclerk.gov/ocs/",
-    "source_url": "https://www.miamidade.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/21/2026"
-  },
-  {
     "county_id": "summit-oh",
     "county_name": "Summit",
     "state": "OH",
@@ -354,20 +250,5 @@
     "kill_detail": "conservative debt $78,810 \u2265 sale $50,100 \u2014 NO surplus (principal $65,869 + interest $6,354 + junior $0 + buffer $6,587)",
     "docket_url": "https://clerk.summitoh.net/PublicSite/CaseDetail.aspx",
     "source_url": "https://summit.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/31/2026"
-  },
-  {
-    "county_id": "cuyahoga-oh",
-    "county_name": "Cuyahoga",
-    "state": "OH",
-    "case_number": "CV25121712 (64563)",
-    "address": "Property Address:\t12017 SOIKA AVENUE",
-    "sale_date": "2026-07-27",
-    "sold_to": "3rd Party Bidder",
-    "former_surplus": 11133.0,
-    "kill_label": "Debt exceeds sale",
-    "kill_signals": [],
-    "kill_detail": "true surplus only $-48,903 after debt verification",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=3ao-tZbhEFA7c378qYobNmB1D3OEEDQ5gaJ9mYKIPeY1",
-    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/27/2026"
   }
 ]

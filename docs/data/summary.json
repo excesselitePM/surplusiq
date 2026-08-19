@@ -1,33 +1,33 @@
 {
-  "generated_at": "2026-08-18T12:01:02",
-  "total_leads": 45,
-  "total_leads_pre_filter": 58,
-  "killed_filtered_count": 12,
-  "killed_shown_count": 22,
-  "below_floor_filtered_count": 1,
+  "generated_at": "2026-08-19T12:06:01",
+  "total_leads": 48,
+  "total_leads_pre_filter": 56,
+  "killed_filtered_count": 8,
+  "killed_shown_count": 15,
+  "below_floor_filtered_count": 0,
   "min_display_surplus": 5000.0,
   "confirmed_surplus_total": 0,
   "estimated_surplus_total": 0,
-  "apparent_surplus_total": 3006902.66,
-  "docket_verified_positive_count": 8,
-  "docket_verified_positive_total": 269021.59,
+  "apparent_surplus_total": 3180875.83,
+  "docket_verified_positive_count": 6,
+  "docket_verified_positive_total": 243436.56000000003,
   "confirmed_surplus_count": 0,
   "estimated_surplus_count": 0,
-  "apparent_surplus_count": 39,
-  "unverified_count": 6,
+  "apparent_surplus_count": 38,
+  "unverified_count": 10,
   "killed_count": 0,
-  "red_count": 1,
+  "red_count": 0,
   "pipeline_ready_count": 0,
   "pr_matched_count": 0,
-  "docket_matched_count": 29,
+  "docket_matched_count": 21,
   "by_state": {
     "FL": {
       "leads": 42,
-      "surplus": 3677312.030000002
+      "surplus": 3858566.0900000017
     },
     "OH": {
-      "leads": 16,
-      "surplus": 905548.76
+      "leads": 14,
+      "surplus": 904015.76
     }
   },
   "by_county": [
@@ -35,24 +35,24 @@
       "county_id": "orange-fl",
       "county_name": "Orange",
       "state": "FL",
-      "leads": 11,
-      "surplus": 1300404.46,
+      "leads": 10,
+      "surplus": 1242602.75,
       "top_lead": 420336.41
     },
     {
       "county_id": "broward-fl",
       "county_name": "Broward",
       "state": "FL",
-      "leads": 13,
-      "surplus": 885624.7199999999,
+      "leads": 15,
+      "surplus": 1142984.6300000004,
       "top_lead": 221453.33
     },
     {
       "county_id": "miami-dade-fl",
       "county_name": "Miami-Dade",
       "state": "FL",
-      "leads": 7,
-      "surplus": 861602.3300000001,
+      "leads": 6,
+      "surplus": 843298.1900000001,
       "top_lead": 205511.11
     },
     {
@@ -67,8 +67,8 @@
       "county_id": "cuyahoga-oh",
       "county_name": "Cuyahoga",
       "state": "OH",
-      "leads": 9,
-      "surplus": 433210.87000000005,
+      "leads": 7,
+      "surplus": 431677.87000000005,
       "top_lead": 150333.0
     },
     {
@@ -105,10 +105,10 @@
     }
   ],
   "by_score": {
-    "A+": 16,
-    "A": 19,
+    "A+": 18,
+    "A": 18,
     "B": 10,
-    "C": 10
+    "C": 9
   },
   "top_5_confirmed_leads": [],
   "top_5_estimated_leads": [],
