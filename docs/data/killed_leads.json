@@ -69,6 +69,25 @@
     "source_url": "https://www.duval.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=08/10/2026"
   },
   {
+    "county_id": "cuyahoga-oh",
+    "county_name": "Cuyahoga",
+    "state": "OH",
+    "case_number": "CV23976605 (64833)",
+    "address": "25446 BRYDEN ROAD",
+    "sale_date": "2026-08-17",
+    "sold_to": "3rd Party Bidder",
+    "former_surplus": 150333.0,
+    "kill_label": "Sale vacated",
+    "kill_signals": [
+      "sale_vacated",
+      "bankruptcy",
+      "motion_to_vacate"
+    ],
+    "kill_detail": "kill signal: sale_vacated",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=p815iiVwT_XJDeFcmDbQEXK5N-rvbFQRha8emM3gYXs1",
+    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=08/17/2026"
+  },
+  {
     "county_id": "franklin-oh",
     "county_name": "Franklin",
     "state": "OH",
@@ -136,6 +155,23 @@
     "source_url": "https://summit.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=08/07/2026"
   },
   {
+    "county_id": "cuyahoga-oh",
+    "county_name": "Cuyahoga",
+    "state": "OH",
+    "case_number": "CV23975399 (64624)",
+    "address": "2912 CLINTON AVENUE",
+    "sale_date": "2026-08-03",
+    "sold_to": "3rd Party Bidder",
+    "former_surplus": 61333.0,
+    "kill_label": "Sale vacated",
+    "kill_signals": [
+      "sale_vacated"
+    ],
+    "kill_detail": "kill signal: sale_vacated",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=I46_G_8JEtqlyxxqPxZixsHZ4eh7d-WbXgfK1arOOfM1",
+    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=08/03/2026"
+  },
+  {
     "county_id": "duval-fl",
     "county_name": "Duval",
     "state": "FL",
@@ -163,11 +199,11 @@
     "former_surplus": 50435.66,
     "kill_label": "Sale vacated",
     "kill_signals": [
-      "motion_to_vacate",
-      "sale_vacated"
+      "sale_vacated",
+      "motion_to_vacate"
     ],
-    "kill_detail": "kill signal: motion_to_vacate",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=Mc9MeuJlWp1_-NcgQ3sqWwCYB-0MxPwcBT-3F0w6qc81",
+    "kill_detail": "kill signal: sale_vacated",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=Mc9MeuJlWp1_-NcgQ3sqW2tG5CK3E4a0wkWHPLDcMpA1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=08/17/2026"
   },
   {
@@ -175,16 +211,18 @@
     "county_name": "Cuyahoga",
     "state": "OH",
     "case_number": "CV21945205 (64622)",
-    "address": "753 TAFT AVENUE",
+    "address": "Property Address:\t753 TAFT AVENUE",
     "sale_date": "2026-08-03",
     "sold_to": "Plaintiff",
     "former_surplus": 46522.57999999999,
-    "kill_label": "Sold to plaintiff",
+    "kill_label": "Sale vacated",
     "kill_signals": [
-      "sold_to_plaintiff"
+      "sale_vacated",
+      "bankruptcy",
+      "motion_to_vacate"
     ],
-    "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $46,523.",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=Cbp3ndF9AmDOptfr6TWaG3GAVwWxi55JUKk4RIIHGrY1",
+    "kill_detail": "kill signal: sale_vacated",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=Cbp3ndF9AmDOptfr6TWaG2qkYnWETxDGVHbyH6SzjIk1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=08/03/2026"
   },
   {
