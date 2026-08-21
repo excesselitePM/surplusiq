@@ -1,22 +1,5 @@
 [
   {
-    "county_id": "hamilton-oh",
-    "county_name": "Hamilton",
-    "state": "OH",
-    "case_number": "A2601131 (12043)",
-    "address": "3571 POWNER RD",
-    "sale_date": "2026-08-12",
-    "sold_to": "Plaintiff",
-    "former_surplus": 21186000.0,
-    "kill_label": "Sold to plaintiff",
-    "kill_signals": [
-      "sold_to_plaintiff"
-    ],
-    "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $21,186,000.",
-    "docket_url": "",
-    "source_url": "https://hamilton.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=08/12/2026"
-  },
-  {
     "county_id": "miami-dade-fl",
     "county_name": "Miami-Dade",
     "state": "FL",
@@ -52,23 +35,6 @@
     "source_url": "https://www.miamidade.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=08/17/2026"
   },
   {
-    "county_id": "duval-fl",
-    "county_name": "Duval",
-    "state": "FL",
-    "case_number": "16-2025-CA-001678-AXXX-MA",
-    "address": "6716 BUTTONTREE CT",
-    "sale_date": "2026-08-10",
-    "sold_to": "3rd Party Bidder",
-    "former_surplus": 154518.47999999998,
-    "kill_label": "Surplus claim filed",
-    "kill_signals": [
-      "surplus_claim_filed"
-    ],
-    "kill_detail": "Docket checked. Surplus claim activity found: docket 'OWNER'S CLAIM FOR MORTGAGE FORECLOSURE SURPLUS'. Lead already being pursued.",
-    "docket_url": "https://core.duvalclerk.com/CoreCms.aspx?mode=PublicAccess",
-    "source_url": "https://www.duval.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=08/10/2026"
-  },
-  {
     "county_id": "cuyahoga-oh",
     "county_name": "Cuyahoga",
     "state": "OH",
@@ -77,14 +43,14 @@
     "sale_date": "2026-08-17",
     "sold_to": "3rd Party Bidder",
     "former_surplus": 150333.0,
-    "kill_label": "Sale vacated",
+    "kill_label": "Bankruptcy filed",
     "kill_signals": [
-      "sale_vacated",
       "bankruptcy",
+      "sale_vacated",
       "motion_to_vacate"
     ],
-    "kill_detail": "kill signal: sale_vacated",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=p815iiVwT_XJDeFcmDbQEXK5N-rvbFQRha8emM3gYXs1",
+    "kill_detail": "kill signal: bankruptcy",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=p815iiVwT_XJDeFcmDbQERGeb5BC5Wv6kAy5ZwBdn2Y1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=08/17/2026"
   },
   {
@@ -123,21 +89,22 @@
     "source_url": "https://www.miamidade.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=08/10/2026"
   },
   {
-    "county_id": "duval-fl",
-    "county_name": "Duval",
-    "state": "FL",
-    "case_number": "16-2025-CA-003105-AXXX-MA",
-    "address": "3554 DELLWOOD AVE",
-    "sale_date": "2026-08-10",
-    "sold_to": "3rd Party Bidder",
-    "former_surplus": 81318.5,
-    "kill_label": "Surplus claim filed",
+    "county_id": "cuyahoga-oh",
+    "county_name": "Cuyahoga",
+    "state": "OH",
+    "case_number": "CV25122629 (64326)",
+    "address": "Property Address:\t13211 WEST 130TH STREET",
+    "sale_date": "2026-07-27",
+    "sold_to": "Plaintiff",
+    "former_surplus": 80153.0,
+    "kill_label": "Debt exceeds sale",
     "kill_signals": [
-      "surplus_claim_filed"
+      "bankruptcy",
+      "motion_to_vacate"
     ],
-    "kill_detail": "Docket checked. Surplus claim activity found: docket 'MOTION FOR DISBURSEMENT OF REGISTRY FUNDS (DEFT DEVIN LAMAR WILSON'S ASSIGNEE'S) INTERVENE'. Lead already being pursued.",
-    "docket_url": "https://core.duvalclerk.com/CoreCms.aspx?mode=PublicAccess",
-    "source_url": "https://www.duval.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=08/10/2026"
+    "kill_detail": "conservative debt $485,276 \u2265 sale $246,820 \u2014 NO surplus (principal $410,741 + interest $33,461 + junior $0 + buffer $41,074)",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=j6hFAUpbICm_PZfpyVl7CGh4WLNulL-vxZpEAxyS8dA1",
+    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/27/2026"
   },
   {
     "county_id": "summit-oh",
@@ -168,25 +135,23 @@
       "sale_vacated"
     ],
     "kill_detail": "kill signal: sale_vacated",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=I46_G_8JEtqlyxxqPxZixsHZ4eh7d-WbXgfK1arOOfM1",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=I46_G_8JEtqlyxxqPxZixpBy2oAvmrzi_40OBBKvDX01",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=08/03/2026"
   },
   {
-    "county_id": "duval-fl",
-    "county_name": "Duval",
-    "state": "FL",
-    "case_number": "16-2016-CA-002390-XXXX-MA",
-    "address": "5857 GUMWOOD DR",
-    "sale_date": "2026-07-23",
+    "county_id": "cuyahoga-oh",
+    "county_name": "Cuyahoga",
+    "state": "OH",
+    "case_number": "CV25116551 (64561)",
+    "address": "4422 WOODWAY AVENUE",
+    "sale_date": "2026-07-27",
     "sold_to": "3rd Party Bidder",
-    "former_surplus": 54462.75,
-    "kill_label": "Surplus claim filed",
-    "kill_signals": [
-      "surplus_claim_filed"
-    ],
-    "kill_detail": "Docket checked. Surplus claim activity found: docket 'MOTION TO INTERVENE AND DISBURSE SURPLUS FUNDS'. Lead already being pursued.",
-    "docket_url": "https://core.duvalclerk.com/CoreCms.aspx?mode=PublicAccess",
-    "source_url": "https://www.duval.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/23/2026"
+    "former_surplus": 55433.0,
+    "kill_label": "Debt exceeds sale",
+    "kill_signals": [],
+    "kill_detail": "conservative debt $168,249 \u2265 sale $152,100 \u2014 NO surplus (principal $132,189 + interest $22,841 + junior $0 + buffer $13,219)",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=eRsMXwp9uwyXgKyy0rHUyCiUi3EAm0t5lMZ2djRkMKc1",
+    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/27/2026"
   },
   {
     "county_id": "cuyahoga-oh",
@@ -203,7 +168,7 @@
       "motion_to_vacate"
     ],
     "kill_detail": "kill signal: sale_vacated",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=Mc9MeuJlWp1_-NcgQ3sqW2tG5CK3E4a0wkWHPLDcMpA1",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=Mc9MeuJlWp1_-NcgQ3sqW_7XSqgl0MnRptsDOMWWXow1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=08/17/2026"
   },
   {
@@ -215,32 +180,30 @@
     "sale_date": "2026-08-03",
     "sold_to": "Plaintiff",
     "former_surplus": 46522.57999999999,
-    "kill_label": "Sale vacated",
+    "kill_label": "Bankruptcy filed",
     "kill_signals": [
-      "sale_vacated",
       "bankruptcy",
+      "sale_vacated",
       "motion_to_vacate"
     ],
-    "kill_detail": "kill signal: sale_vacated",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=Cbp3ndF9AmDOptfr6TWaG2qkYnWETxDGVHbyH6SzjIk1",
+    "kill_detail": "kill signal: bankruptcy",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=Cbp3ndF9AmDOptfr6TWaG5mmmy1v8-xEWSpTFasnedU1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=08/03/2026"
   },
   {
-    "county_id": "duval-fl",
-    "county_name": "Duval",
-    "state": "FL",
-    "case_number": "16-2024-CC-010262-AXXX-MA",
-    "address": "2661 E DALMATION LN",
-    "sale_date": "2026-08-06",
-    "sold_to": "3rd Party Bidder",
-    "former_surplus": 43839.63,
-    "kill_label": "Surplus claim filed",
-    "kill_signals": [
-      "surplus_claim_filed"
-    ],
-    "kill_detail": "Docket checked. Surplus claim activity found: docket 'MOTION TO INTERVENE AND DISBURSE SURPLUS FUNDS'. Lead already being pursued.",
-    "docket_url": "https://core.duvalclerk.com/CoreCms.aspx?mode=PublicAccess",
-    "source_url": "https://www.duval.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=08/06/2026"
+    "county_id": "cuyahoga-oh",
+    "county_name": "Cuyahoga",
+    "state": "OH",
+    "case_number": "CV25125501 (64564)",
+    "address": "Property Address:\t671 EAST 250TH STREET",
+    "sale_date": "2026-07-27",
+    "sold_to": "Plaintiff",
+    "former_surplus": 41766.0,
+    "kill_label": "Debt exceeds sale",
+    "kill_signals": [],
+    "kill_detail": "conservative debt $173,192 \u2265 sale $155,100 \u2014 NO surplus (principal $151,658 + interest $6,369 + junior $0 + buffer $15,166)",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=cZi5_ro54EErZvnAhOaFLM3MA14NIymThhucIkDF20o1",
+    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/27/2026"
   },
   {
     "county_id": "miami-dade-fl",
@@ -288,5 +251,20 @@
     "kill_detail": "conservative debt $78,810 \u2265 sale $50,100 \u2014 NO surplus (principal $65,869 + interest $6,354 + junior $0 + buffer $6,587)",
     "docket_url": "https://clerk.summitoh.net/PublicSite/CaseDetail.aspx",
     "source_url": "https://summit.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/31/2026"
+  },
+  {
+    "county_id": "cuyahoga-oh",
+    "county_name": "Cuyahoga",
+    "state": "OH",
+    "case_number": "CV25121712 (64563)",
+    "address": "Property Address:\t12017 SOIKA AVENUE",
+    "sale_date": "2026-07-27",
+    "sold_to": "3rd Party Bidder",
+    "former_surplus": 11133.0,
+    "kill_label": "Debt exceeds sale",
+    "kill_signals": [],
+    "kill_detail": "true surplus only $-48,903 after debt verification",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=3ao-tZbhEFA7c378qYobNjfo4m_ivDd9J3dAt2dwk7Q1",
+    "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=07/27/2026"
   }
 ]
