@@ -1,5 +1,22 @@
 [
   {
+    "county_id": "hamilton-oh",
+    "county_name": "Hamilton",
+    "state": "OH",
+    "case_number": "A2601131 (12043)",
+    "address": "3571 POWNER RD",
+    "sale_date": "2026-08-12",
+    "sold_to": "Plaintiff",
+    "former_surplus": 21186000.0,
+    "kill_label": "Sold to plaintiff",
+    "kill_signals": [
+      "sold_to_plaintiff"
+    ],
+    "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $21,186,000.",
+    "docket_url": "",
+    "source_url": "https://hamilton.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=08/12/2026"
+  },
+  {
     "county_id": "miami-dade-fl",
     "county_name": "Miami-Dade",
     "state": "FL",
@@ -42,14 +59,14 @@
     "sale_date": "2026-08-17",
     "sold_to": "3rd Party Bidder",
     "former_surplus": 150333.0,
-    "kill_label": "Bankruptcy filed",
+    "kill_label": "Sale vacated",
     "kill_signals": [
-      "bankruptcy",
       "sale_vacated",
+      "bankruptcy",
       "motion_to_vacate"
     ],
-    "kill_detail": "kill signal: bankruptcy",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=p815iiVwT_XJDeFcmDbQEcJKVcVEZ9ft2FDzir1ouL41",
+    "kill_detail": "kill signal: sale_vacated",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=p815iiVwT_XJDeFcmDbQER09Tn45SHBdqvg-Np3wC_U1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=08/17/2026"
   },
   {
@@ -134,23 +151,8 @@
       "sale_vacated"
     ],
     "kill_detail": "kill signal: sale_vacated",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=I46_G_8JEtqlyxxqPxZixvtZYo_mkjqGkIRYHNjgP0M1",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=I46_G_8JEtqlyxxqPxZixhwrEwv_wkLBCk5i2aHyigc1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=08/03/2026"
-  },
-  {
-    "county_id": "montgomery-oh",
-    "county_name": "Montgomery",
-    "state": "OH",
-    "case_number": "2025 CV 06895 (0)",
-    "address": "Property Address:\t825 GLENEAGLE DRIVE",
-    "sale_date": "2026-08-21",
-    "sold_to": "3rd Party Bidder",
-    "former_surplus": 51200.0,
-    "kill_label": "Debt exceeds sale",
-    "kill_signals": [],
-    "kill_detail": "conservative debt $333,187 \u2265 sale $221,200 \u2014 NO surplus (principal $275,286 + interest $30,372 + junior $0 + buffer $27,529)",
-    "docket_url": "https://pro.mcohio.org/",
-    "source_url": "https://montgomery.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=08/21/2026"
   },
   {
     "county_id": "cuyahoga-oh",
@@ -167,7 +169,7 @@
       "motion_to_vacate"
     ],
     "kill_detail": "kill signal: sale_vacated",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=Mc9MeuJlWp1_-NcgQ3sqW_gAPs2R-7fNbs5KF6tt8Ik1",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=Mc9MeuJlWp1_-NcgQ3sqW7ccdvJfLknBLxxwuRKHPdE1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=08/17/2026"
   },
   {
@@ -179,33 +181,15 @@
     "sale_date": "2026-08-03",
     "sold_to": "Plaintiff",
     "former_surplus": 46522.57999999999,
-    "kill_label": "Bankruptcy filed",
+    "kill_label": "Sale vacated",
     "kill_signals": [
+      "sale_vacated",
       "bankruptcy",
-      "sale_vacated",
       "motion_to_vacate"
     ],
-    "kill_detail": "kill signal: bankruptcy",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=Cbp3ndF9AmDOptfr6TWaG17PVDi8s0zx0aFFR8oe65U1",
+    "kill_detail": "kill signal: sale_vacated",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=Cbp3ndF9AmDOptfr6TWaGwH-1dfWxtl_1FrPxdoaBsg1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=08/03/2026"
-  },
-  {
-    "county_id": "montgomery-oh",
-    "county_name": "Montgomery",
-    "state": "OH",
-    "case_number": "2025 CV 04109-4 (0)",
-    "address": "28-30 HILLCREST AVENUE",
-    "sale_date": "2026-08-21",
-    "sold_to": "3rd Party Bidder",
-    "former_surplus": 46100.0,
-    "kill_label": "Debt exceeds sale",
-    "kill_signals": [
-      "sale_vacated",
-      "motion_to_vacate"
-    ],
-    "kill_detail": "conservative debt $587,321 \u2265 sale $94,100 \u2014 NO surplus (principal $453,658 + interest $88,296 + junior $0 + buffer $45,366)",
-    "docket_url": "https://pro.mcohio.org/",
-    "source_url": "https://montgomery.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=08/21/2026"
   },
   {
     "county_id": "summit-oh",
@@ -289,20 +273,5 @@
     "kill_detail": "conservative debt $102,014 \u2265 sale $77,100 \u2014 NO surplus (principal $83,678 + interest $9,969 + junior $0 + buffer $8,368)",
     "docket_url": "https://clerk.summitoh.net/PublicSite/CaseDetail.aspx",
     "source_url": "https://summit.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=08/14/2026"
-  },
-  {
-    "county_id": "montgomery-oh",
-    "county_name": "Montgomery",
-    "state": "OH",
-    "case_number": "2026 CV 01590 (0)",
-    "address": "Property Address:\t4214 WINONA AVENUE",
-    "sale_date": "2026-08-21",
-    "sold_to": "3rd Party Bidder",
-    "former_surplus": 14100.0,
-    "kill_label": "Debt exceeds sale",
-    "kill_signals": [],
-    "kill_detail": "conservative debt $51,359 \u2265 sale $46,100 \u2014 NO surplus (principal $46,690 + interest $0 + junior $0 + buffer $4,669)",
-    "docket_url": "https://pro.mcohio.org/",
-    "source_url": "https://montgomery.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=08/21/2026"
   }
 ]
