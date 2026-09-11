@@ -1,67 +1,59 @@
 {
-  "generated_at": "2026-09-10T15:23:32",
-  "total_leads": 41,
-  "total_leads_pre_filter": 49,
-  "killed_filtered_count": 8,
-  "killed_shown_count": 27,
+  "generated_at": "2026-09-11T15:31:53",
+  "total_leads": 38,
+  "total_leads_pre_filter": 45,
+  "killed_filtered_count": 7,
+  "killed_shown_count": 29,
   "below_floor_filtered_count": 0,
   "min_display_surplus": 5000.0,
   "confirmed_surplus_total": 0,
   "estimated_surplus_total": 0,
-  "apparent_surplus_total": 2241219.66,
-  "docket_verified_positive_count": 10,
-  "docket_verified_positive_total": 212820.46,
+  "apparent_surplus_total": 2009869.93,
+  "docket_verified_positive_count": 7,
+  "docket_verified_positive_total": 117267.70999999999,
   "confirmed_surplus_count": 0,
   "estimated_surplus_count": 0,
-  "apparent_surplus_count": 26,
+  "apparent_surplus_count": 23,
   "unverified_count": 15,
   "killed_count": 0,
   "red_count": 0,
   "pipeline_ready_count": 0,
   "pr_matched_count": 0,
-  "docket_matched_count": 27,
+  "docket_matched_count": 23,
   "by_state": {
     "FL": {
-      "leads": 26,
-      "surplus": 3143778.810000001
+      "leads": 23,
+      "surplus": 2827006.1200000006
     },
     "OH": {
-      "leads": 23,
-      "surplus": 1241618.5999999996
+      "leads": 22,
+      "surplus": 1361175.5399999996
     }
   },
   "by_county": [
     {
-      "county_id": "miami-dade-fl",
-      "county_name": "Miami-Dade",
-      "state": "FL",
-      "leads": 7,
-      "surplus": 1446269.0699999998,
-      "top_lead": 373083.28
-    },
-    {
       "county_id": "broward-fl",
       "county_name": "Broward",
       "state": "FL",
-      "leads": 11,
-      "surplus": 1307105.23,
+      "leads": 13,
+      "surplus": 1343722.5000000002,
       "top_lead": 471732.59
+    },
+    {
+      "county_id": "miami-dade-fl",
+      "county_name": "Miami-Dade",
+      "state": "FL",
+      "leads": 6,
+      "surplus": 1330214.3099999998,
+      "top_lead": 373083.28
     },
     {
       "county_id": "cuyahoga-oh",
       "county_name": "Cuyahoga",
       "state": "OH",
-      "leads": 12,
-      "surplus": 683672.98,
+      "leads": 14,
+      "surplus": 884441.6399999999,
       "top_lead": 259433.0
-    },
-    {
-      "county_id": "orange-fl",
-      "county_name": "Orange",
-      "state": "FL",
-      "leads": 5,
-      "surplus": 308751.38,
-      "top_lead": 111411.7
     },
     {
       "county_id": "franklin-oh",
@@ -80,6 +72,14 @@
       "top_lead": 55400.0
     },
     {
+      "county_id": "orange-fl",
+      "county_name": "Orange",
+      "state": "FL",
+      "leads": 3,
+      "surplus": 136337.13,
+      "top_lead": 97142.69
+    },
+    {
       "county_id": "hamilton-oh",
       "county_name": "Hamilton",
       "state": "OH",
@@ -91,24 +91,16 @@
       "county_id": "duval-fl",
       "county_name": "Duval",
       "state": "FL",
-      "leads": 3,
-      "surplus": 81653.12999999999,
-      "top_lead": 51352.119999999995
-    },
-    {
-      "county_id": "montgomery-oh",
-      "county_name": "Montgomery",
-      "state": "OH",
-      "leads": 3,
-      "surplus": 81211.72,
-      "top_lead": 46100.0
+      "leads": 1,
+      "surplus": 16732.18,
+      "top_lead": 16732.18
     }
   ],
   "by_score": {
-    "A+": 16,
-    "A": 10,
-    "B": 11,
-    "C": 11
+    "A+": 15,
+    "A": 9,
+    "B": 12,
+    "C": 8
   },
   "top_5_confirmed_leads": [],
   "top_5_estimated_leads": [],
