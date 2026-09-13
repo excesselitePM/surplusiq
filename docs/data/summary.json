@@ -1,20 +1,20 @@
 {
-  "generated_at": "2026-09-12T14:28:24",
-  "total_leads": 37,
-  "total_leads_pre_filter": 42,
-  "killed_filtered_count": 5,
-  "killed_shown_count": 26,
+  "generated_at": "2026-09-13T15:23:30",
+  "total_leads": 34,
+  "total_leads_pre_filter": 41,
+  "killed_filtered_count": 7,
+  "killed_shown_count": 23,
   "below_floor_filtered_count": 0,
   "min_display_surplus": 5000.0,
   "confirmed_surplus_total": 0,
   "estimated_surplus_total": 0,
-  "apparent_surplus_total": 1944327.67,
-  "docket_verified_positive_count": 6,
-  "docket_verified_positive_total": 78790.53,
+  "apparent_surplus_total": 1933530.56,
+  "docket_verified_positive_count": 4,
+  "docket_verified_positive_total": 67993.42,
   "confirmed_surplus_count": 0,
   "estimated_surplus_count": 0,
-  "apparent_surplus_count": 21,
-  "unverified_count": 16,
+  "apparent_surplus_count": 20,
+  "unverified_count": 14,
   "killed_count": 0,
   "red_count": 0,
   "pipeline_ready_count": 0,
@@ -26,8 +26,8 @@
       "surplus": 2799941.0400000005
     },
     "OH": {
-      "leads": 20,
-      "surplus": 1189957.7199999997
+      "leads": 19,
+      "surplus": 1323861.3799999997
     }
   },
   "by_county": [
@@ -51,8 +51,8 @@
       "county_id": "cuyahoga-oh",
       "county_name": "Cuyahoga",
       "state": "OH",
-      "leads": 12,
-      "surplus": 683672.98,
+      "leads": 11,
+      "surplus": 817576.6399999999,
       "top_lead": 259433.0
     },
     {
@@ -97,10 +97,10 @@
     }
   ],
   "by_score": {
-    "A+": 14,
-    "A": 8,
-    "B": 12,
-    "C": 7
+    "A+": 15,
+    "A": 9,
+    "B": 11,
+    "C": 6
   },
   "top_5_confirmed_leads": [],
   "top_5_estimated_leads": [],
