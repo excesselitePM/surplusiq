@@ -1,16 +1,16 @@
 {
-  "generated_at": "2026-10-08T18:19:04",
+  "generated_at": "2026-10-09T17:52:29",
   "total_leads": 42,
-  "total_leads_pre_filter": 52,
-  "killed_filtered_count": 10,
-  "killed_shown_count": 36,
+  "total_leads_pre_filter": 51,
+  "killed_filtered_count": 9,
+  "killed_shown_count": 33,
   "below_floor_filtered_count": 0,
   "min_display_surplus": 5000.0,
   "confirmed_surplus_total": 0,
   "estimated_surplus_total": 0,
-  "apparent_surplus_total": 1858896.4000000001,
+  "apparent_surplus_total": 1830583.84,
   "docket_verified_positive_count": 10,
-  "docket_verified_positive_total": 370200.14,
+  "docket_verified_positive_total": 331108.32,
   "confirmed_surplus_count": 0,
   "estimated_surplus_count": 0,
   "apparent_surplus_count": 33,
@@ -19,15 +19,15 @@
   "red_count": 1,
   "pipeline_ready_count": 0,
   "pr_matched_count": 0,
-  "docket_matched_count": 31,
+  "docket_matched_count": 29,
   "by_state": {
     "FL": {
-      "leads": 26,
-      "surplus": 1914472.5900000005
+      "leads": 27,
+      "surplus": 1925251.8500000006
     },
     "OH": {
-      "leads": 26,
-      "surplus": 1183552.1300000001
+      "leads": 24,
+      "surplus": 1114652.1300000001
     }
   },
   "by_county": [
@@ -35,8 +35,8 @@
       "county_id": "broward-fl",
       "county_name": "Broward",
       "state": "FL",
-      "leads": 11,
-      "surplus": 789781.55,
+      "leads": 12,
+      "surplus": 800560.81,
       "top_lead": 285804.62
     },
     {
@@ -64,20 +64,20 @@
       "top_lead": 168862.32
     },
     {
-      "county_id": "summit-oh",
-      "county_name": "Summit",
-      "state": "OH",
-      "leads": 9,
-      "surplus": 270768.55,
-      "top_lead": 52136.46
-    },
-    {
       "county_id": "lee-fl",
       "county_name": "Lee",
       "state": "FL",
       "leads": 2,
       "surplus": 256037.76,
       "top_lead": 156025.31
+    },
+    {
+      "county_id": "summit-oh",
+      "county_name": "Summit",
+      "state": "OH",
+      "leads": 8,
+      "surplus": 238468.55,
+      "top_lead": 52136.46
     },
     {
       "county_id": "duval-fl",
@@ -96,27 +96,27 @@
       "top_lead": 86827.54
     },
     {
-      "county_id": "montgomery-oh",
-      "county_name": "Montgomery",
-      "state": "OH",
-      "leads": 4,
-      "surplus": 138800.0,
-      "top_lead": 71100.0
-    },
-    {
       "county_id": "hamilton-oh",
       "county_name": "Hamilton",
       "state": "OH",
       "leads": 2,
       "surplus": 113500.0,
       "top_lead": 60300.0
+    },
+    {
+      "county_id": "montgomery-oh",
+      "county_name": "Montgomery",
+      "state": "OH",
+      "leads": 3,
+      "surplus": 102200.0,
+      "top_lead": 71100.0
     }
   ],
   "by_score": {
     "A+": 10,
     "A": 10,
-    "B": 18,
-    "C": 10
+    "B": 16,
+    "C": 11
   },
   "top_5_confirmed_leads": [],
   "top_5_estimated_leads": [],
