@@ -1,33 +1,33 @@
 {
-  "generated_at": "2026-10-09T17:52:29",
-  "total_leads": 42,
-  "total_leads_pre_filter": 51,
-  "killed_filtered_count": 9,
-  "killed_shown_count": 33,
+  "generated_at": "2026-10-10T16:40:47",
+  "total_leads": 40,
+  "total_leads_pre_filter": 47,
+  "killed_filtered_count": 7,
+  "killed_shown_count": 22,
   "below_floor_filtered_count": 0,
   "min_display_surplus": 5000.0,
   "confirmed_surplus_total": 0,
   "estimated_surplus_total": 0,
-  "apparent_surplus_total": 1830583.84,
-  "docket_verified_positive_count": 10,
-  "docket_verified_positive_total": 331108.32,
+  "apparent_surplus_total": 2066053.4200000002,
+  "docket_verified_positive_count": 9,
+  "docket_verified_positive_total": 266225.87,
   "confirmed_surplus_count": 0,
   "estimated_surplus_count": 0,
-  "apparent_surplus_count": 33,
-  "unverified_count": 9,
+  "apparent_surplus_count": 32,
+  "unverified_count": 8,
   "killed_count": 0,
   "red_count": 1,
   "pipeline_ready_count": 0,
   "pr_matched_count": 0,
-  "docket_matched_count": 29,
+  "docket_matched_count": 28,
   "by_state": {
     "FL": {
-      "leads": 27,
-      "surplus": 1925251.8500000006
+      "leads": 25,
+      "surplus": 1858626.5900000005
     },
     "OH": {
-      "leads": 24,
-      "surplus": 1114652.1300000001
+      "leads": 22,
+      "surplus": 1009201.2899999999
     }
   },
   "by_county": [
@@ -35,8 +35,8 @@
       "county_id": "broward-fl",
       "county_name": "Broward",
       "state": "FL",
-      "leads": 12,
-      "surplus": 800560.81,
+      "leads": 10,
+      "surplus": 733935.55,
       "top_lead": 285804.62
     },
     {
@@ -56,11 +56,19 @@
       "top_lead": 113744.9
     },
     {
+      "county_id": "summit-oh",
+      "county_name": "Summit",
+      "state": "OH",
+      "leads": 10,
+      "surplus": 277268.55,
+      "top_lead": 52136.46
+    },
+    {
       "county_id": "franklin-oh",
       "county_name": "Franklin",
       "state": "OH",
-      "leads": 3,
-      "surplus": 314268.36,
+      "leads": 2,
+      "surplus": 272217.52,
       "top_lead": 168862.32
     },
     {
@@ -70,14 +78,6 @@
       "leads": 2,
       "surplus": 256037.76,
       "top_lead": 156025.31
-    },
-    {
-      "county_id": "summit-oh",
-      "county_name": "Summit",
-      "state": "OH",
-      "leads": 8,
-      "surplus": 238468.55,
-      "top_lead": 52136.46
     },
     {
       "county_id": "duval-fl",
@@ -102,21 +102,13 @@
       "leads": 2,
       "surplus": 113500.0,
       "top_lead": 60300.0
-    },
-    {
-      "county_id": "montgomery-oh",
-      "county_name": "Montgomery",
-      "state": "OH",
-      "leads": 3,
-      "surplus": 102200.0,
-      "top_lead": 71100.0
     }
   ],
   "by_score": {
     "A+": 10,
-    "A": 10,
-    "B": 16,
-    "C": 11
+    "A": 9,
+    "B": 14,
+    "C": 10
   },
   "top_5_confirmed_leads": [],
   "top_5_estimated_leads": [],
@@ -129,6 +121,24 @@
       "surplus": 285804.62,
       "money_status": "apparent_surplus",
       "evidence_level": "auction_only"
+    },
+    {
+      "county": "Miami-Dade",
+      "state": "FL",
+      "case_number": "2023-021353-CA-01",
+      "address": "",
+      "surplus": 186780.58,
+      "money_status": "apparent_surplus",
+      "evidence_level": "docket_reviewed"
+    },
+    {
+      "county": "Miami-Dade",
+      "state": "FL",
+      "case_number": "2025-014438-CA-01",
+      "address": "",
+      "surplus": 180196.71000000002,
+      "money_status": "apparent_surplus",
+      "evidence_level": "docket_reviewed"
     },
     {
       "county": "Lee",
@@ -145,24 +155,6 @@
       "case_number": "CACE-25-016105",
       "address": "12674 NW 11 PL",
       "surplus": 139632.28000000003,
-      "money_status": "apparent_surplus",
-      "evidence_level": "auction_only"
-    },
-    {
-      "county": "Miami-Dade",
-      "state": "FL",
-      "case_number": "2021-021632-CA-01",
-      "address": "8155 NW 201 ST",
-      "surplus": 108816.28000000003,
-      "money_status": "apparent_surplus",
-      "evidence_level": "docket_reviewed"
-    },
-    {
-      "county": "Lee",
-      "state": "FL",
-      "case_number": "25-CA-002865",
-      "address": "325 SE 30TH ST",
-      "surplus": 100012.45,
       "money_status": "apparent_surplus",
       "evidence_level": "auction_only"
     }
