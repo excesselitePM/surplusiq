@@ -13,7 +13,7 @@
       "sold_to_plaintiff"
     ],
     "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $1,200,200.",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=BQ6jOHhxCx54gYAPR2SHl9B1CgUCg29WLC3CmXRxwjI1",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=BQ6jOHhxCx54gYAPR2SHl6fUTkVsBJ0vi8hSK49Kpbw1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=10/19/2026"
   },
   {
@@ -30,7 +30,7 @@
       "sold_to_plaintiff"
     ],
     "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $610,000.",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=TNPDhGjD0DcXAXdiCOw8b_itqwMpVaFGhaN-3eDQI6c1",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=TNPDhGjD0DcXAXdiCOw8b0Qyaq01PwreaZsfCSFdsmo1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=10/13/2026"
   },
   {
@@ -47,7 +47,7 @@
       "sold_to_plaintiff"
     ],
     "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $187,441.",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=3MtDkAeiyOteNoFhljRHJYV0GM4lskBGVjculbcfQI01",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=3MtDkAeiyOteNoFhljRHJQOpYEIqmvff3ZOjbi0joj01",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=10/05/2026"
   },
   {
@@ -95,13 +95,13 @@
     "sale_date": "2026-10-07",
     "sold_to": "3rd Party Bidder",
     "former_surplus": 92845.97,
-    "kill_label": "Bankruptcy filed",
+    "kill_label": "Sale vacated",
     "kill_signals": [
-      "bankruptcy",
-      "motion_to_vacate"
+      "motion_to_vacate",
+      "bankruptcy"
     ],
-    "kill_detail": "kill signal: bankruptcy",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=wznnoQNcTUAimIGiSFvO5zElEGerNPmAomGzuJImczY1",
+    "kill_detail": "kill signal: motion_to_vacate",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=wznnoQNcTUAimIGiSFvO56sjOCp0YeUYMG_dWw_dcKY1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=10/07/2026"
   },
   {
@@ -135,25 +135,8 @@
       "motion_to_vacate"
     ],
     "kill_detail": "kill signal: motion_to_vacate",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=jxHmLmIM_9iBwggDVAk0cOoDZlIhNBSl6rGHhyRyiNc1",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=jxHmLmIM_9iBwggDVAk0cK4qVfl1b_LfYI0E1vHejK01",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=10/05/2026"
-  },
-  {
-    "county_id": "hamilton-oh",
-    "county_name": "Hamilton",
-    "state": "OH",
-    "case_number": "A2504280 (12162)",
-    "address": "4205 LOWRY AVE",
-    "sale_date": "2026-09-23",
-    "sold_to": "Plaintiff",
-    "former_surplus": 56100.0,
-    "kill_label": "Sold to plaintiff",
-    "kill_signals": [
-      "sold_to_plaintiff"
-    ],
-    "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $56,100.",
-    "docket_url": "",
-    "source_url": "https://hamilton.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=09/23/2026"
   },
   {
     "county_id": "montgomery-oh",
@@ -181,13 +164,13 @@
     "sale_date": "2026-10-07",
     "sold_to": "3rd Party Bidder",
     "former_surplus": 48759.35,
-    "kill_label": "Bankruptcy filed",
+    "kill_label": "Sale vacated",
     "kill_signals": [
-      "bankruptcy",
-      "motion_to_vacate"
+      "motion_to_vacate",
+      "bankruptcy"
     ],
-    "kill_detail": "kill signal: bankruptcy",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=QQP7H4n1qa5YhDkGojxuVkTvpyCxHux54o5abhA6jPU1",
+    "kill_detail": "kill signal: motion_to_vacate",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=QQP7H4n1qa5YhDkGojxuVqmSM2GedyZ0xTxeuJdWDQY1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=10/07/2026"
   },
   {
@@ -219,7 +202,7 @@
       "sold_to_plaintiff"
     ],
     "kill_detail": "Sold to plaintiff \u2014 no recoverable surplus for homeowner (SOP step 11). Apparent surplus was $45,333.",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=AZvwSDHX3D7rew_Wx1jhzjwJKaqG8GdQtnQULl9b--81",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=AZvwSDHX3D7rew_Wx1jhzudIh9UtTw2STcS2219fQy41",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=10/05/2026"
   },
   {
@@ -315,7 +298,7 @@
       "bankruptcy"
     ],
     "kill_detail": "conservative debt $194,378 \u2265 sale $120,100 \u2014 NO surplus (principal $151,154 + interest $28,108 + junior $0 + buffer $15,115)",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=-xrKm6pidSg3M_ybVd9JKXvOTEGgY3sY-ELEF2OLTWk1",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=-xrKm6pidSg3M_ybVd9JKVP3n3T51BObvSnX4BiFaSw1",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=09/28/2026"
   },
   {
@@ -397,7 +380,7 @@
       "motion_to_vacate"
     ],
     "kill_detail": "conservative debt $86,691 \u2265 sale $23,100 \u2014 NO surplus (principal $69,472 + interest $10,271 + junior $0 + buffer $6,947)",
-    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=xEVajoRmOWHB4CRWkzMYx92i0ESwljMZxsQ4L-j5rXk1",
+    "docket_url": "https://cpdocket.cp.cuyahogacounty.gov/CV_CaseInformation_Summary.aspx?q=xEVajoRmOWHB4CRWkzMYxwqm2kabNMKPs6ezUpfRpl41",
     "source_url": "https://cuyahoga.sheriffsaleauction.ohio.gov/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=10/13/2026"
   },
   {
