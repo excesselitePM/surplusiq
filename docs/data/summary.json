@@ -1,33 +1,33 @@
 {
-  "generated_at": "2026-11-02T21:13:01",
-  "total_leads": 51,
-  "total_leads_pre_filter": 56,
-  "killed_filtered_count": 5,
-  "killed_shown_count": 23,
+  "generated_at": "2026-11-03T18:47:46",
+  "total_leads": 53,
+  "total_leads_pre_filter": 57,
+  "killed_filtered_count": 4,
+  "killed_shown_count": 19,
   "below_floor_filtered_count": 0,
   "min_display_surplus": 5000.0,
-  "confirmed_surplus_total": 108816.28,
+  "confirmed_surplus_total": 0,
   "estimated_surplus_total": 0,
-  "apparent_surplus_total": 2462320.29,
-  "docket_verified_positive_count": 13,
-  "docket_verified_positive_total": 189289.73,
-  "confirmed_surplus_count": 1,
+  "apparent_surplus_total": 2352744.24,
+  "docket_verified_positive_count": 11,
+  "docket_verified_positive_total": 110544.74,
+  "confirmed_surplus_count": 0,
   "estimated_surplus_count": 0,
-  "apparent_surplus_count": 39,
-  "unverified_count": 11,
+  "apparent_surplus_count": 38,
+  "unverified_count": 15,
   "killed_count": 0,
   "red_count": 1,
-  "pipeline_ready_count": 1,
+  "pipeline_ready_count": 0,
   "pr_matched_count": 0,
-  "docket_matched_count": 29,
+  "docket_matched_count": 30,
   "by_state": {
     "FL": {
-      "leads": 37,
-      "surplus": 2767559.929999999
+      "leads": 35,
+      "surplus": 2409699.46
     },
     "OH": {
-      "leads": 19,
-      "surplus": 565539.87
+      "leads": 22,
+      "surplus": 701716.0999999999
     }
   },
   "by_county": [
@@ -35,40 +35,48 @@
       "county_id": "miami-dade-fl",
       "county_name": "Miami-Dade",
       "state": "FL",
-      "leads": 8,
-      "surplus": 987799.3500000001,
+      "leads": 6,
+      "surplus": 692202.4900000001,
       "top_lead": 245917.19
     },
     {
       "county_id": "broward-fl",
       "county_name": "Broward",
       "state": "FL",
-      "leads": 13,
-      "surplus": 808757.8500000002,
+      "leads": 11,
+      "surplus": 619161.6300000001,
       "top_lead": 190830.65
     },
     {
       "county_id": "orange-fl",
       "county_name": "Orange",
       "state": "FL",
-      "leads": 7,
-      "surplus": 447456.63999999996,
+      "leads": 9,
+      "surplus": 562256.22,
       "top_lead": 190472.46
+    },
+    {
+      "county_id": "summit-oh",
+      "county_name": "Summit",
+      "state": "OH",
+      "leads": 11,
+      "surplus": 326944.78,
+      "top_lead": 54100.0
     },
     {
       "county_id": "duval-fl",
       "county_name": "Duval",
       "state": "FL",
       "leads": 5,
-      "surplus": 311936.18,
+      "surplus": 324469.21,
       "top_lead": 114958.24
     },
     {
       "county_id": "cuyahoga-oh",
       "county_name": "Cuyahoga",
       "state": "OH",
-      "leads": 10,
-      "surplus": 309071.32,
+      "leads": 9,
+      "surplus": 296371.32,
       "top_lead": 92845.97
     },
     {
@@ -80,14 +88,6 @@
       "top_lead": 94295.72
     },
     {
-      "county_id": "summit-oh",
-      "county_name": "Summit",
-      "state": "OH",
-      "leads": 7,
-      "surplus": 178068.55,
-      "top_lead": 54100.0
-    },
-    {
       "county_id": "hamilton-oh",
       "county_name": "Hamilton",
       "state": "OH",
@@ -97,22 +97,12 @@
     }
   ],
   "by_score": {
-    "A+": 10,
-    "A": 11,
-    "B": 20,
+    "A+": 7,
+    "A": 12,
+    "B": 23,
     "C": 11
   },
-  "top_5_confirmed_leads": [
-    {
-      "county": "Miami-Dade",
-      "state": "FL",
-      "case_number": "2021-021632-CA-01",
-      "address": "8155 NW 201 ST",
-      "surplus": 108816.28,
-      "money_status": "confirmed_surplus",
-      "evidence_level": "docket_confirmed"
-    }
-  ],
+  "top_5_confirmed_leads": [],
   "top_5_estimated_leads": [],
   "top_5_apparent_leads": [
     {
@@ -152,13 +142,13 @@
       "evidence_level": "auction_only"
     },
     {
-      "county": "Broward",
+      "county": "Duval",
       "state": "FL",
-      "case_number": "CACE-23-021250",
-      "address": "13382 LAKEPOINTE CIR",
-      "surplus": 146641.53,
+      "case_number": "16-2025-CA-001932-AXXX-MA",
+      "address": "2628 W SEBAGO AVE",
+      "surplus": 114958.24,
       "money_status": "apparent_surplus",
-      "evidence_level": "auction_only"
+      "evidence_level": "docket_reviewed"
     }
   ],
   "coverage": {
