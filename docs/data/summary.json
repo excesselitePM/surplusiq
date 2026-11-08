@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-11-07T17:18:23",
-  "total_leads": 49,
-  "total_leads_pre_filter": 51,
+  "generated_at": "2026-11-08T17:30:12",
+  "total_leads": 48,
+  "total_leads_pre_filter": 50,
   "killed_filtered_count": 2,
   "killed_shown_count": 15,
   "below_floor_filtered_count": 0,
@@ -14,20 +14,20 @@
   "confirmed_surplus_count": 0,
   "estimated_surplus_count": 0,
   "apparent_surplus_count": 37,
-  "unverified_count": 12,
+  "unverified_count": 11,
   "killed_count": 0,
   "red_count": 0,
   "pipeline_ready_count": 0,
   "pr_matched_count": 0,
-  "docket_matched_count": 26,
+  "docket_matched_count": 25,
   "by_state": {
     "FL": {
       "leads": 34,
       "surplus": 2425327.2
     },
     "OH": {
-      "leads": 17,
-      "surplus": 499442.23
+      "leads": 16,
+      "surplus": 432342.23
     }
   },
   "by_county": [
@@ -67,9 +67,9 @@
       "county_id": "summit-oh",
       "county_name": "Summit",
       "state": "OH",
-      "leads": 9,
-      "surplus": 319476.23,
-      "top_lead": 67100.0
+      "leads": 8,
+      "surplus": 252376.22999999998,
+      "top_lead": 54100.0
     },
     {
       "county_id": "lee-fl",
@@ -98,7 +98,7 @@
   ],
   "by_score": {
     "A+": 7,
-    "A": 11,
+    "A": 10,
     "B": 22,
     "C": 8
   },
